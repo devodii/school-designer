@@ -12,9 +12,10 @@ export default function Home() {
             or flex it with your friends
           </p>
           <ul className="">
-            <li>🎨 Design custom notebook + diary covers from your photo or prompt.</li>
-            <li>🧠 Generate smart study timetables based on your schedule.</li>
-            <li>📕 Print as PDFs, save to your phone, or just share on socials</li>
+            <li>🎨 Make notebooks with your picture on the cover</li>
+            <li>🎓 Generate photos of you in your dream college/university</li>
+            <li>📚 Join or create classrooms for studying with your buddies!</li>
+            <li>🔥 And lots more...</li>
           </ul>
         </div>
 
