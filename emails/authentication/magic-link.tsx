@@ -49,7 +49,6 @@ const MagicLinkEmail = ({ url }: MagicLinkEmailProps) => {
             maxWidth: 200,
             textAlign: "center",
             marginTop: -10,
-
           }}
         >
           Signin
