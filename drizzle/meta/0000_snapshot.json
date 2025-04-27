@@ -1,5 +1,5 @@
 {
-  "id": "1af6c361-2269-422b-b1e2-73c838edf1f8",
+  "id": "cf77decc-5d00-423e-86a9-5c4a71087bcd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -102,7 +102,7 @@
           "name": "account_id",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "used_at": {
           "name": "used_at",
@@ -192,7 +192,16 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.level": {
+      "name": "level",
+      "schema": "public",
+      "values": [
+        "COLLEDGE",
+        "HIGH SCHOOL"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

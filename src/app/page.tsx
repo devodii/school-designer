@@ -1,5 +1,4 @@
-import { TextField } from "@/components/text-field"
-import { Button } from "@/components/ui/button"
+import { AuthForm } from "@/components/auth-form"
 
 export default function Home() {
   return (
@@ -19,10 +18,7 @@ export default function Home() {
           </ul>
         </div>
 
-        <div className="flex max-w-sm flex-1 flex-col gap-3">
-          <TextField labelHtmlFor="email" inputId="email" labelText="Email" />
-          <Button className="w-full">Continue</Button>
-        </div>
+        <AuthForm />
       </section>
     </div>
   )

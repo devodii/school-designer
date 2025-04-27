@@ -1,3 +1,4 @@
+CREATE TYPE "public"."level" AS ENUM('COLLEDGE', 'HIGH SCHOOL');--> statement-breakpoint
 CREATE TABLE "account" (
 	"id" varchar PRIMARY KEY NOT NULL,
 	"email" varchar NOT NULL,
@@ -14,7 +15,7 @@ CREATE TABLE "auth" (
 	"id" varchar PRIMARY KEY NOT NULL,
 	"token" varchar NOT NULL,
 	"email" varchar NOT NULL,
-	"account_id" varchar NOT NULL,
+	"account_id" varchar,
 	"used_at" timestamp,
 	"expires_at" varchar NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
