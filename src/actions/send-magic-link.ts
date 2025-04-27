@@ -1,4 +1,4 @@
-import { MagicLinkSignIn } from "@/components/emails/magic-link-sign-in"
+import { MagicLinkSignIn } from "../../emails/authentication/magic-link"
 import db from "@/db"
 import { resend } from "@/lib/resend"
 import { tryCatch } from "@/lib/try-catch"
