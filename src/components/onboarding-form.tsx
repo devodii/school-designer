@@ -1,6 +1,6 @@
 "use client"
 
-import { ComponentType, JSX, useState } from "react"
+import { useState } from "react"
 
 import { useFileUpload } from "@/hooks/use-file-upload"
 import { FileUploader } from "@components/file-uploader"
@@ -18,7 +18,7 @@ import { HIGH_SCHOOL_SUBJECTS, UNIVERSITY_SUBJECTS } from "~/constants/subjects"
 const onboardingSchema = z.object({
   username: z.string({ message: "This is a required field" }).min(3).max(20),
   classroom_code: z.string().optional(),
-  education_level: z.enum(["HIGH SCHOOL", "COLLEDGE"]),
+  education_level: z.enum(["HIGH SCHOOL", "COLLEGE"]),
   school_name: z.string(),
   subjects: z.array(z.string()).min(1),
   referral_code: z.string().optional(),
@@ -31,7 +31,14 @@ const UsernameStep = ({ onNext }: StepComponentProps) => {
   const form = useFormContext()
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-col gap-10">
+    <form
+      onSubmit={async e => {
+        e.preventDefault()
+        const valid = await form.trigger("username")
+        if (valid) onNext()
+      }}
+      className="mx-auto flex w-full max-w-lg flex-col gap-10"
+    >
       <Controller
         control={form.control}
         name="username"
@@ -47,16 +54,8 @@ const UsernameStep = ({ onNext }: StepComponentProps) => {
         )}
       />
 
-      <Button
-        type="button"
-        onClick={async () => {
-          const valid = await form.trigger("username")
-          if (valid) onNext()
-        }}
-      >
-        Next
-      </Button>
-    </div>
+      <Button type="submit">Next</Button>
+    </form>
   )
 }
 
@@ -64,7 +63,14 @@ const ClassroomCodeStep = ({ onNext, onBack }: StepComponentProps) => {
   const form = useFormContext()
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-col gap-10">
+    <form
+      onSubmit={async e => {
+        e.preventDefault()
+        const valid = await form.trigger("classroom_code")
+        if (valid) onNext()
+      }}
+      className="mx-auto flex w-full max-w-lg flex-col gap-10"
+    >
       <Controller
         control={form.control}
         name="classroom_code"
@@ -80,22 +86,21 @@ const ClassroomCodeStep = ({ onNext, onBack }: StepComponentProps) => {
         )}
       />
 
-      <div className="flex w-full items-center gap-4">
-        <Button className="flex-1" type="button" variant="outline" onClick={() => onBack()}>
-          Back
-        </Button>
-        <Button
-          className="flex-1"
-          type="button"
-          onClick={async () => {
-            const valid = await form.trigger("classroom_code")
-            if (valid) onNext()
-          }}
-        >
-          Next
+      <div className="flex flex-col gap-4">
+        <div className="flex w-full items-center gap-4">
+          <Button className="flex-1" type="button" variant="outline" onClick={() => onBack()}>
+            Back
+          </Button>
+          <Button className="flex-1" type="submit">
+            Next
+          </Button>
+        </div>
+
+        <Button className="flex-1" type="button" variant="outline" onClick={() => onNext()}>
+          Skip
         </Button>
       </div>
-    </div>
+    </form>
   )
 }
 
@@ -103,7 +108,14 @@ const SchoolNameStep = ({ onNext, onBack }: StepComponentProps) => {
   const form = useFormContext()
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-col gap-10">
+    <form
+      onSubmit={async e => {
+        e.preventDefault()
+        const valid = await form.trigger("school_name")
+        if (valid) onNext()
+      }}
+      className="mx-auto flex w-full max-w-lg flex-col gap-10"
+    >
       <Controller
         control={form.control}
         name="school_name"
@@ -123,18 +135,11 @@ const SchoolNameStep = ({ onNext, onBack }: StepComponentProps) => {
         <Button className="flex-1" type="button" variant="outline" onClick={() => onBack()}>
           Back
         </Button>
-        <Button
-          className="flex-1"
-          type="button"
-          onClick={async () => {
-            const valid = await form.trigger("school_name")
-            if (valid) onNext()
-          }}
-        >
+        <Button className="flex-1" type="submit">
           Next
         </Button>
       </div>
-    </div>
+    </form>
   )
 }
 
@@ -142,7 +147,14 @@ const EducationLevelStep = ({ onNext, onBack }: StepComponentProps) => {
   const form = useFormContext()
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-col gap-10">
+    <form
+      onSubmit={async e => {
+        e.preventDefault()
+        const valid = await form.trigger("education_level")
+        if (valid) onNext()
+      }}
+      className="mx-auto flex w-full max-w-lg flex-col gap-10"
+    >
       <Controller
         control={form.control}
         name="education_level"
@@ -167,18 +179,11 @@ const EducationLevelStep = ({ onNext, onBack }: StepComponentProps) => {
         <Button className="flex-1" type="button" variant="outline" onClick={() => onBack()}>
           Back
         </Button>
-        <Button
-          className="flex-1"
-          type="button"
-          onClick={async () => {
-            const valid = await form.trigger("education_level")
-            if (valid) onNext()
-          }}
-        >
+        <Button className="flex-1" type="submit">
           Next
         </Button>
       </div>
-    </div>
+    </form>
   )
 }
 
@@ -206,7 +211,14 @@ const SubjectsStep = ({ onNext, onBack }: StepComponentProps) => {
         name="subjects"
         render={() => {
           return (
-            <div className="flex w-full flex-col gap-4 overflow-y-auto">
+            <form
+              onSubmit={async e => {
+                e.preventDefault()
+                const valid = await form.trigger("subjects")
+                if (valid) onNext()
+              }}
+              className="flex w-full flex-col gap-4 overflow-y-auto"
+            >
               <Label>Select your area of focus</Label>
               <div className="flex flex-wrap gap-2">
                 {subjects.map(subject => {
@@ -229,7 +241,7 @@ const SubjectsStep = ({ onNext, onBack }: StepComponentProps) => {
                   )
                 })}
               </div>
-            </div>
+            </form>
           )
         }}
       />
@@ -238,14 +250,7 @@ const SubjectsStep = ({ onNext, onBack }: StepComponentProps) => {
         <Button className="flex-1" type="button" variant="outline" onClick={() => onBack()}>
           Back
         </Button>
-        <Button
-          className="flex-1"
-          type="button"
-          onClick={async () => {
-            const valid = await form.trigger("subjects")
-            if (valid) onNext()
-          }}
-        >
+        <Button className="flex-1" type="submit">
           Next
         </Button>
       </div>
@@ -257,7 +262,14 @@ const ReferralCodeStep = ({ onNext, onBack }: StepComponentProps) => {
   const form = useFormContext()
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-col gap-10">
+    <form
+      onSubmit={async e => {
+        e.preventDefault()
+        const valid = await form.trigger("referral_code")
+        if (valid) onNext()
+      }}
+      className="mx-auto flex w-full max-w-lg flex-col gap-10"
+    >
       <Controller
         control={form.control}
         name="referral_code"
@@ -278,18 +290,11 @@ const ReferralCodeStep = ({ onNext, onBack }: StepComponentProps) => {
         <Button className="flex-1" type="button" variant="outline" onClick={() => onBack()}>
           Back
         </Button>
-        <Button
-          className="flex-1"
-          type="button"
-          onClick={async () => {
-            const valid = await form.trigger("referral_code")
-            if (valid) onNext()
-          }}
-        >
+        <Button className="flex-1" type="submit">
           Next
         </Button>
       </div>
-    </div>
+    </form>
   )
 }
 
@@ -303,7 +308,14 @@ const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps) => {
   )
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-col gap-10">
+    <form
+      onSubmit={async e => {
+        e.preventDefault()
+        const valid = await form.trigger("photo_urls")
+        if (valid) onNext()
+      }}
+      className="mx-auto flex w-full max-w-lg flex-col gap-10"
+    >
       <Controller
         control={form.control}
         name="photo_urls"
@@ -328,18 +340,11 @@ const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps) => {
         <Button className="flex-1" type="button" variant="outline" onClick={() => onBack()}>
           Back
         </Button>
-        <Button
-          className="flex-1"
-          type="button"
-          onClick={async () => {
-            const valid = await form.trigger("photo_urls")
-            if (valid) onNext()
-          }}
-        >
+        <Button className="flex-1" type="submit">
           Next
         </Button>
       </div>
-    </div>
+    </form>
   )
 }
 
@@ -352,9 +357,9 @@ export const OnboardingForm = () => {
 
   const onboardingSteps = [
     { key: "username", component: UsernameStep },
+    { key: "education_level", component: EducationLevelStep },
     { key: "classroom_code", component: ClassroomCodeStep },
     { key: "school_name", component: SchoolNameStep },
-    { key: "education_level", component: EducationLevelStep },
     { key: "subjects", component: SubjectsStep },
     { key: "referral_code", component: ReferralCodeStep },
     { key: "photo_urls", component: PhotoUrlsStep },

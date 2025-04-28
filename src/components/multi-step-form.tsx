@@ -1,6 +1,6 @@
 "use client"
 
-import { ComponentType } from "react"
+import { ComponentType, useState } from "react"
 
 import { motion, AnimatePresence } from "framer-motion"
 import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form"
@@ -16,6 +16,8 @@ export interface Step<T extends FieldValues> {
   component: ComponentType<StepComponentProps>
 }
 
+type Direction = "forward" | "back"
+
 export interface MultiStepFormProps<T extends FieldValues> {
   form: UseFormReturn<T>
   steps: Step<T>[]
@@ -30,36 +32,52 @@ export function MultiStepForm<T extends FieldValues>({
   steps,
   currentStep,
   onStepSubmit,
-  onComplete,
   onStepBack,
 }: MultiStepFormProps<T>) {
+  const [direction, setDirection] = useState<Direction>("forward")
   const CurrentStepComponent = steps[currentStep].component
   const isLastStep = currentStep === steps.length - 1
 
-  const handleSubmit = async (data: T) => {
-    if (!isLastStep) return onStepSubmit(data)
-    onComplete(data)
+  const handleBack = () => {
+    setDirection("back")
+    onStepBack()
+  }
+
+  const handleNext = () => {
+    setDirection("forward")
+    onStepSubmit(form.getValues())
+  }
+
+  const variants = {
+    enter: (direction: Direction) => ({
+      x: direction === "forward" ? 40 : -40,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: Direction) => ({
+      x: direction === "forward" ? -40 : 40,
+      opacity: 0,
+    }),
   }
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="w-full space-y-4">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
-            transition={{ duration: 0.25 }}
-          >
-            <CurrentStepComponent
-              onNext={() => onStepSubmit(form.getValues())}
-              onBack={onStepBack}
-              isLastStep={isLastStep}
-            />
-          </motion.div>
-        </AnimatePresence>
-      </form>
+      <AnimatePresence mode="wait" initial={false} custom={direction}>
+        <motion.div
+          key={currentStep}
+          custom={direction}
+          variants={variants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.25 }}
+        >
+          <CurrentStepComponent onNext={handleNext} onBack={handleBack} isLastStep={isLastStep} />
+        </motion.div>
+      </AnimatePresence>
     </FormProvider>
   )
 }
