@@ -24,7 +24,7 @@ export const TextField = ({ labelText, errorText, ...mixProps }: TextFieldProps)
       </Label>
       <Input {...input} />
       {errorText && (
-        <span {...error} className={cn("text-xs text-red-400", error.className)}>
+        <span {...error} className={cn("-mt-1 text-xs text-red-500", error.className)}>
           {errorText}
         </span>
       )}

@@ -13,7 +13,7 @@ export const SelectField = ({ items, ...mixProps }: SelectFieldProps) => {
   const { trigger, ...rest } = splitProps(mixProps, "trigger")
 
   return (
-    <Select {...rest}>
+    <Select {...rest.rest}>
       <SelectTrigger {...trigger}>
         <SelectValue />
       </SelectTrigger>
