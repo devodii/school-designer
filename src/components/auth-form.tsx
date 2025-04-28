@@ -2,14 +2,13 @@
 
 import { useState } from "react"
 
-import { sendMagicLink } from "@/actions/send-magic-link"
+import { sendMagicLink } from "@/actions/auth"
+import { Spinner } from "@/components/spinner"
 import { TextField } from "@/components/text-field"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
-
-import { Spinner } from "./spinner"
 
 const authSchema = z.object({ email: z.string() })
 
@@ -30,7 +29,7 @@ export const AuthForm = ({ onSendMagicLink, onError }: AuthFormProps) => {
       const response = await sendMagicLink(data)
       onSendMagicLink(data)
 
-      if (!response.success) onError(response.error.message)
+      if (!response.success) onError(response.error)
     } finally {
       setIsPending(false)
     }

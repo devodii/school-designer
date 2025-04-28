@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/tw-merge"
 import * as LabelPrimitive from "@radix-ui/react-label"
 
 export type LabelProps = React.ComponentProps<typeof LabelPrimitive.Root>

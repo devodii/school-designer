@@ -3,7 +3,7 @@ import React, { ComponentProps } from "react"
 import { Input, type InputProps } from "@/components/ui/input"
 import { type LabelProps, Label } from "@/components/ui/label"
 import { MixinProps, splitProps } from "@/lib/mixin"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/tw-merge"
 
 interface TextFieldProps
   extends ComponentProps<"div">,
