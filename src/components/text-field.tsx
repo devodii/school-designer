@@ -23,7 +23,11 @@ export const TextField = ({ labelText, errorText, ...mixProps }: TextFieldProps)
         {labelText}
       </Label>
       <Input {...input} />
-      {errorText && <span {...error}>{errorText}</span>}
+      {errorText && (
+        <span {...error} className={cn("text-xs text-red-400", error.className)}>
+          {errorText}
+        </span>
+      )}
     </div>
   )
 }

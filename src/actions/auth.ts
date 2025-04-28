@@ -9,7 +9,6 @@ import { resend } from "@/lib/resend"
 import { tryCatch } from "@/lib/try-catch"
 import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
-import { cookies } from "next/headers"
 import MagicLinkSignIn from "~/emails/authentication/magic-link"
 
 type AuthResponse = { success: true } | { success: false; error: string }

@@ -1,0 +1,16 @@
+import { OnboardingForm } from "@/components/onboarding-form"
+
+export default function OnboardingPage() {
+  return (
+    <div className="bg-background container flex min-h-screen flex-col items-center justify-center">
+      <div className="mx-auto w-full max-w-lg space-y-6">
+        <div className="space-y-2 text-center">
+          <h1 className="text-3xl font-bold">Complete your profile</h1>
+          <p className="text-muted-foreground">Tell us a bit about yourself to get started</p>
+        </div>
+
+        <OnboardingForm />
+      </div>
+    </div>
+  )
+}
