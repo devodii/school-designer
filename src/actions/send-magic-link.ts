@@ -29,7 +29,7 @@ export const sendMagicLink = async (dto: {
     })
     .returning({ token: auth.token })
 
-  const { error } = await tryCatch(
+  const { data } = await tryCatch(
     resend.emails.send({
       from: "Acme <onboarding@resend.dev>",
       to: [dto.email],
@@ -38,7 +38,9 @@ export const sendMagicLink = async (dto: {
     }),
   )
 
-  if (error) return { success: false, error: error }
+  console.log({ data })
+
+  if (data?.error) return { success: false, error: data.error }
 
   return { success: true }
 }

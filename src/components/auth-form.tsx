@@ -15,7 +15,12 @@ const authSchema = z.object({ email: z.string() })
 
 type AuthSchema = z.infer<typeof authSchema>
 
-export const AuthForm = () => {
+interface AuthFormProps {
+  onSendMagicLink: (data: AuthSchema) => void
+  onError: (data: string) => void
+}
+
+export const AuthForm = ({ onSendMagicLink, onError }: AuthFormProps) => {
   const { handleSubmit, control } = useForm<AuthSchema>({ resolver: zodResolver(authSchema) })
   const [isPending, setIsPending] = useState(false)
 
@@ -23,17 +28,16 @@ export const AuthForm = () => {
     setIsPending(true)
     try {
       const response = await sendMagicLink(data)
+      onSendMagicLink(data)
 
-      if (!response.success) {
-        console.log({ error: response.error })
-      }
+      if (!response.success) onError(response.error.message)
     } finally {
       setIsPending(false)
     }
   }
 
   return (
-    <form className="flex max-w-sm flex-1 flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
+    <form className="flex w-full max-w-sm flex-1 flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
       <Controller
         name="email"
         control={control}

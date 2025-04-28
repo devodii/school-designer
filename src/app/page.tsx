@@ -1,12 +1,27 @@
-import { AuthForm } from "@/components/auth-form"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center gap-20 p-6 md:p-12 lg:p-24">
-      <section className="flex w-full flex-col gap-8 lg:flex-row">
-        <div className="flex max-w-2xl flex-col gap-3">
-          <h4 className="text-4xl font-semibold">🎒 Design your school life</h4>
-          <p className="text-secondary-foreground text-[17px]">
+      <header className="fixed top-4 right-0 left-0 flex w-screen justify-between px-4 md:px-8">
+        <h2 className="text-2xl font-semibold">🎒</h2>
+
+        <nav className="flex items-center gap-2">
+          <Link href="/signin">
+            <Button variant="outline">Log in</Button>
+          </Link>
+
+          <Link href="/signup">
+            <Button>Sign up</Button>
+          </Link>
+        </nav>
+      </header>
+
+      <section className="flex w-full">
+        <div className="flex w-full flex-col items-center justify-center gap-3">
+          <h2 className="text-center text-4xl font-semibold">Design your school life</h2>
+          <p className="text-secondary-foreground max-w-2xl text-center text-[17px]">
             AI-made notebooks, planners, timetables, and class themes that actually match your vibe. Download & print,
             or flex it with your friends
           </p>
@@ -14,11 +29,9 @@ export default function Home() {
             <li>🎨 Make notebooks with your picture on the cover</li>
             <li>🎓 Generate photos of you in your dream college/university</li>
             <li>📚 Join or create classrooms for studying with your buddies!</li>
-            <li>🔥 And lots more...</li>
+            <li>🔥 ... and lots more</li>
           </ul>
         </div>
-
-        <AuthForm />
       </section>
     </div>
   )
