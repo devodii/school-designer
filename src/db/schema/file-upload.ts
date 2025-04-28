@@ -1,5 +1,9 @@
 import { accountSchema } from "@/db/schema/account"
-import { pgTable, varchar, foreignKey, timestamp, pgEnum, index } from "drizzle-orm/pg-core"
+import { pgTable, varchar, foreignKey, timestamp, pgEnum, index, jsonb } from "drizzle-orm/pg-core"
+
+export type FileMetadata = {
+  SCOPE: "PROFILE"
+}
 
 export const fileUploadTypeEnum = pgEnum("fileUploadType", ["IMAGE"])
 
@@ -12,6 +16,7 @@ export const fileUploadSchema = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date", precision: 3 }).$onUpdate(() => new Date()),
     type: fileUploadTypeEnum().notNull(),
+    metadata: jsonb("metadata").$type<FileMetadata>(),
   },
   ({ accountId }) => ({
     accountFk: foreignKey({

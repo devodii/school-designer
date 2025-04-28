@@ -4,11 +4,12 @@ import { findUserByEmail } from "@/actions/account"
 import db from "@/db"
 import { accountSchema } from "@/db/schema/account"
 import { type AuthSchema, authSchema } from "@/db/schema/auth"
-import { generateTokens } from "@/lib/jwt"
+import { generateJwtTokens, verifyJwtToken } from "@/lib/jwt"
 import { resend } from "@/lib/resend"
 import { tryCatch } from "@/lib/try-catch"
 import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
+import { cookies } from "next/headers"
 import MagicLinkSignIn from "~/emails/authentication/magic-link"
 
 type AuthResponse = { success: true } | { success: false; error: string }
@@ -16,7 +17,7 @@ type AuthResponse = { success: true } | { success: false; error: string }
 export const sendMagicLink = async (dto: { email: string }): Promise<AuthResponse> => {
   const account = await findUserByEmail(dto.email)
 
-  const { accessToken, refreshToken } = generateTokens({ accountId: account?.id })
+  const { accessToken, refreshToken } = generateJwtTokens({ accountId: account?.id })
 
   const { data, error } = await tryCatch(
     db
@@ -78,7 +79,19 @@ export const verifyToken = async (
     email: auth.email,
     created_at: new Date(),
     updated_at: new Date(),
+    isOnboarded: false,
   })
 
   return { success: true, data: auth }
+}
+
+export const getAuth = async () => {
+  const cookieStore = await cookies()
+  const token = cookieStore.get("token")
+
+  if (!token) return null
+
+  const auth = verifyJwtToken(token.value)
+
+  return auth
 }

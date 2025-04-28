@@ -1,3 +1,5 @@
+"use server"
+
 import { findUserById } from "@/actions/account"
 import db from "@/db"
 import { FileUploadSchema, fileUploadSchema, FileUploadType } from "@/db/schema/file-upload"
@@ -25,6 +27,7 @@ export const postUploads = async (dto: PostUploadsDto): Promise<PostUploadsRespo
         type: d.type,
         createdAt: new Date(),
         updatedAt: new Date(),
+        metadata: { SCOPE: "PROFILE" } as const,
       })),
     ),
   )

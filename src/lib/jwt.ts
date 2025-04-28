@@ -8,17 +8,14 @@ type TokenPayload = {
   accountId: string
 }
 
-export function generateTokens(payload: TokenPayload) {
-  const accessToken = jwt.sign(payload, JWT_SECRET, {
-    expiresIn: ACCESS_TOKEN_EXPIRY,
-  })
-
+export const generateJwtTokens = (payload: TokenPayload) => {
+  const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY })
   const refreshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRY })
 
   return { accessToken, refreshToken }
 }
 
-export function verifyToken(token: string) {
+export const verifyJwtToken = (token: string) => {
   try {
     return jwt.verify(token, JWT_SECRET) as TokenPayload
   } catch {

@@ -5,15 +5,15 @@ import { ComponentType, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form"
 
-export interface StepComponentProps {
-  onNext: () => void
+export interface StepComponentProps<T> {
+  onNext: () => T
   onBack: () => void
   isLastStep: boolean
 }
 
 export interface Step<T extends FieldValues> {
   key: keyof T
-  component: ComponentType<StepComponentProps>
+  component: ComponentType<StepComponentProps<T>>
 }
 
 type Direction = "forward" | "back"
@@ -22,7 +22,7 @@ export interface MultiStepFormProps<T extends FieldValues> {
   form: UseFormReturn<T>
   steps: Step<T>[]
   currentStep: number
-  onStepSubmit: (data: Partial<T>) => void
+  onStepSubmit: () => void
   onStepBack: () => void
   onComplete: (data: T) => void
 }
@@ -45,7 +45,8 @@ export function MultiStepForm<T extends FieldValues>({
 
   const handleNext = () => {
     setDirection("forward")
-    onStepSubmit(form.getValues())
+    onStepSubmit()
+    return form.getValues()
   }
 
   const variants = {

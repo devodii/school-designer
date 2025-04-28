@@ -14,10 +14,16 @@ export const ourFileRouter = {
         file,
         metadata: { accountId },
       }): Promise<{ success: true; data: { id: string; url: string } } | { success: false; error: string }> => {
-        const response = await postUploads({ accountId, data: [{ url: file.ufsUrl, type: "IMAGE" }] })
+        console.log({ file })
 
-        if (!response.success) return { success: false, error: response.error }
-        return { success: true, data: { url: file.ufsUrl, id: response.data[0].id } }
+        return { success: true, data: { url: file.ufsUrl, id: file.key } }
+
+        // const response = await postUploads({ accountId, data: [{ url: file.ufsUrl, type: "IMAGE" }] })
+
+        // console.log({ response })
+        // if (!response.success) return { success: false, error: response.error }
+
+        // return { success: true, data: { url: file.ufsUrl, id: response.data[0].id } }
       },
     ),
 } satisfies FileRouter

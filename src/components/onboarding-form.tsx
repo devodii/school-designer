@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 
+import { updateAccount } from "@/actions/account"
+import { getAuth } from "@/actions/auth"
 import { useFileUpload } from "@/hooks/use-file-upload"
 import { FileUploader } from "@components/file-uploader"
 import { MultiStepForm, Step, StepComponentProps } from "@components/multi-step-form"
@@ -10,24 +12,27 @@ import { TextField } from "@components/text-field"
 import { Button } from "@components/ui/button"
 import { Label } from "@components/ui/label"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
 import { Controller, useForm, useFormContext } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { HIGH_SCHOOL_SUBJECTS, UNIVERSITY_SUBJECTS } from "~/constants/subjects"
 
+import { Spinner } from "./spinner"
+
 const onboardingSchema = z.object({
   username: z.string({ message: "This is a required field" }).min(3).max(20),
   classroom_code: z.string().optional(),
-  education_level: z.enum(["HIGH SCHOOL", "COLLEGE"]),
+  education_level: z.enum(["HIGH SCHOOL", "COLLEDGE"]),
   school_name: z.string(),
   subjects: z.array(z.string()).min(1),
   referral_code: z.string().optional(),
-  photo_urls: z.array(z.string()).optional(),
+  photos: z.array(z.object({ id: z.string(), url: z.string() })),
 })
 
 type OnboardingSchema = z.infer<typeof onboardingSchema>
 
-const UsernameStep = ({ onNext }: StepComponentProps) => {
+const UsernameStep = ({ onNext }: StepComponentProps<OnboardingSchema>) => {
   const form = useFormContext()
 
   return (
@@ -59,7 +64,7 @@ const UsernameStep = ({ onNext }: StepComponentProps) => {
   )
 }
 
-const ClassroomCodeStep = ({ onNext, onBack }: StepComponentProps) => {
+const ClassroomCodeStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>) => {
   const form = useFormContext()
 
   return (
@@ -104,7 +109,7 @@ const ClassroomCodeStep = ({ onNext, onBack }: StepComponentProps) => {
   )
 }
 
-const SchoolNameStep = ({ onNext, onBack }: StepComponentProps) => {
+const SchoolNameStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>) => {
   const form = useFormContext()
 
   return (
@@ -143,7 +148,7 @@ const SchoolNameStep = ({ onNext, onBack }: StepComponentProps) => {
   )
 }
 
-const EducationLevelStep = ({ onNext, onBack }: StepComponentProps) => {
+const EducationLevelStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>) => {
   const form = useFormContext()
 
   return (
@@ -158,7 +163,7 @@ const EducationLevelStep = ({ onNext, onBack }: StepComponentProps) => {
       <Controller
         control={form.control}
         name="education_level"
-        render={({ field }) => {
+        render={({ field, fieldState: { error } }) => {
           return (
             <div className="flex flex-col gap-2">
               <Label>What's your level of education?</Label>
@@ -168,7 +173,10 @@ const EducationLevelStep = ({ onNext, onBack }: StepComponentProps) => {
                   { label: "High School", value: "HIGH SCHOOL" },
                   { label: "College", value: "COLLEGE" },
                 ]}
+                value={field.value}
                 onValueChange={value => field.onChange(value)}
+                name={field.name}
+                errorText={error?.message}
               />
             </div>
           )
@@ -187,7 +195,7 @@ const EducationLevelStep = ({ onNext, onBack }: StepComponentProps) => {
   )
 }
 
-const SubjectsStep = ({ onNext, onBack }: StepComponentProps) => {
+const SubjectsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>) => {
   const form = useFormContext()
 
   const subjects = form.watch("education_level") === "HIGH SCHOOL" ? HIGH_SCHOOL_SUBJECTS : UNIVERSITY_SUBJECTS
@@ -205,20 +213,20 @@ const SubjectsStep = ({ onNext, onBack }: StepComponentProps) => {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-10">
+    <form
+      onSubmit={async e => {
+        e.preventDefault()
+        const valid = await form.trigger("subjects")
+        if (valid) onNext()
+      }}
+      className="mx-auto flex w-full max-w-3xl flex-col gap-10"
+    >
       <Controller
         control={form.control}
         name="subjects"
         render={() => {
           return (
-            <form
-              onSubmit={async e => {
-                e.preventDefault()
-                const valid = await form.trigger("subjects")
-                if (valid) onNext()
-              }}
-              className="flex w-full flex-col gap-4 overflow-y-auto"
-            >
+            <div className="flex w-full flex-col gap-4 overflow-y-auto">
               <Label>Select your area of focus</Label>
               <div className="flex flex-wrap gap-2">
                 {subjects.map(subject => {
@@ -241,7 +249,7 @@ const SubjectsStep = ({ onNext, onBack }: StepComponentProps) => {
                   )
                 })}
               </div>
-            </form>
+            </div>
           )
         }}
       />
@@ -254,11 +262,11 @@ const SubjectsStep = ({ onNext, onBack }: StepComponentProps) => {
           Next
         </Button>
       </div>
-    </div>
+    </form>
   )
 }
 
-const ReferralCodeStep = ({ onNext, onBack }: StepComponentProps) => {
+const ReferralCodeStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>) => {
   const form = useFormContext()
 
   return (
@@ -298,33 +306,48 @@ const ReferralCodeStep = ({ onNext, onBack }: StepComponentProps) => {
   )
 }
 
-const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps) => {
+const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>) => {
   const form = useFormContext()
 
-  const { onUpload, progresses, isUploading, uploadResult } = useFileUpload(
-    "image",
-    { defaultUploadedFiles: [] },
-    error => toast.error(error),
+  const { onUpload, progresses, isUploading } = useFileUpload("image", { defaultUploadedFiles: [] }, error =>
+    toast.error(error),
   )
+
+  const { mutate: updateAccountMutation, isPending: isUpdatingAccount } = useMutation({
+    mutationFn: async (values: OnboardingSchema) => {
+      console.log({ values })
+
+      const auth = await getAuth()
+
+      if (!auth) throw new Error("Unauthorized")
+
+      await updateAccount(auth.accountId, {
+        level: values.education_level,
+        referral_code: values.referral_code,
+        profile: { name: values.username, subjects_offered: values.subjects, pictures: values.photos },
+        isOnboarded: true,
+      })
+    },
+  })
 
   return (
     <form
       onSubmit={async e => {
         e.preventDefault()
-        const valid = await form.trigger("photo_urls")
-        if (valid) onNext()
+        const valid = await form.trigger("photos")
+        if (valid) updateAccountMutation(onNext())
       }}
       className="mx-auto flex w-full max-w-lg flex-col gap-10"
     >
       <Controller
         control={form.control}
-        name="photo_urls"
+        name="photos"
         render={() => {
           return (
             <div className="flex w-full flex-col gap-2">
               <Label>Upload up to 5 photos of yourself</Label>
               <FileUploader
-                accept={{ "image/*": ["image/png", "image/jpeg", "image/webp"] }}
+                accept={{ "image/png": [".png"], "image/jpeg": [".jpg", ".jpeg"], "image/webp": [".webp"] }}
                 maxFileCount={5}
                 maxSize={1024 * 1024 * 1} // 1MB
                 progresses={progresses}
@@ -340,8 +363,9 @@ const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps) => {
         <Button className="flex-1" type="button" variant="outline" onClick={() => onBack()}>
           Back
         </Button>
-        <Button className="flex-1" type="submit">
-          Next
+        <Button className="flex-1" type="submit" disabled={isUpdatingAccount}>
+          {isUpdatingAccount ? "Uploading..." : "Next"}
+          {isUpdatingAccount && <Spinner size={24} />}
         </Button>
       </div>
     </form>
@@ -352,17 +376,17 @@ export const OnboardingForm = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const form = useForm<OnboardingSchema>({
     resolver: zodResolver(onboardingSchema),
-    defaultValues: { subjects: [] },
+    defaultValues: { subjects: [], photos: [] },
   })
 
   const onboardingSteps = [
+    { key: "photo_urls", component: PhotoUrlsStep },
     { key: "username", component: UsernameStep },
     { key: "education_level", component: EducationLevelStep },
     { key: "classroom_code", component: ClassroomCodeStep },
     { key: "school_name", component: SchoolNameStep },
     { key: "subjects", component: SubjectsStep },
     { key: "referral_code", component: ReferralCodeStep },
-    { key: "photo_urls", component: PhotoUrlsStep },
   ] as Step<OnboardingSchema>[]
 
   return (

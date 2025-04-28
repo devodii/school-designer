@@ -255,10 +255,9 @@ interface FileCardProps {
   file: File
   onRemove: () => void
   progress?: number
-  isRemovable?: boolean
 }
 
-const FileCard = ({ file, progress, onRemove, isRemovable = true }: FileCardProps) => {
+const FileCard = ({ file, progress, onRemove }: FileCardProps) => {
   return (
     <div className="relative flex items-center gap-2.5">
       <div className="flex flex-1 gap-2.5">
@@ -271,14 +270,12 @@ const FileCard = ({ file, progress, onRemove, isRemovable = true }: FileCardProp
           {progress ? <Progress value={progress} /> : null}
         </div>
       </div>
-      {isRemovable && (
-        <div className="flex items-center gap-2">
-          <Button type="button" variant="outline" size="icon" className="size-7" onClick={onRemove}>
-            <X className="size-4" aria-hidden="true" />
-            <span className="sr-only">Remove file</span>
-          </Button>
-        </div>
-      )}
+      <div className="flex items-center gap-2">
+        <Button type="button" variant="outline" size="icon" className="size-7" onClick={onRemove}>
+          <X className="size-4" aria-hidden="true" />
+          <span className="sr-only">Remove file</span>
+        </Button>
+      </div>
     </div>
   )
 }

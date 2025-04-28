@@ -1,5 +1,5 @@
 import { AccountProfile } from "@/types"
-import { jsonb, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core"
+import { boolean, jsonb, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core"
 
 export const levelEnum = pgEnum("level", ["COLLEDGE", "HIGH SCHOOL"])
 
@@ -10,7 +10,8 @@ export const accountSchema = pgTable("account", {
   level: levelEnum("level"),
   created_at: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at", { mode: "date", precision: 3 }).$onUpdate(() => new Date()),
-  profile: jsonb().$type<AccountProfile>(),
+  profile: jsonb("profile").$type<AccountProfile>(),
+  isOnboarded: boolean("is_onboarded").default(false),
 })
 
 export type AccountSchema = typeof accountSchema.$inferSelect
