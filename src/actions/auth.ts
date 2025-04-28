@@ -1,14 +1,14 @@
 "use server"
 
+import { getUser } from "@/actions/user"
 import db from "@/db"
+import { authSchema } from "@/db/schema/auth"
 import { resend } from "@/lib/resend"
 import { tryCatch } from "@/lib/try-catch"
-import { auth } from "@/schema"
+import { eq } from "drizzle-orm"
 import moment from "moment"
 import { nanoid } from "nanoid"
 import MagicLinkSignIn from "~/emails/authentication/magic-link"
-
-import { getUser } from "./user"
 
 type AuthResponse = { success: true } | { success: false; error: string }
 
@@ -16,7 +16,7 @@ export const sendMagicLink = async (dto: { email: string }): Promise<AuthRespons
   const user = await getUser(dto.email)
 
   const response = await db
-    .insert(auth)
+    .insert(authSchema)
     .values({
       id: `au_${nanoid(25)}`,
       token: `to_${nanoid(25)}`,
@@ -27,7 +27,7 @@ export const sendMagicLink = async (dto: { email: string }): Promise<AuthRespons
       created_at: moment().toDate(),
       updated_at: moment().toDate(),
     })
-    .returning({ token: auth.token })
+    .returning({ token: authSchema.token })
 
   const { data } = await tryCatch(
     resend.emails.send({
@@ -46,7 +46,7 @@ export const sendMagicLink = async (dto: { email: string }): Promise<AuthRespons
 }
 
 export const verifyToken = async (token: string): Promise<AuthResponse> => {
-  const auth = await db.query.auth.findFirst({ where: (auth, { eq }) => eq(auth.token, token) })
+  const [auth] = await db.select().from(authSchema).where(eq(authSchema.token, token))
 
   if (!auth) return { success: false, error: "Invalid token" }
 
@@ -55,6 +55,8 @@ export const verifyToken = async (token: string): Promise<AuthResponse> => {
   }
 
   if (auth.used_at) return { success: false, error: "Token already used" }
+
+  await db.update(authSchema).set({ used_at: moment().toDate() }).where(eq(authSchema.token, token)).returning()
 
   return { success: true }
 }

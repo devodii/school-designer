@@ -1,11 +1,5 @@
-import { drizzle } from "drizzle-orm/postgres-js"
-import postgres from "postgres"
+import { drizzle } from "drizzle-orm/node-postgres"
 
-import * as schema from "./schema"
-
-const queryClient = postgres(process.env.POSTGRES_URI!)
-const db = drizzle(queryClient, { logger: true, schema })
+const db = drizzle(process.env.DATABASE_URL)
 
 export default db
-
-export type DrizzleClient = typeof db
