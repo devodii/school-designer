@@ -2,8 +2,10 @@
 
 import * as React from "react"
 
-import UseAnimations from "react-useanimations"
+import dynamic from "next/dynamic"
 import loadingAnimation from "react-useanimations/lib/loading"
+
+const UseAnimations = dynamic(() => import("react-useanimations"), { ssr: false })
 
 interface Props extends Omit<React.ComponentPropsWithoutRef<typeof UseAnimations>, "animation"> {}
 

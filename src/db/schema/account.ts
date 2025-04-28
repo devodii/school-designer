@@ -3,7 +3,7 @@ import { jsonb, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core"
 
 export const levelEnum = pgEnum("level", ["COLLEDGE", "HIGH SCHOOL"])
 
-export const account = pgTable("account", {
+export const accountSchema = pgTable("account", {
   id: varchar("id").primaryKey().notNull(),
   email: varchar("email").unique().notNull(),
   referral_code: varchar("referral_code").unique(),
@@ -12,3 +12,5 @@ export const account = pgTable("account", {
   updated_at: timestamp("updated_at", { mode: "date", precision: 3 }).$onUpdate(() => new Date()),
   profile: jsonb().$type<AccountProfile>(),
 })
+
+export type AccountSchema = typeof accountSchema.$inferSelect

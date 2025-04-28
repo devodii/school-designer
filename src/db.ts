@@ -1,5 +1,8 @@
-import { drizzle } from "drizzle-orm/node-postgres"
+import { drizzle } from "drizzle-orm/postgres-js"
+import postgres from "postgres"
 
-const db = drizzle(process.env.DATABASE_URL)
+const queryClient = postgres(process.env.POSTGRES_URI!)
+
+const db = drizzle(queryClient, { logger: true })
 
 export default db
