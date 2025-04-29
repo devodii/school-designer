@@ -36,6 +36,13 @@
       "when": 1745868558362,
       "tag": "0004_fearless_thena",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1745919956714,
+      "tag": "0005_amused_franklin_richards",
+      "breakpoints": true
     }
   ]
 }
