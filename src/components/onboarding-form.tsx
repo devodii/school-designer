@@ -164,20 +164,18 @@ const EducationLevelStep = ({ onNext, onBack }: StepComponentProps<OnboardingSch
         name="education_level"
         render={({ field, fieldState: { error } }) => {
           return (
-            <div className="flex flex-col gap-2">
-              <Label>What's your level of education?</Label>
-              <SelectField
-                triggerClassName="w-[250px]"
-                items={[
-                  { label: "High School", value: "HIGH SCHOOL" },
-                  { label: "College", value: "COLLEGE" },
-                ]}
-                value={field.value}
-                onValueChange={value => field.onChange(value)}
-                name={field.name}
-                errorText={error?.message}
-              />
-            </div>
+            <SelectField
+              labelText="What's your level of education?"
+              triggerClassName="w-[250px]"
+              items={[
+                { label: "High School", value: "HIGH SCHOOL" },
+                { label: "College", value: "COLLEGE" },
+              ]}
+              value={field.value}
+              onValueChange={value => field.onChange(value)}
+              name={field.name}
+              errorText={error?.message}
+            />
           )
         }}
       />
