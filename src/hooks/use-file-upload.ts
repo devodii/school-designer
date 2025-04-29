@@ -2,9 +2,9 @@ import * as React from "react"
 
 import { type OurFileRouter } from "@/app/api/uploadthing/core"
 import { uploadFiles } from "@/lib/uploadthing"
-import { toast } from "sonner"
 import type { AnyFileRoute, UploadFilesOptions } from "uploadthing/types"
 import { type ClientUploadedFileData } from "uploadthing/types"
+import { Response } from "~/typescript"
 
 interface UseFileUploadOptions<TFileRoute extends AnyFileRoute>
   extends Pick<UploadFilesOptions<TFileRoute>, "headers" | "onUploadBegin" | "onUploadProgress" | "skipPolling"> {
@@ -18,9 +18,7 @@ export function useFileUpload(
 ) {
   const [progresses, setProgresses] = React.useState<Record<string, number>>({})
   const [isUploading, setIsUploading] = React.useState(false)
-  const [uploadResult, setUploadResult] = React.useState<
-    { success: false; error: string } | { success: true; data: { url: string; id: string } } | null
-  >(null)
+  const [uploadResult, setUploadResult] = React.useState<Response<{ url: string; id: string }> | null>(null)
 
   async function onUpload(files: File[]) {
     setIsUploading(true)
@@ -38,11 +36,7 @@ export function useFileUpload(
         },
       })
 
-      if (!res[0].serverData.success) {
-        onUploadError(res[0].serverData.error)
-      } else {
-        setUploadResult({ success: true, data: { url: res[0].ufsUrl, id: res[0].serverData.data.id } })
-      }
+      setUploadResult({ success: true, data: { url: res[0].serverData.url, id: res[0].serverData.id } })
     } catch (err: unknown) {
       if (err instanceof Error) {
         onUploadError(err.message)

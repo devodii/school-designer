@@ -1,12 +1,11 @@
 "use client"
 
-import { useState } from "react"
-
-import { sendMagicLink } from "@/actions/auth"
+import { sendMagicLink as sendMagicLinkAction } from "@/actions/auth"
 import { Spinner } from "@/components/spinner"
 import { TextField } from "@/components/text-field"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -16,27 +15,22 @@ type AuthSchema = z.infer<typeof authSchema>
 
 interface AuthFormProps {
   onSendMagicLink: (data: AuthSchema) => void
-  onError: (data: string) => void
+  onError: (message: string) => void
 }
 
 export const AuthForm = ({ onSendMagicLink, onError }: AuthFormProps) => {
   const { handleSubmit, control } = useForm<AuthSchema>({ resolver: zodResolver(authSchema) })
-  const [isPending, setIsPending] = useState(false)
 
-  const onSubmit = async (data: AuthSchema) => {
-    setIsPending(true)
-    try {
-      const response = await sendMagicLink(data)
+  const { mutate: sendMagicLink, isPending } = useMutation({
+    mutationFn: async (data: AuthSchema) => {
       onSendMagicLink(data)
-
-      if (!response.success) onError(response.error)
-    } finally {
-      setIsPending(false)
-    }
-  }
+      return await sendMagicLinkAction(data)
+    },
+    onError: ({ message }) => onError(message),
+  })
 
   return (
-    <form className="flex w-full max-w-sm flex-1 flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
+    <form className="flex w-full max-w-sm flex-1 flex-col gap-3" onSubmit={handleSubmit(data => sendMagicLink(data))}>
       <Controller
         name="email"
         control={control}

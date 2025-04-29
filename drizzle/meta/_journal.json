@@ -22,6 +22,20 @@
       "when": 1745864944849,
       "tag": "0002_tricky_scrambler",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1745867942637,
+      "tag": "0003_overjoyed_nemesis",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1745868558362,
+      "tag": "0004_fearless_thena",
+      "breakpoints": true
     }
   ]
 }

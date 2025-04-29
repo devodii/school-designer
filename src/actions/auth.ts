@@ -1,34 +1,37 @@
 "use server"
 
-import { findUserByEmail } from "@/actions/account"
+import { createAccount, findAccountByEmail } from "@/actions/account"
+import { updateSession } from "@/actions/session"
 import db from "@/db"
-import { accountSchema } from "@/db/schema/account"
 import { type AuthSchema, authSchema } from "@/db/schema/auth"
-import { generateJwtTokens, verifyJwtToken } from "@/lib/jwt"
+import { generateJwtTokens } from "@/lib/jwt"
 import { resend } from "@/lib/resend"
 import { tryCatch } from "@/lib/try-catch"
 import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
-import { cookies } from "next/headers"
 import MagicLinkSignIn from "~/emails/authentication/magic-link"
 
-type AuthResponse = { success: true } | { success: false; error: string }
+export const updateAuth = async (id: string, dto: Partial<AuthSchema>) => {
+  const { data, error } = await tryCatch(db.update(authSchema).set(dto).where(eq(authSchema.id, id)).returning())
 
-export const sendMagicLink = async (dto: { email: string }): Promise<AuthResponse> => {
-  const account = await findUserByEmail(dto.email)
+  if (error) throw new Error("Failed to update auth session")
 
-  const { accessToken, refreshToken } = generateJwtTokens({ accountId: account?.id })
+  return data[0]
+}
 
-  const { data, error } = await tryCatch(
+export const createAuth = async (dto: { email: string; accountId: string }) => {
+  const { email, accountId } = dto
+
+  const { data: auth, error } = await tryCatch(
     db
       .insert(authSchema)
       .values({
         id: `au_${nanoid(25)}`,
         token: `to_${nanoid(50)}`,
-        accountId: account?.id,
-        accessToken,
-        refreshToken,
-        email: dto.email,
+        accessToken: null,
+        refreshToken: null,
+        email,
+        accountId,
         usedAt: null,
         expiresAt: (() => {
           const date = new Date()
@@ -38,12 +41,29 @@ export const sendMagicLink = async (dto: { email: string }): Promise<AuthRespons
         createdAt: new Date(),
         updatedAt: new Date(),
       })
-      .returning({ token: authSchema.token }),
+      .returning(),
   )
 
-  if (error) return { success: false, error: "Database operation failed" }
+  if (error) throw new Error("Failed to create auth session")
 
-  const token = data[0].token
+  return auth[0]
+}
+
+export const findByToken = async (token: string) => {
+  const { data: auth, error } = await tryCatch(db.select().from(authSchema).where(eq(authSchema.token, token)))
+
+  if (error) throw new Error("Failed to find auth session")
+
+  return auth[0]
+}
+
+export const sendMagicLink = async (dto: { email: string }) => {
+  const account = await findAccountByEmail(dto.email)
+  const { data: auth, error } = await tryCatch(createAuth({ email: dto.email, accountId: account?.id }))
+
+  if (error) throw new Error("Failed to create auth session")
+
+  const token = auth.token
 
   const { data: emailData } = await tryCatch(
     resend.emails.send({
@@ -54,44 +74,37 @@ export const sendMagicLink = async (dto: { email: string }): Promise<AuthRespons
     }),
   )
 
-  console.log({ data })
-
-  if (emailData?.error) return { success: false, error: emailData.error.message }
-
-  return { success: true }
+  if (emailData?.error) throw new Error(emailData.error.message)
 }
 
-export const verifyToken = async (
-  token: string,
-): Promise<{ success: false; error: string } | { success: true; data: AuthSchema }> => {
-  const [auth] = await db.select().from(authSchema).where(eq(authSchema.token, token))
+export const verifyToken = async (token: string): Promise<{ success: true; data: AuthSchema }> => {
+  const auth = await findByToken(token)
 
-  if (!auth) return { success: false, error: "Invalid token" }
+  if (!auth) throw new Error("Invalid token")
 
-  if (auth.usedAt) return { success: false, error: "Token already used" }
+  if (auth.usedAt) throw new Error("Token has already been used")
 
-  if (new Date().getTime() > new Date(auth.expiresAt).getTime()) {
-    return { success: false, error: "Token expired" }
+  if (new Date().getTime() > new Date(auth.expiresAt).getTime()) throw new Error("Token has expired")
+
+  if (!auth.accountId) {
+    const { id: accountId } = await createAccount({
+      email: auth.email,
+      created_at: new Date(),
+      updated_at: new Date(),
+      isOnboarded: false,
+      referral_code: `ref_${nanoid(10)}`,
+      level: null,
+      profile: null,
+    })
+
+    const { accessToken, refreshToken } = generateJwtTokens({ accountId, email: auth.email })
+
+    await updateSession(auth.id, { accessToken, refreshToken })
+  } else {
+    const { accessToken, refreshToken } = generateJwtTokens({ accountId: auth.accountId, email: auth.email })
+
+    await updateSession(auth.id, { accessToken, refreshToken })
   }
 
-  await db.insert(accountSchema).values({
-    id: `ac_${nanoid(25)}`,
-    email: auth.email,
-    created_at: new Date(),
-    updated_at: new Date(),
-    isOnboarded: false,
-  })
-
   return { success: true, data: auth }
-}
-
-export const getAuth = async () => {
-  const cookieStore = await cookies()
-  const token = cookieStore.get("token")
-
-  if (!token) return null
-
-  const auth = verifyJwtToken(token.value)
-
-  return auth
 }

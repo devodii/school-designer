@@ -12,8 +12,8 @@ export const authSchema = pgTable(
     expiresAt: varchar("expires_at").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date", precision: 3 }).$onUpdate(() => new Date()),
-    accessToken: varchar("access_token").notNull(),
-    refreshToken: varchar("refresh_token").notNull(),
+    accessToken: varchar("access_token"),
+    refreshToken: varchar("refresh_token"),
   },
   ({ email, token, accountId }) => ({
     accountFk: foreignKey({

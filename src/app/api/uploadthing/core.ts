@@ -1,31 +1,32 @@
+import { findAccountById } from "@/actions/account"
 import { postUploads } from "@/actions/file-upload"
+import { getSession } from "@/actions/session"
 import { createUploadthing, type FileRouter } from "uploadthing/next"
 
 const f = createUploadthing()
 
 export const ourFileRouter = {
   image: f(["image/png", "image/jpeg", "image/webp"])
-    .middleware(async ({ req }) => {
-      const accountId = req.headers.get("x-account-id") as string
-      return { accountId }
+    .middleware(async () => {
+      const session = await getSession()
+
+      if (!session) throw new Error("Unauthorized")
+
+      const account = await findAccountById(session.accountId)
+
+      if (!account) throw new Error("Invalid account")
+
+      return { accountId: account.id }
     })
-    .onUploadComplete(
-      async ({
-        file,
-        metadata: { accountId },
-      }): Promise<{ success: true; data: { id: string; url: string } } | { success: false; error: string }> => {
-        console.log({ file })
+    .onUploadComplete(async ({ file }) => {
+      console.log({ file })
 
-        return { success: true, data: { url: file.ufsUrl, id: file.key } }
+      const [response] = await postUploads({
+        data: [{ url: file.ufsUrl, type: "IMAGE", metadata: { scope: "PROFILE" } }],
+      })
 
-        // const response = await postUploads({ accountId, data: [{ url: file.ufsUrl, type: "IMAGE" }] })
-
-        // console.log({ response })
-        // if (!response.success) return { success: false, error: response.error }
-
-        // return { success: true, data: { url: file.ufsUrl, id: response.data[0].id } }
-      },
-    ),
+      return response
+    }),
 } satisfies FileRouter
 
 export type OurFileRouter = typeof ourFileRouter

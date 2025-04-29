@@ -3,11 +3,12 @@
 import { useState } from "react"
 
 import { updateAccount } from "@/actions/account"
-import { getAuth } from "@/actions/auth"
+import { getSession } from "@/actions/session"
 import { useFileUpload } from "@/hooks/use-file-upload"
 import { FileUploader } from "@components/file-uploader"
 import { MultiStepForm, Step, StepComponentProps } from "@components/multi-step-form"
 import { SelectField } from "@components/select-field"
+import { Spinner } from "@components/spinner"
 import { TextField } from "@components/text-field"
 import { Button } from "@components/ui/button"
 import { Label } from "@components/ui/label"
@@ -17,8 +18,6 @@ import { Controller, useForm, useFormContext } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { HIGH_SCHOOL_SUBJECTS, UNIVERSITY_SUBJECTS } from "~/constants/subjects"
-
-import { Spinner } from "./spinner"
 
 const onboardingSchema = z.object({
   username: z.string({ message: "This is a required field" }).min(3).max(20),
@@ -317,11 +316,11 @@ const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>)
     mutationFn: async (values: OnboardingSchema) => {
       console.log({ values })
 
-      const auth = await getAuth()
+      const session = await getSession()
 
-      if (!auth) throw new Error("Unauthorized")
+      if (!session) throw new Error("Unauthorized")
 
-      await updateAccount(auth.accountId, {
+      await updateAccount(session.id, {
         level: values.education_level,
         referral_code: values.referral_code,
         profile: { name: values.username, subjects_offered: values.subjects, pictures: values.photos },
@@ -342,7 +341,7 @@ const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>)
       <Controller
         control={form.control}
         name="photos"
-        render={() => {
+        render={({ field, fieldState: { error } }) => {
           return (
             <div className="flex w-full flex-col gap-2">
               <Label>Upload up to 5 photos of yourself</Label>
@@ -351,9 +350,13 @@ const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>)
                 maxFileCount={5}
                 maxSize={1024 * 1024 * 1} // 1MB
                 progresses={progresses}
-                onUpload={onUpload}
+                onUpload={async files => {
+                  await onUpload(files)
+                  field.onChange(files)
+                }}
                 disabled={isUploading}
               />
+              {error?.message && <p className="text-red-500">{error.message}</p>}
             </div>
           )
         }}
@@ -380,13 +383,13 @@ export const OnboardingForm = () => {
   })
 
   const onboardingSteps = [
-    { key: "photo_urls", component: PhotoUrlsStep },
     { key: "username", component: UsernameStep },
     { key: "education_level", component: EducationLevelStep },
     { key: "classroom_code", component: ClassroomCodeStep },
     { key: "school_name", component: SchoolNameStep },
     { key: "subjects", component: SubjectsStep },
     { key: "referral_code", component: ReferralCodeStep },
+    { key: "photo_urls", component: PhotoUrlsStep },
   ] as Step<OnboardingSchema>[]
 
   return (

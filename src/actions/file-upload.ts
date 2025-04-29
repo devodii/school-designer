@@ -1,38 +1,40 @@
 "use server"
 
-import { findUserById } from "@/actions/account"
+import { findAccountById } from "@/actions/account"
+import { getSession } from "@/actions/session"
 import db from "@/db"
-import { FileUploadSchema, fileUploadSchema, FileUploadType } from "@/db/schema/file-upload"
+import { FileMetadata, FileUploadSchema, fileUploadSchema, FileUploadType } from "@/db/schema/file-upload"
 import { tryCatch } from "@/lib/try-catch"
 import { nanoid } from "nanoid"
 
 interface PostUploadsDto {
-  accountId: string
-  data: Array<{ url: string; type: FileUploadType }>
+  data: Array<{ url: string; type: FileUploadType; metadata?: FileMetadata }>
 }
 
-type PostUploadsResponse = { success: true; data: Array<FileUploadSchema> } | { success: false; error: string }
+export const postUploads = async (dto: PostUploadsDto) => {
+  const session = await getSession()
 
-export const postUploads = async (dto: PostUploadsDto): Promise<PostUploadsResponse> => {
-  const account = await findUserById(dto.accountId)
+  if (!session) throw new Error("Unauthorized")
 
-  if (!account) return { success: false, error: "Invalid account" }
+  const account = await findAccountById(session.accountId)
+
+  if (!account) throw new Error("Invalid account")
 
   const { data, error } = await tryCatch(
     db.insert(fileUploadSchema).values(
       dto.data.map(d => ({
-        accountId: dto.accountId,
+        accountId: session.accountId,
         id: `fu_${nanoid(25)}`,
         url: d.url,
         type: d.type,
         createdAt: new Date(),
         updatedAt: new Date(),
-        metadata: { SCOPE: "PROFILE" } as const,
+        metadata: d.metadata,
       })),
     ),
   )
 
-  if (error) return { success: false, error: "Database operation failed" }
+  if (error) throw new Error("Failed to save uploaded files")
 
-  return { success: true, data }
+  return data.map((d: FileUploadSchema) => ({ id: d.id, url: d.url }))
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "account" ADD COLUMN "is_onboarded" boolean DEFAULT false;

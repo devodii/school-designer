@@ -6,6 +6,7 @@ const REFRESH_TOKEN_EXPIRY = "1y"
 
 type TokenPayload = {
   accountId: string
+  email: string
 }
 
 export const generateJwtTokens = (payload: TokenPayload) => {
