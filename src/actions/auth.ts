@@ -3,11 +3,12 @@
 import { createAccount, findAccountByEmail } from "@/actions/account"
 import { updateSession } from "@/actions/session"
 import db from "@/db"
-import { type AuthSchema, authSchema } from "@/db/schema/auth"
+import { AuthProvider, type AuthSchema, authSchema, GoogleIdTokenPayload } from "@/db/schema/auth"
 import { generateJwtTokens } from "@/lib/jwt"
 import { resend } from "@/lib/resend"
 import { tryCatch } from "@/lib/try-catch"
 import { eq } from "drizzle-orm"
+import { jwtDecode } from "jwt-decode"
 import { nanoid } from "nanoid"
 import MagicLinkSignIn from "~/emails/authentication/magic-link"
 
@@ -19,8 +20,8 @@ export const updateAuth = async (id: string, dto: Partial<AuthSchema>) => {
   return data[0]
 }
 
-export const createAuth = async (dto: { email: string; accountId: string }) => {
-  const { email, accountId } = dto
+export const createAuth = async (dto: { email: string; accountId: string; provider: AuthProvider }) => {
+  const { email, accountId, provider } = dto
 
   const { data: auth, error } = await tryCatch(
     db
@@ -40,6 +41,7 @@ export const createAuth = async (dto: { email: string; accountId: string }) => {
         })(),
         createdAt: new Date(),
         updatedAt: new Date(),
+        provider,
       })
       .returning(),
   )
@@ -59,9 +61,8 @@ export const findByToken = async (token: string) => {
 
 export const sendMagicLink = async (dto: { email: string }) => {
   const account = await findAccountByEmail(dto.email)
-  const { data: auth, error } = await tryCatch(createAuth({ email: dto.email, accountId: account?.id }))
 
-  if (error) throw new Error("Failed to create auth session")
+  const auth = await createAuth({ email: dto.email, accountId: account?.id, provider: "EMAIL" })
 
   const token = auth.token
 
@@ -77,7 +78,7 @@ export const sendMagicLink = async (dto: { email: string }) => {
   if (emailData?.error) throw new Error(emailData.error.message)
 }
 
-export const verifyToken = async (token: string): Promise<{ success: true; data: AuthSchema }> => {
+export const verifyMagicLinkToken = async (token: string) => {
   const auth = await findByToken(token)
 
   if (!auth) throw new Error("Invalid token")
@@ -86,25 +87,43 @@ export const verifyToken = async (token: string): Promise<{ success: true; data:
 
   if (new Date().getTime() > new Date(auth.expiresAt).getTime()) throw new Error("Token has expired")
 
-  if (!auth.accountId) {
-    const { id: accountId } = await createAccount({
-      email: auth.email,
-      created_at: new Date(),
-      updated_at: new Date(),
-      isOnboarded: false,
-      referral_code: `ref_${nanoid(10)}`,
-      level: null,
-      profile: null,
-    })
+  let isNewAccount = false
+  let account: { email: string; id: string } | null = null
 
-    const { accessToken, refreshToken } = generateJwtTokens({ accountId, email: auth.email })
+  account = await findAccountByEmail(auth.email)
 
-    await updateSession(auth.id, { accessToken, refreshToken })
-  } else {
-    const { accessToken, refreshToken } = generateJwtTokens({ accountId: auth.accountId, email: auth.email })
-
-    await updateSession(auth.id, { accessToken, refreshToken })
+  if (!account) {
+    const { id: accountId } = await createAccount({ email: auth.email })
+    account = { email: auth.email, id: accountId }
+    isNewAccount = true
   }
 
-  return { success: true, data: auth }
+  const { accessToken, refreshToken } = generateJwtTokens({ accountId: account.id, email: auth.email })
+
+  await updateSession(auth.id, { accessToken, refreshToken })
+
+  return { isNewAccount, accountId: account.id }
+}
+
+export const verifyGoogleToken = async (token: string) => {
+  const decoded = jwtDecode<GoogleIdTokenPayload>(token)
+
+  let isNewAccount = false
+  let account: { email: string; id: string } | null = null
+
+  account = await findAccountByEmail(decoded.email)
+
+  if (!account) {
+    const { id: accountId } = await createAccount({ email: decoded.email })
+    account = { email: decoded.email, id: accountId }
+    isNewAccount = true
+  }
+
+  const { accessToken, refreshToken } = generateJwtTokens({ accountId: account.id, email: decoded.email })
+
+  const auth = await createAuth({ email: decoded.email, accountId: account.id, provider: "GOOGLE" })
+
+  await updateSession(auth.id, { accessToken, refreshToken })
+
+  return { isNewAccount, accountId: account.id }
 }

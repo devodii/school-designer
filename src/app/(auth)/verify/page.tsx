@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 
-import { verifyToken as verifyTokenAction } from "@/actions/auth"
+import { verifyMagicLinkToken, verifyGoogleToken } from "@/actions/auth"
 import { Spinner } from "@/components/spinner"
 import { delay } from "@/lib/delay"
 import { useMutation } from "@tanstack/react-query"
@@ -21,19 +21,30 @@ export default function VerifyTokenPage() {
     isPending,
   } = useMutation({
     mutationFn: async () => {
+      await delay(2000)
+
+      // Google Auth
+      const hashFragment = window.location.hash.substring(1)
+      const params = new URLSearchParams(hashFragment)
+      const idToken = params.get("id_token") as string
+
+      if (idToken) {
+        return await verifyGoogleToken(idToken)
+      }
+
       if (!token) {
         toast.error("No token provided")
         return
       }
 
-      await delay(2000)
-      return await verifyTokenAction(token)
+      // Magic Link Auth
+      return await verifyMagicLinkToken(token)
     },
     onSuccess: response => {
-      if (response?.data.accountId) {
-        router.replace("/dashboard")
-      } else {
+      if (response?.isNewAccount) {
         router.replace("/onboarding")
+      } else {
+        router.replace("/dashboard")
       }
     },
   })

@@ -27,11 +27,20 @@ export const updateAccount = async (id: string, data: Partial<AccountSchema>) =>
   return user
 }
 
-export const createAccount = async (data: Omit<AccountSchema, "id">) => {
+export const createAccount = async (dto: { email: string }) => {
   const { data: user, error } = await tryCatch(
     db
       .insert(accountSchema)
-      .values({ id: `ac_${nanoid(25)}`, ...data })
+      .values({
+        id: `ac_${nanoid(25)}`,
+        email: dto.email,
+        created_at: new Date(),
+        updated_at: new Date(),
+        isOnboarded: false,
+        referral_code: `ref+${nanoid(10)}`,
+        profile: null,
+        level: null,
+      })
       .returning({ id: accountSchema.id }),
   )
 

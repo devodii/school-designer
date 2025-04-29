@@ -1,3 +1,5 @@
+"use server"
+
 import { updateAuth } from "@/actions/auth"
 import { verifyJwtToken } from "@/lib/jwt"
 import { cookies } from "next/headers"

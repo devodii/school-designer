@@ -22,7 +22,7 @@ import { HIGH_SCHOOL_SUBJECTS, UNIVERSITY_SUBJECTS } from "~/constants/subjects"
 const onboardingSchema = z.object({
   username: z.string({ message: "This is a required field" }).min(3).max(20),
   classroom_code: z.string().optional(),
-  education_level: z.enum(["HIGH SCHOOL", "COLLEDGE"]),
+  education_level: z.enum(["HIGH SCHOOL", "COLLEGE"]),
   school_name: z.string(),
   subjects: z.array(z.string()).min(1),
   referral_code: z.string().optional(),
@@ -320,7 +320,7 @@ const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>)
 
       if (!session) throw new Error("Unauthorized")
 
-      await updateAccount(session.id, {
+      await updateAccount(session.accountId, {
         level: values.education_level,
         referral_code: values.referral_code,
         profile: { name: values.username, subjects_offered: values.subjects, pictures: values.photos },

@@ -3,6 +3,7 @@
 import { useState } from "react"
 
 import { AuthForm } from "@/components/auth-form"
+import { GoogleLogin } from "@/components/google-login"
 import { Google } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
@@ -50,10 +51,7 @@ export default function SignIn() {
       <h2 className="text-center text-3xl font-semibold">Login to School Designer</h2>
 
       <div className="mx-auto flex w-full max-w-sm flex-col gap-1">
-        <Button variant="outline" className="flex items-center gap-1">
-          <Google />
-          <span>Continue with Google</span>
-        </Button>
+        <GoogleLogin />
         <Button variant="link" onClick={() => setSelectedEmailLogin(true)}>
           Continue with Email
         </Button>

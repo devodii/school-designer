@@ -1,7 +1,7 @@
 import { AccountProfile } from "@/types"
 import { boolean, jsonb, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core"
 
-export const levelEnum = pgEnum("level", ["COLLEDGE", "HIGH SCHOOL"])
+export const levelEnum = pgEnum("level", ["COLLEGE", "HIGH SCHOOL"])
 
 export const accountSchema = pgTable("account", {
   id: varchar("id").primaryKey().notNull(),
