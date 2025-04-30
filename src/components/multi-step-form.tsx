@@ -50,18 +50,9 @@ export function MultiStepForm<T extends FieldValues>({
   }
 
   const variants = {
-    enter: (direction: Direction) => ({
-      x: direction === "forward" ? 40 : -40,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: Direction) => ({
-      x: direction === "forward" ? -40 : 40,
-      opacity: 0,
-    }),
+    enter: (direction: Direction) => ({ x: direction === "forward" ? 40 : -40, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (direction: Direction) => ({ x: direction === "forward" ? -40 : 40, opacity: 0 }),
   }
 
   return (

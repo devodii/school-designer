@@ -74,10 +74,10 @@ export const mockActivities = [
 ]
 
 export const mockClassmates = [
-  { id: 1, name: "Chloe", avatar: "" },
-  { id: 2, name: "Ethan", avatar: "" },
-  { id: 3, name: "Maya", avatar: "" },
-  { id: 4, name: "Jacob", avatar: "" },
+  { id: 1, name: "Chloe", avatar: "https://randomuser.me/api/portraits/women/32.jpg" },
+  { id: 2, name: "Ethan", avatar: "https://randomuser.me/api/portraits/men/44.jpg" },
+  { id: 3, name: "Maya", avatar: "https://randomuser.me/api/portraits/women/52.jpg" },
+  { id: 4, name: "Jacob", avatar: "https://randomuser.me/api/portraits/men/62.jpg" },
 ]
 
 export const mockSuggestedUsers = [

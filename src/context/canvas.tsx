@@ -15,7 +15,7 @@ export type CanvasState = {
 
 type CanvasContextType = {
   state: CanvasState
-  openCanvas: (options: Partial<Omit<CanvasState, "isOpen">>) => void
+  openCanvas: (options: Omit<CanvasState, "isOpen">) => void
   closeCanvas: () => void
 }
 
@@ -24,8 +24,8 @@ export const CanvasContext = createContext({} as CanvasContextType)
 export const CanvasProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState<CanvasState>({ isOpen: false, width: "300px", content: null, position: "right" })
 
-  const openCanvas = (options: Partial<Omit<CanvasState, "isOpen">>) => {
-    setState(prev => ({ ...prev, isOpen: true, ...options }))
+  const openCanvas = (options: Omit<CanvasState, "isOpen">) => {
+    setState(prev => ({ ...prev, ...options, isOpen: true }))
   }
 
   const closeCanvas = () => {
