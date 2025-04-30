@@ -1,0 +1,1 @@
+ALTER TABLE "classroom" ADD COLUMN "description" varchar NOT NULL;

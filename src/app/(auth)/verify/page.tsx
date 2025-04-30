@@ -4,7 +4,7 @@ import { useEffect } from "react"
 
 import { verifyMagicLinkToken, verifyGoogleToken } from "@/actions/auth"
 import { Spinner } from "@/components/spinner"
-import { delay } from "@/lib/delay"
+import { sleep } from "@/lib/sleep"
 import { useMutation } from "@tanstack/react-query"
 import { useSearchParams, useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -21,7 +21,7 @@ export default function VerifyTokenPage() {
     isPending,
   } = useMutation({
     mutationFn: async () => {
-      await delay(2000)
+      await sleep(2000)
 
       // Google Auth
       const hashFragment = window.location.hash.substring(1)

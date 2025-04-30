@@ -4,9 +4,10 @@ import { pgTable, varchar, timestamp } from "drizzle-orm/pg-core"
 export const classroomSchema = pgTable("classroom", {
   id: varchar("id").primaryKey(),
   name: varchar("name").notNull(),
-  inviteCode: varchar("invite_code").notNull(),
+  inviteCode: varchar("invite_code").notNull().unique(),
   ownerId: varchar("owner_id").references(() => accountSchema.id),
   subject: varchar("subject").notNull(),
+  description: varchar("description").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date", precision: 3 }).$onUpdate(() => new Date()),
 })

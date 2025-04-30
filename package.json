@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "fix-prettier": "prettier --write \"**/*.{js,ts,tsx,md,mdx}\""
+    "fix-prettier": "prettier --write \"**/*.{js,ts,tsx,md,mdx}\"",
+    "db:sync": "npx drizzle-kit generate && npx drizzle-kit migrate"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

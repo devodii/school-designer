@@ -1,7 +1,6 @@
 import { BlurImage } from "@/components/blur-image"
 import { CardRoot } from "@/components/card-root"
 import { Button } from "@/components/ui/button"
-import { UsersRound } from "lucide-react"
 
 interface ClassroomCardProps {
   name: string
