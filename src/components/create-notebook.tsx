@@ -64,6 +64,7 @@ export const CreateNotebook = ({ trigger }: CreateNotebookProps) => {
       open={isSheetOpen}
       onOpenChange={setIsSheetOpen}
       triggerChildren={trigger}
+      triggerAsChild
       contentChildren={
         <div className="flex h-screen flex-col gap-4 px-4 py-6">
           <h3 className="flex items-center gap-2 text-lg font-semibold">
