@@ -46,7 +46,7 @@ export const CreateClassroom = ({ trigger }: CreateClassroomProps) => {
     onSuccess: data => {
       setIsCreateModalOpen(false)
       form.reset()
-      router.push(`/classrooms/${data.id}`)
+      router.push(`/dashboard/classrooms/${data.id}`)
     },
   })
 
