@@ -1,12 +1,10 @@
 "use client"
 
-import { ReactElement, useState } from "react"
-
 import { createClassroom as createClassroomAction } from "@/actions/classroom"
 import { Spinner } from "@/components/spinner"
 import { TextareaField } from "@/components/text-area-field"
+import { useCanvas } from "@/context/canvas"
 import { sleep } from "@/lib/sleep"
-import { SheetField } from "@components/sheet-field"
 import { TextField } from "@components/text-field"
 import { Button } from "@components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -16,6 +14,8 @@ import { useRouter } from "next/navigation"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
+import { CanvasTrigger } from "../canvas-trigger"
+
 const createClassroomSchema = z.object({
   name: z.string({ message: "Classroom name is required" }).min(1),
   inviteCode: z.string({ message: "Invite code is required" }),
@@ -24,12 +24,8 @@ const createClassroomSchema = z.object({
 
 type ClassroomSchema = z.infer<typeof createClassroomSchema>
 
-interface CreateClassroomProps {
-  trigger: ReactElement
-}
-
-export const CreateClassroom = ({ trigger }: CreateClassroomProps) => {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+export const CreateClassroom = () => {
+  const { closeCanvas } = useCanvas()
 
   const router = useRouter()
 
@@ -44,7 +40,7 @@ export const CreateClassroom = ({ trigger }: CreateClassroomProps) => {
       return await createClassroomAction(data)
     },
     onSuccess: data => {
-      setIsCreateModalOpen(false)
+      closeCanvas()
       form.reset()
       router.push(`/dashboard/classrooms/${data.id}`)
     },
@@ -56,77 +52,71 @@ export const CreateClassroom = ({ trigger }: CreateClassroomProps) => {
   })
 
   return (
-    <SheetField
-      contentClassName="px-4 py-6"
-      titleChildren="Create New Classroom"
-      descriptionChildren="Create a new classroom to start your learning journey."
-      open={isCreateModalOpen}
-      onOpenChange={setIsCreateModalOpen}
-      triggerChildren={trigger}
-      contentChildren={
-        <form onSubmit={form.handleSubmit(data => createClassroom(data))} className="mt-6 flex flex-col gap-4">
-          <Controller
-            name="name"
-            control={form.control}
-            render={({ field, fieldState: { error } }) => (
-              <TextField
-                labelText="Classroom Name"
-                errorText={error?.message}
-                inputPlaceholder="Defense Against Dark Arts"
-                inputName={field.name}
-                inputValue={field.value}
-                inputOnChange={field.onChange}
-                inputOnBlur={field.onBlur}
-              />
-            )}
-          />
+    <div className="flex w-full flex-col gap-4 py-6">
+      <h1 className="text-xl font-semibold">Create New Classroom</h1>
+      <span className="text-muted-foreground text-sm">Create a new classroom to start your learning journey.</span>
+      <form onSubmit={form.handleSubmit(data => createClassroom(data))} className="mt-6 flex w-full flex-col gap-4">
+        <Controller
+          name="name"
+          control={form.control}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              labelText="Classroom Name"
+              errorText={error?.message}
+              inputPlaceholder="Defense Against Dark Arts"
+              inputName={field.name}
+              inputValue={field.value}
+              inputOnChange={field.onChange}
+              inputOnBlur={field.onBlur}
+            />
+          )}
+        />
 
-          <Controller
-            name="description"
-            control={form.control}
-            render={({ field, fieldState: { error } }) => (
-              <TextareaField
-                labelText="What’s this class about?"
-                errorText={error?.message}
-                textareaPlaceholder="Learn to fight the dark arts with friends."
-                textareaName={field.name}
-                textareaValue={field.value}
-                textareaOnChange={field.onChange}
-                textareaOnBlur={field.onBlur}
-                textareaClassName="h-32"
-              />
-            )}
-          />
+        <Controller
+          name="description"
+          control={form.control}
+          render={({ field, fieldState: { error } }) => (
+            <TextareaField
+              labelText="What’s this class about?"
+              errorText={error?.message}
+              textareaPlaceholder="Learn to fight the dark arts with friends."
+              textareaName={field.name}
+              textareaValue={field.value}
+              textareaOnChange={field.onChange}
+              textareaOnBlur={field.onBlur}
+              textareaClassName="h-32"
+            />
+          )}
+        />
 
-          <Controller
-            name="inviteCode"
-            control={form.control}
-            render={({ field, fieldState: { error } }) => (
-              <TextField
-                labelText="Customize your invite code"
-                errorText={error?.message}
-                inputPlaceholder="Enter your invite code"
-                inputName={field.name}
-                inputValue={field.value}
-                inputOnChange={field.onChange}
-                inputOnBlur={field.onBlur}
-              />
-            )}
-          />
+        <Controller
+          name="inviteCode"
+          control={form.control}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              labelText="Customize your invite code"
+              errorText={error?.message}
+              inputPlaceholder="Enter your invite code"
+              inputName={field.name}
+              inputValue={field.value}
+              inputOnChange={field.onChange}
+              inputOnBlur={field.onBlur}
+            />
+          )}
+        />
 
-          {isError && <p className="text-sm text-red-500">{error?.message}</p>}
+        {isError && <p className="text-sm text-red-500">{error?.message}</p>}
 
-          <div className="flex justify-end gap-2">
-            <Button type="button" className="text-sm" variant="outline" onClick={() => setIsCreateModalOpen(false)}>
-              Close
-            </Button>
-            <Button className="text-sm" type="submit">
-              Create Classroom
-              {isPending && <Spinner className="ml-2" size={20} />}
-            </Button>
-          </div>
-        </form>
-      }
-    />
+        <div className="flex justify-end gap-2">
+          <Button type="button" className="text-sm" variant="outline" onClick={() => closeCanvas()}>
+            Close
+          </Button>
+          <Button className="text-sm" type="submit">
+            Create Classroom
+            {isPending && <Spinner className="ml-2" size={20} />}
+          </Button>
+        </div>
+      </form>
+    </div>
   )
 }

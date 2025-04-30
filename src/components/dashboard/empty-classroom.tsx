@@ -3,6 +3,8 @@
 import { CreateClassroom } from "@components/dashboard/create-classroom"
 import { Button } from "@components/ui/button"
 
+import { CanvasTrigger } from "../canvas-trigger"
+
 export const EmptyClassroom = () => {
   return (
     <div className="flex h-full flex-col items-center justify-center py-16">
@@ -33,7 +35,12 @@ export const EmptyClassroom = () => {
           Start your learning journey by creating your first classroom. Invite classmates and begin studying together!
         </p>
 
-        <CreateClassroom trigger={<Button>Create Your First Classroom</Button>} />
+        <CanvasTrigger
+          canvasPushElementId="canvas-push-element"
+          canvasContainerStyle={{ top: 20 }}
+          canvasOptions={{ content: <CreateClassroom />, width: "400px", position: "right" }}
+          triggerChildren={<Button>Create Your First Classroom</Button>}
+        />
       </div>
     </div>
   )
