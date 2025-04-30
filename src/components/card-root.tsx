@@ -13,7 +13,7 @@ interface CardRootProps
 }
 
 export const CardRoot = ({ cardHeaderClassname, ...mixinProps }: CardRootProps) => {
-  const { title, description, content, footer, action, rest } = splitProps(
+  const { title, description, content, footer, rest } = splitProps(
     mixinProps,
     "title",
     "description",

@@ -8,6 +8,14 @@ import { tryCatch } from "@/lib/try-catch"
 import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
 
+export const findClassroomById = async (id: string) => {
+  const { data, error } = await tryCatch(db.select().from(classroomSchema).where(eq(classroomSchema.id, id)))
+
+  if (error) return null
+
+  return data[0]
+}
+
 const findClassroomByInviteCode = async (inviteCode: string) => {
   const { data, error } = await tryCatch(
     db.select().from(classroomSchema).where(eq(classroomSchema.inviteCode, inviteCode)),

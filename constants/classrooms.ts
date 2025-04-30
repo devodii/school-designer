@@ -1,4 +1,4 @@
-export const classroomsData = [
+export const mockClassrooms = [
   {
     id: "1",
     name: "SAT Bootcamp",
@@ -60,4 +60,29 @@ export const classroomsData = [
     ],
     isJoined: true,
   },
+]
+
+export const mockAssignments = [
+  { id: 1, title: "Math Homework", dueDate: "Due Tuesday" },
+  { id: 2, title: "Book Report", dueDate: "Due Wednesday" },
+]
+
+export const mockActivities = [
+  { id: 1, user: "Kavla", avatar: "", content: "Know any fun science experiments?" },
+  { id: 2, user: "David", avatar: "", content: "Shares Study timetable" },
+  { id: 3, user: "Emma", avatar: "", content: "Invite check notes in History noteb" },
+]
+
+export const mockClassmates = [
+  { id: 1, name: "Chloe", avatar: "" },
+  { id: 2, name: "Ethan", avatar: "" },
+  { id: 3, name: "Maya", avatar: "" },
+  { id: 4, name: "Jacob", avatar: "" },
+]
+
+export const mockSuggestedUsers = [
+  { id: 101, name: "Alex Johnson" },
+  { id: 102, name: "Jamie Smith" },
+  { id: 103, name: "Taylor Wilson" },
+  { id: 104, name: "Morgan Lee" },
 ]

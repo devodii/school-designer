@@ -1,4 +1,3 @@
-import { getAuth } from "@/actions/auth"
 import { OnboardingForm } from "@/components/onboarding-form"
 
 export default async function OnboardingPage() {
