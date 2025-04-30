@@ -16,13 +16,17 @@ interface SelectFieldProps
 }
 
 export const SelectField = ({ items, labelText, errorText, ...mixProps }: SelectFieldProps) => {
-  const { trigger, error, label, ...rest } = splitProps(mixProps, "trigger", "error", "label")
+  const { trigger, error, label, rest } = splitProps(mixProps, "trigger", "error", "label")
 
   return (
     <div className="flex flex-col gap-2">
-      {label && <Label className="mb-0 w-full" {...label}>{labelText}</Label>}
+      {label && (
+        <Label className="mb-0 w-full" {...label}>
+          {labelText}
+        </Label>
+      )}
 
-      <Select {...rest.rest}>
+      <Select {...rest}>
         <SelectTrigger {...trigger}>
           <SelectValue />
         </SelectTrigger>

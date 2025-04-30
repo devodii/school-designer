@@ -15,10 +15,10 @@ interface TextFieldProps
 }
 
 export const TextField = ({ labelText, errorText, ...mixProps }: TextFieldProps) => {
-  const { input, label, error, ...rest } = splitProps(mixProps, "input", "label", "error")
+  const { input, label, error, rest } = splitProps(mixProps, "input", "label", "error")
 
   return (
-    <div className={cn("flex w-full flex-col gap-2", rest.rest.className)} {...rest}>
+    <div {...rest} className={cn("flex w-full flex-col gap-2", rest.className)}>
       <Label className={cn("w-full flex-1", label.className)} {...label}>
         {labelText}
       </Label>
