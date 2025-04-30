@@ -1,4 +1,4 @@
-import { QueryClientProvider } from "@/providers/query-client"
+import { Providers } from "@/providers"
 import type { Metadata } from "next"
 import { Toaster } from "sonner"
 
@@ -17,10 +17,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <QueryClientProvider>
+        <Providers>
           <Toaster />
           {children}
-        </QueryClientProvider>
+        </Providers>
       </body>
     </html>
   )
