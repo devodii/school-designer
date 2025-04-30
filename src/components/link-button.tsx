@@ -18,8 +18,6 @@ export const LinkButton = ({ label, icon: Icon, href, ...mixProps }: LinkButtonP
   const pathname = usePathname()
   const isActive = pathname == href
 
-  console.log({ isActive, pathname, href })
-
   return (
     <Link href={href} {...rest.rest} className="w-full">
       <Button

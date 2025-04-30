@@ -3,6 +3,7 @@
 import React from "react"
 
 import { getAccount } from "@/queries/account"
+import { BlurImage } from "@components/blur-image"
 import { Input } from "@components/ui/input"
 import { useQuery } from "@tanstack/react-query"
 import { Search, Bell } from "lucide-react"
@@ -10,7 +11,7 @@ import { Search, Bell } from "lucide-react"
 export const DashboardHeader = () => {
   const { data: account } = useQuery(getAccount())
 
-  console.log({ account })
+  const profilePicture = account?.profile?.pictures[0]
 
   return (
     <header className="flex h-16 w-[calc(100%-256px)] items-center justify-between border-b border-gray-100 px-6">
@@ -21,7 +22,7 @@ export const DashboardHeader = () => {
         <Input type="text" className="w0full pr-4 pl-10" placeholder="Search anything..." />
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <button className="hover:bg-muted relative cursor-pointer rounded-full p-2">
           <Bell className="text-muted-foreground h-5 w-5" />
           <span className="bg-muted-foreground absolute top-1 right-1 h-2 w-2 rounded-full"></span>
@@ -29,12 +30,21 @@ export const DashboardHeader = () => {
 
         <div className="flex items-center gap-3">
           <div className="flex flex-col items-end">
-            <span className="text-sm font-medium">Luna Lovegood</span>
-            <span className="text-muted-foreground text-xs">Ravenclaw House</span>
+            <span className="text-md font-medium">{account?.profile?.name}</span>
           </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200">
-            <span className="font-medium text-gray-700">LL</span>
-          </div>
+          {profilePicture ? (
+            <BlurImage
+              src={profilePicture.url}
+              alt={`${account?.profile?.name} on School Designer`}
+              className="rounded-full"
+              width={32}
+              height={32}
+            />
+          ) : (
+            <div className="flex size-8 items-center justify-center rounded-full bg-gray-200">
+              <span className="font-medium text-gray-700">{account?.profile?.name.charAt(0)}</span>
+            </div>
+          )}
         </div>
       </div>
     </header>
