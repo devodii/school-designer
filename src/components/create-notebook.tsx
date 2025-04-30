@@ -1,18 +1,19 @@
 "use client"
 
-import { ReactNode } from "react"
+import { ReactNode, useState } from "react"
 
 import { getAccount } from "@/queries/account"
 import { SelectField } from "@components/select-field"
 import { SheetField } from "@components/sheet-field"
+import { Spinner } from "@components/spinner"
+import { TextareaField } from "@components/text-area-field"
 import { Button } from "@components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { BookOpen, Wand } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
+import { toast } from "sonner"
 import { z } from "zod"
-
-import { TextField } from "./text-field"
 
 const notebookSize = z.enum([
   'A4 (8.3" x 11.7")',
@@ -23,9 +24,8 @@ const notebookSize = z.enum([
 ])
 
 const createNotebookSchema = z.object({
-  title: z.string().min(1),
-  description: z.string().min(1),
   subject: z.string(),
+  extraNotes: z.string().optional(),
   size: notebookSize,
 })
 
@@ -34,6 +34,8 @@ interface CreateNotebookProps {
 }
 
 export const CreateNotebook = ({ trigger }: CreateNotebookProps) => {
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+
   const form = useForm<z.infer<typeof createNotebookSchema>>({
     resolver: zodResolver(createNotebookSchema),
   })
@@ -44,8 +46,23 @@ export const CreateNotebook = ({ trigger }: CreateNotebookProps) => {
 
   const { data: account } = useQuery(getAccount())
 
+  const { mutate: createNotebook, isPending } = useMutation({
+    mutationFn: async (data: z.infer<typeof createNotebookSchema>) => {
+      console.log({ data })
+    },
+    onSuccess: () => {
+      toast.success("Notebook created successfully")
+      setIsSheetOpen(false)
+    },
+    onError: () => {
+      toast.error("Failed to create notebook")
+    },
+  })
+
   return (
     <SheetField
+      open={isSheetOpen}
+      onOpenChange={setIsSheetOpen}
       triggerChildren={trigger}
       contentChildren={
         <div className="flex h-screen flex-col gap-4 px-4 py-6">
@@ -56,70 +73,63 @@ export const CreateNotebook = ({ trigger }: CreateNotebookProps) => {
 
           <p className="text-muted-foreground text-md">Create a new magical notebook for your studies</p>
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex h-full flex-col justify-between">
-            <div className="flex flex-col gap-4">
-              <Controller
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <TextField
-                    labelText="Title"
-                    inputPlaceholder="Quantum Notebook"
-                    inputOnBlur={field.onBlur}
-                    inputName={field.name}
-                    inputValue={field.value}
-                    inputOnChange={field.onChange}
-                  />
-                )}
-              />
-              <Controller
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <TextField
-                    labelText="Description"
-                    inputPlaceholder="Where ideas become equation"
-                    inputOnBlur={field.onBlur}
-                    inputName={field.name}
-                    inputValue={field.value}
-                    inputOnChange={field.onChange}
-                  />
-                )}
-              />
-              <Controller
-                control={form.control}
-                name="subject"
-                render={({ field, fieldState: { error } }) => (
-                  <SelectField
-                    labelText="📚 Pick your subject"
-                    items={account?.profile?.subjects_offered.map(i => ({ label: i, value: i })) ?? []}
-                    onValueChange={value => field.onChange(value)}
-                    triggerClassName="w-[300px]"
-                    name={field.name}
-                    errorText={error?.message}
-                  />
-                )}
-              />
-              <Controller
-                control={form.control}
-                name="size"
-                render={({ field, fieldState: { error } }) => (
-                  <SelectField
-                    labelText="📏 Choose your notebook size"
-                    items={notebookSize.options.map(i => ({ label: i, value: i })) ?? []}
-                    onValueChange={value => field.onChange(value)}
-                    triggerClassName="w-[300px]"
-                    name={field.name}
-                    errorText={error?.message}
-                  />
-                )}
-              />
-            </div>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex h-full flex-col gap-4">
+            <div className="flex flex-col gap-4"></div>
 
-            <Button type="submit" className="flex items-center gap-2">
-              <span>Generate</span>
-              <Wand className="ml-2 size-4" />
-            </Button>
+            <Controller
+              control={form.control}
+              name="subject"
+              render={({ field, fieldState: { error } }) => (
+                <SelectField
+                  labelText="📚 Pick your subject"
+                  items={account?.profile?.subjects_offered.map(i => ({ label: i, value: i })) ?? []}
+                  onValueChange={value => field.onChange(value)}
+                  triggerClassName="w-full"
+                  name={field.name}
+                  errorText={error?.message}
+                />
+              )}
+            />
+
+            <Controller
+              control={form.control}
+              name="size"
+              render={({ field, fieldState: { error } }) => (
+                <SelectField
+                  labelText="📏 Choose your notebook size"
+                  items={notebookSize.options.map(i => ({ label: i, value: i })) ?? []}
+                  onValueChange={value => field.onChange(value)}
+                  triggerClassName="w-full"
+                  name={field.name}
+                  errorText={error?.message}
+                />
+              )}
+            />
+
+            <Controller
+              control={form.control}
+              name="extraNotes"
+              render={({ field, fieldState: { error } }) => (
+                <TextareaField
+                  labelText="Notes (optional)"
+                  textareaPlaceholder="Add any additional notes you want to include"
+                  textareaName={field.name}
+                  textareaValue={field.value}
+                  textareaOnChange={field.onChange}
+                  errorText={error?.message}
+                  textareaOnBlur={field.onBlur}
+                  textareaClassName="h-24"
+                />
+              )}
+            />
+
+            <div className="flex justify-end gap-2">
+              <Button variant="outline">Close</Button>
+              <Button type="submit">
+                <span>Generate</span>
+                {isPending ? <Spinner size={20} /> : <Wand className="ml-2 size-4" />}
+              </Button>
+            </div>
           </form>
         </div>
       }
