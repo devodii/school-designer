@@ -35,7 +35,7 @@ export const EmptyClassroom = () => {
         </p>
 
         <CanvasTrigger
-          canvasPushElementId="canvas-push-element"
+          canvasPushElementId="__canvas-push-element"
           canvasId="create-classroom"
           canvasContainerStyle={{ top: -10 }}
           canvasOptions={{ content: <CreateClassroom />, width: "400px", position: "right", id: "create-classroom" }}

@@ -24,7 +24,7 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
 
   return (
     <div className="flex h-screen w-full flex-col gap-6 px-4 py-6 md:px-12">
-      <div className="flex flex-col gap-6" id="classroom-index">
+      <div className="flex flex-col gap-6" id="__classroom_index">
         <header className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">{classroom.name}</h1>
 
@@ -48,7 +48,7 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
               position: "right",
               id: "upcoming-assignments",
             }}
-            canvasPushElementId="classroom-index"
+            canvasPushElementId="__classroom_index"
             triggerChildren={
               <CardRoot
                 className="h-[200px]"
@@ -89,7 +89,7 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
               position: "right",
               id: "classmates",
             }}
-            canvasPushElementId="classroom-index"
+            canvasPushElementId="__classroom_index"
             triggerChildren={
               <CardRoot
                 className="h-[200px]"

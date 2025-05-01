@@ -47,7 +47,6 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
       content: <QuizForm quiz={quiz} />,
       width: "500px",
       position: "right",
-      pushElementId: "__canvas-push-element",
     })
   }
 

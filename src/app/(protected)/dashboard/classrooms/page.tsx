@@ -10,7 +10,7 @@ const hasClassrooms = false
 export default function ClassroomsPage() {
   return (
     <div className="flex h-screen w-full flex-col p-4">
-      <div className="flex flex-col gap-6" id="canvas-push-element">
+      <div className="flex flex-col gap-6" id="__canvas-push-element">
         <h1 className="flex items-center gap-2 text-2xl font-semibold">
           <span>My Classrooms</span>
           <Sparkle className="text-primary h-5 w-5" />
@@ -23,7 +23,7 @@ export default function ClassroomsPage() {
             ))}
 
             <CanvasTrigger
-              canvasPushElementId="canvas-push-element"
+              canvasPushElementId="__canvas-push-element"
               canvasContainerStyle={{ top: 20 }}
               canvasId="create-classroom"
               canvasOptions={{
