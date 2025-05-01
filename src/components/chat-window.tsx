@@ -8,6 +8,7 @@ import { ChatMessageSkeleton } from "@components/chat-message-skeleton"
 import { ChatTagPicker } from "@components/chat-tag-picker"
 import { Button } from "@components/ui/button"
 import { Textarea } from "@components/ui/textarea"
+import { mockQuiz } from "~/constants/classrooms"
 import { Plus, SendHorizontal } from "lucide-react"
 import { nanoid } from "nanoid"
 
@@ -84,19 +85,7 @@ export const ChatWindow = ({ sessionId }: ChatWindowProps) => {
           {messages.map(message => (
             <div key={message.id} className="flex w-full flex-col gap-2">
               <ChatMessage
-                structuredResponse={
-                  message.persona === "user"
-                    ? null
-                    : {
-                        tag: "@Recommendation",
-                        recommendation: {
-                          fullName: "Emmanuel Odii",
-                          userName: "@devodii",
-                          id: "1",
-                          picture: "https://randomuser.me/api/portraits/men/82.jpg",
-                        },
-                      }
-                }
+                structuredResponse={message.persona === "user" ? null : { tag: "@Quiz", quiz: mockQuiz }}
                 dto={message}
               />
               {isTyping && <ChatMessageSkeleton />}

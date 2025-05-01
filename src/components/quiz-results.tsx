@@ -29,11 +29,10 @@ export const QuizResults = ({ quiz, userAnswers, score }: QuizResultsProps) => {
                 {question.type === "multiple_choice" && (
                   <div className="text-green-500">Correct answer: {question.correctOptions.join(", ")}</div>
                 )}
-                {question.type === "true_false" && (
-                  <div className="text-green-500">Correct answer: {question.correctAnswer ? "True" : "False"}</div>
+                {question.type === "single_choice" && (
+                  <div className="text-green-500">Correct answer: {question.correctAnswer}</div>
                 )}
               </div>
-              <p className="text-muted-foreground text-sm">{quiz.explanation}</p>
             </div>
           </div>
         </div>

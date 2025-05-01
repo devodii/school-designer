@@ -3,8 +3,10 @@
 import { ChatMessageTag, TaggedChatResponse } from "@/interfaces/chat"
 import { cn } from "@/lib/tw-merge"
 import { BlurImage } from "@components/blur-image"
+import { CardRoot } from "@components/card-root"
 import { DialogRoot } from "@components/dialog-root"
 import { Button } from "@components/ui/button"
+import { Timer } from "lucide-react"
 import Image from "next/image"
 
 export type ChatMessagePersona = "user" | "ai"
@@ -32,6 +34,10 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
   const quiz = structuredResponse && "quiz" in structuredResponse ? structuredResponse.quiz : null
 
   console.log({ content, recommendation, explanation, summary, quiz })
+
+  const handleAttemptQuiz = () => {
+    console.log("Attempting quiz")
+  }
 
   return (
     <li className={cn("flex w-full flex-col gap-2", persona === "user" ? "items-end" : "items-start")}>
@@ -97,6 +103,37 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
               </div>
 
               <Button className="mt-6 w-full">Send Message</Button>
+            </div>
+          }
+        />
+      )}
+
+      {quiz && (
+        <CardRoot
+          className="w-4/5 pt-2 pb-0"
+          titleChildren={
+            <div className="flex items-center justify-between">
+              <h4 className="text-lg font-semibold">{quiz.title}</h4>
+              <div className="flex items-center gap-2">
+                <Timer className="text-muted-foreground size-4" />
+                <span className="text-muted-foreground text-sm">{quiz.estimatedTime} minutes</span>
+              </div>
+            </div>
+          }
+          titleClassName="text-lg font-semibold px-4 py-1"
+          cardHeaderClassname="p-0"
+          descriptionChildren={quiz.description}
+          descriptionClassName="text-muted-foreground px-4 py-1 text-sm text-start"
+          contentClassName="p-0 w-full"
+          contentChildren={
+            <div className="flex w-full flex-col gap-2 px-4">
+              <div className="text-muted-foreground text-start text-sm">{quiz.questions.length} questions</div>
+
+              <div className="bg-accent w-full rounded-lg p-2 text-sm">{quiz.questions[0].question}</div>
+
+              <Button onClick={handleAttemptQuiz} className="w-full">
+                Attempt Quiz
+              </Button>
             </div>
           }
         />

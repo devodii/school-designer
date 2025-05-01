@@ -34,16 +34,15 @@ export interface SummaryResponse extends ChatMessageBaseResponse {
 export interface QuizResponse extends ChatMessageBaseResponse {
   tag: "@Quiz"
   quiz: {
-    topic: string
+    id: string
+    title: string
+    description: string
     questions: Array<
       | { question: string; type: "multiple_choice"; options: string[]; correctOptions: string[] }
-      | { question: string; type: "true_false"; correctAnswer: boolean }
-      | { question: string; type: "short_answer"; correctAnswer: string }
+      | { question: string; type: "single_choice"; options: string[]; correctAnswer: string }
     >
     totalPoints: number
-    estimatedTime: string
-    difficulty: "easy" | "medium" | "hard"
-    explanation: string
+    estimatedTime: number
   }
 }
 
