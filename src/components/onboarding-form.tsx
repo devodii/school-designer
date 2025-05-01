@@ -4,10 +4,10 @@ import { useState } from "react"
 
 import { updateAccount } from "@/actions/account"
 import { getSession } from "@/actions/session"
+import { SelectRoot } from "@/components/select-root"
 import { useFileUpload } from "@/hooks/use-file-upload"
 import { FileUploader } from "@components/file-uploader"
 import { MultiStepForm, Step, StepComponentProps } from "@components/multi-step-form"
-import { SelectField } from "@components/select-field"
 import { Spinner } from "@components/spinner"
 import { TextField } from "@components/text-field"
 import { Button } from "@components/ui/button"
@@ -164,7 +164,7 @@ const EducationLevelStep = ({ onNext, onBack }: StepComponentProps<OnboardingSch
         name="education_level"
         render={({ field, fieldState: { error } }) => {
           return (
-            <SelectField
+            <SelectRoot
               labelText="What's your level of education?"
               triggerClassName="w-[250px]"
               items={[

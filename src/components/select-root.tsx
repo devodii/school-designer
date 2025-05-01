@@ -1,3 +1,5 @@
+"use client"
+
 import { ComponentProps } from "react"
 
 import { Label, LabelProps } from "@/components/ui/label"
@@ -5,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
 
-interface SelectFieldProps
+interface SelectRootProps
   extends ComponentProps<typeof Select>,
     MixinProps<"trigger", Omit<ComponentProps<typeof SelectTrigger>, "children">>,
     MixinProps<"error", Omit<ComponentProps<"span">, "children">>,
@@ -15,7 +17,7 @@ interface SelectFieldProps
   labelText?: string
 }
 
-export const SelectField = ({ items, labelText, errorText, ...mixProps }: SelectFieldProps) => {
+export const SelectRoot = ({ items, labelText, errorText, ...mixProps }: SelectRootProps) => {
   const { trigger, error, label, rest } = splitProps(mixProps, "trigger", "error", "label")
 
   return (

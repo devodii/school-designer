@@ -2,8 +2,8 @@
 
 import { ReactNode, useState } from "react"
 
+import { SelectRoot } from "@/components/select-root"
 import { getAccount } from "@/queries/account"
-import { SelectField } from "@components/select-field"
 import { SheetField } from "@components/sheet-field"
 import { Spinner } from "@components/spinner"
 import { TextareaField } from "@components/text-area-field"
@@ -81,7 +81,7 @@ export const CreateNotebook = ({ trigger }: CreateNotebookProps) => {
               control={form.control}
               name="subject"
               render={({ field, fieldState: { error } }) => (
-                <SelectField
+                <SelectRoot
                   labelText="📚 Pick your subject"
                   items={account?.profile?.subjects_offered.map(i => ({ label: i, value: i })) ?? []}
                   onValueChange={value => field.onChange(value)}
@@ -96,7 +96,7 @@ export const CreateNotebook = ({ trigger }: CreateNotebookProps) => {
               control={form.control}
               name="size"
               render={({ field, fieldState: { error } }) => (
-                <SelectField
+                <SelectRoot
                   labelText="📏 Choose your notebook size"
                   items={notebookSize.options.map(i => ({ label: i, value: i })) ?? []}
                   onValueChange={value => field.onChange(value)}
