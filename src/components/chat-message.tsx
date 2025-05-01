@@ -54,15 +54,17 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
       {recommendation && (
         <DialogRoot
           triggerChildren={
-            <div className="mt-3 flex cursor-pointer items-center rounded-lg border border-gray-200 bg-white p-3 transition-colors hover:bg-gray-50">
+            <div className="mt-1 flex cursor-pointer items-center rounded-lg border border-gray-200 bg-white p-3 transition-colors hover:bg-gray-50">
               <BlurImage
+                width={50}
+                height={50}
                 src={recommendation.picture}
                 alt={recommendation.fullName}
-                className="mr-3 h-10 w-10 rounded-full"
+                className="mr-3 size-10 rounded-full"
               />
-              <div className="flex-1">
+              <div className="flex flex-1 flex-col items-start gap-0">
                 <div className="font-medium text-black">{recommendation.fullName}</div>
-                <div className="text-xs text-gray-500">@{recommendation.userName}</div>
+                <div className="text-xs text-gray-500">{recommendation.userName}</div>
               </div>
             </div>
           }
@@ -70,10 +72,12 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
           description="More information about the student"
           contentChildren={
             <div className="flex flex-col items-center py-4">
-              <BlurImage
+              <Image
+                width={50}
+                height={50}
                 src={recommendation.picture}
                 alt={recommendation.fullName}
-                className="mr-3 h-10 w-10 rounded-full"
+                className="mr-3 size-10 rounded-full"
               />
               <h3 className="text-xl font-medium">{recommendation.fullName}</h3>
               <p className="text-gray-500">@{recommendation.userName}</p>

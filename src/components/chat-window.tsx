@@ -83,7 +83,22 @@ export const ChatWindow = ({ sessionId }: ChatWindowProps) => {
         <div className="max-h-[calc(100vh-175px)] w-full flex-1 space-y-4 overflow-y-auto p-4">
           {messages.map(message => (
             <div key={message.id} className="flex w-full flex-col gap-2">
-              <ChatMessage structuredResponse={null} dto={message} />
+              <ChatMessage
+                structuredResponse={
+                  message.persona === "user"
+                    ? null
+                    : {
+                        tag: "@Recommendation",
+                        recommendation: {
+                          fullName: "Emmanuel Odii",
+                          userName: "@devodii",
+                          id: "1",
+                          picture: "https://randomuser.me/api/portraits/men/82.jpg",
+                        },
+                      }
+                }
+                dto={message}
+              />
               {isTyping && <ChatMessageSkeleton />}
             </div>
           ))}

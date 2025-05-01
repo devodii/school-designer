@@ -47,6 +47,7 @@ export const DashboardSidebar = () => {
               content: <ChatWindow sessionId="" />,
               id: "ai-chat",
             }}
+            asChild
             triggerChildren={
               <button className="w-full cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
                 AI Chat

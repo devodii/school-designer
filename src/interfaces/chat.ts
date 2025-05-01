@@ -35,17 +35,15 @@ export interface QuizResponse extends ChatMessageBaseResponse {
   tag: "@Quiz"
   quiz: {
     topic: string
-    questions: {
-      id: string
-      question: string
-      type: "multiple_choice" | "true_false" | "short_answer"
-      options?: string[]
-      correctAnswer: string
-      explanation: string
-      difficulty: "easy" | "medium" | "hard"
-    }[]
+    questions: Array<
+      | { question: string; type: "multiple_choice"; options: string[]; correctOptions: string[] }
+      | { question: string; type: "true_false"; correctAnswer: boolean }
+      | { question: string; type: "short_answer"; correctAnswer: string }
+    >
     totalPoints: number
     estimatedTime: string
+    difficulty: "easy" | "medium" | "hard"
+    explanation: string
   }
 }
 
