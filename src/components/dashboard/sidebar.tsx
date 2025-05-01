@@ -3,7 +3,7 @@
 import React from "react"
 
 import { CanvasTrigger } from "@/components/canvas-trigger"
-import { Chat } from "@/components/chat/chat"
+import { ChatWindow } from "@/components/chat-window"
 import { CreateNotebook } from "@/components/create-notebook"
 import { LinkButton } from "@components/link-button"
 import { Book, BookOpen, Calendar, Settings, Sparkle } from "lucide-react"
@@ -44,7 +44,7 @@ export const DashboardSidebar = () => {
             canvasOptions={{
               position: "right",
               width: "400px",
-              content: <Chat />,
+              content: <ChatWindow sessionId="" />,
               id: "ai-chat",
             }}
             triggerChildren={
@@ -52,7 +52,8 @@ export const DashboardSidebar = () => {
                 AI Chat
               </button>
             }
-            canvasContainerStyle={{ top: 0 }}
+            canvasContainerStyle={{ top: 0, borderRadius: "0px" }}
+            canvasContainerClassName="h-full p-0"
           />
 
           <button className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">

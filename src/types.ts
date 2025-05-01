@@ -1,5 +1,6 @@
 export interface AccountProfile {
-  name: string
-  subjects_offered: string[]
+  fullName: string
+  userName: string
+  subjectsOffered: string[]
   pictures: { id: string; url: string }[]
 }
