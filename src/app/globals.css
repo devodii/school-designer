@@ -3,12 +3,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-    "Helvetica Neue", "Ubuntu", sans-serif;
-}
-
 @theme inline {
+  --font-quicksand: var(--font-quicksand);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

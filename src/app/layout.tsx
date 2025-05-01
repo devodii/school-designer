@@ -1,3 +1,5 @@
+import { quicksand } from "@/fonts/quick-sand"
+import { cn } from "@/lib/tw-merge"
 import { Providers } from "@/providers"
 import type { Metadata } from "next"
 import { Toaster } from "sonner"
@@ -16,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className={cn("font-quicksand antialiased", quicksand.className)}>
         <Providers>
           <Toaster />
           {children}

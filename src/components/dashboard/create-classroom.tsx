@@ -14,8 +14,6 @@ import { useRouter } from "next/navigation"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { CanvasTrigger } from "../canvas-trigger"
-
 const createClassroomSchema = z.object({
   name: z.string({ message: "Classroom name is required" }).min(1),
   inviteCode: z.string({ message: "Invite code is required" }),
