@@ -2,11 +2,11 @@ import { DashboardHeader } from "@/components/dashboard/header"
 
 export default function DashboardPage() {
   return (
-    <div className="flex h-screen w-screen flex-col">
+    <div className="flex w-full flex-col">
       <DashboardHeader />
-      <div className="flex flex-col"> </div>
-
-      <div className="container"></div>
+      <div className="flex flex-col">
+        <div className="container"></div>
+      </div>
     </div>
   )
 }

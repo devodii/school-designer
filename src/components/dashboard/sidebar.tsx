@@ -2,11 +2,12 @@
 
 import React from "react"
 
+import { CanvasTrigger } from "@/components/canvas-trigger"
+import { Chat } from "@/components/chat/chat"
+import { CreateNotebook } from "@/components/create-notebook"
 import { LinkButton } from "@components/link-button"
 import { Book, BookOpen, Calendar, Settings, Sparkle } from "lucide-react"
 import Link from "next/link"
-
-import { CreateNotebook } from "../create-notebook"
 
 export const DashboardSidebar = () => {
   return (
@@ -37,10 +38,27 @@ export const DashboardSidebar = () => {
             }
           />
 
-          <button className="ursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
-            Generate Cover
+          <CanvasTrigger
+            canvasId="ai-chat"
+            canvasPushElementId="__dashboard-layout-container"
+            canvasOptions={{
+              position: "right",
+              width: "400px",
+              content: <Chat />,
+              id: "ai-chat",
+            }}
+            triggerChildren={
+              <button className="w-full cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
+                AI Chat
+              </button>
+            }
+            canvasContainerStyle={{ top: 0 }}
+          />
+
+          <button className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
+            Study Helper
           </button>
-          <button className="ursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
+          <button className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
             Study Helper
           </button>
         </div>

@@ -2,8 +2,6 @@ import { findClassroomById } from "@/actions/classroom"
 import { BlurImage } from "@/components/blur-image"
 import { CanvasTrigger } from "@/components/canvas-trigger"
 import { CardRoot } from "@/components/card-root"
-import { Combobox } from "@/components/combobox"
-import { CommandRoot } from "@/components/command-root"
 import { InviteSuggestedStudents } from "@/components/invite-suggested-students"
 import { ShareClassroomLink } from "@/components/share-classroom-link"
 import { Button } from "@/components/ui/button"
@@ -25,7 +23,7 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
   const shareLink = `${process.env.APP_URL}/join?roomId=${id}`
 
   return (
-    <div className="flex h-screen w-[calc(100vw-250px)] flex-col gap-6 px-4 py-6 md:px-12">
+    <div className="flex h-screen w-full flex-col gap-6 px-4 py-6 md:px-12">
       <div className="flex flex-col gap-6" id="classroom-index">
         <header className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">{classroom.name}</h1>
@@ -43,10 +41,12 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
 
         <div className="grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <CanvasTrigger
+            canvasId="upcoming-assignments"
             canvasOptions={{
               content: <div>Upcoming Assignments</div>,
               width: "400px",
               position: "right",
+              id: "upcoming-assignments",
             }}
             canvasPushElementId="classroom-index"
             triggerChildren={
@@ -82,7 +82,13 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
           />
 
           <CanvasTrigger
-            canvasOptions={{ content: <div>Classmates</div>, width: "400px", position: "right" }}
+            canvasId="classmates"
+            canvasOptions={{
+              content: <div>Classmates</div>,
+              width: "400px",
+              position: "right",
+              id: "classmates",
+            }}
             canvasPushElementId="classroom-index"
             triggerChildren={
               <CardRoot

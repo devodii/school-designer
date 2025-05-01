@@ -1,9 +1,8 @@
 "use client"
 
+import { CanvasTrigger } from "@/components/canvas-trigger"
 import { CreateClassroom } from "@components/dashboard/create-classroom"
 import { Button } from "@components/ui/button"
-
-import { CanvasTrigger } from "../canvas-trigger"
 
 export const EmptyClassroom = () => {
   return (
@@ -37,8 +36,9 @@ export const EmptyClassroom = () => {
 
         <CanvasTrigger
           canvasPushElementId="canvas-push-element"
-          canvasContainerStyle={{ top: 20 }}
-          canvasOptions={{ content: <CreateClassroom />, width: "400px", position: "right" }}
+          canvasId="create-classroom"
+          canvasContainerStyle={{ top: -10 }}
+          canvasOptions={{ content: <CreateClassroom />, width: "400px", position: "right", id: "create-classroom" }}
           triggerChildren={<Button>Create Your First Classroom</Button>}
         />
       </div>

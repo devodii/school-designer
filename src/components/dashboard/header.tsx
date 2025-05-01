@@ -14,7 +14,7 @@ export const DashboardHeader = () => {
   const profilePicture = account?.profile?.pictures[0]
 
   return (
-    <header className="flex h-16 w-[calc(100%-256px)] items-center justify-between border-b border-gray-100 px-6">
+    <header className="flex h-16 w-full items-center justify-between border-b border-gray-100 px-6">
       <div className="relative w-64">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <Search className="h-4 w-4 text-gray-400" />
