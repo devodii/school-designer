@@ -12,19 +12,20 @@ import {
 } from "@/components/ui/command"
 import { MixinProps, splitProps } from "@/lib/mixin"
 
-interface CommandRootProps
+export interface CommandRootProps
   extends ComponentProps<typeof Command>,
     MixinProps<"input", ComponentProps<typeof CommandInput>>,
     MixinProps<"list", ComponentProps<typeof CommandList>>,
     MixinProps<"empty", ComponentProps<typeof CommandEmpty>>,
     MixinProps<"group", ComponentProps<typeof CommandGroup>>,
     MixinProps<"separator", ComponentProps<typeof CommandSeparator>>,
-    MixinProps<"shortcut", ComponentProps<typeof CommandShortcut>> {
+    MixinProps<"shortcut", ComponentProps<typeof CommandShortcut>>,
+    MixinProps<"option", ComponentProps<typeof CommandItem>> {
   options: { heading: string; items: { label: string; value: string }[] }[]
 }
 
 export const CommandRoot = ({ options, ...mixProps }: CommandRootProps) => {
-  const { input, list, empty, group, separator, rest } = splitProps(
+  const { input, list, empty, group, separator, option, rest } = splitProps(
     mixProps,
     "input",
     "list",
@@ -32,6 +33,7 @@ export const CommandRoot = ({ options, ...mixProps }: CommandRootProps) => {
     "group",
     "separator",
     "shortcut",
+    "option",
   )
 
   return (
@@ -39,16 +41,16 @@ export const CommandRoot = ({ options, ...mixProps }: CommandRootProps) => {
       <CommandInput {...input} />
       <CommandList {...list}>
         <CommandEmpty {...empty} />
-        {options.map(option => (
+        {options.map((option, index) => (
           <>
             <CommandGroup {...group} heading={option.heading}>
               {option.items.map(({ label, value }) => (
-                <CommandItem key={value} value={value}>
+                <CommandItem key={value} value={value} {...option}>
                   {label}
                 </CommandItem>
               ))}
             </CommandGroup>
-            <CommandSeparator {...separator} />
+            {index < options.length - 1 && <CommandSeparator {...separator} />}
           </>
         ))}
       </CommandList>

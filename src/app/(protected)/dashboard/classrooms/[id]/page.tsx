@@ -2,6 +2,7 @@ import { findClassroomById } from "@/actions/classroom"
 import { BlurImage } from "@/components/blur-image"
 import { CanvasTrigger } from "@/components/canvas-trigger"
 import { CardRoot } from "@/components/card-root"
+import { CommandRoot } from "@/components/command-root"
 import { ShareClassroomLink } from "@/components/share-classroom-link"
 import { Button } from "@/components/ui/button"
 import { UsersRound } from "lucide-react"
@@ -109,10 +110,29 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
           />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold">{classroom.name}</h1>
-          <p className="text-muted-foreground">{classroom.description}</p>
-        </div>
+        <CardRoot
+          className="w-full"
+          titleChildren="Invite Classmates"
+          descriptionChildren="Add students to your classroom"
+          titleClassName="text-xl font-semibold text-start"
+          contentChildren={
+            <CommandRoot
+              options={[
+                {
+                  heading: "Students",
+                  items: [
+                    { label: "Emmanuel Odii", value: "emmanuel-odii" },
+                    { label: "Patrick Silva", value: "patrick-silva" },
+                    { label: "John Doe", value: "john-doe" },
+                    { label: "Jane Doe", value: "jane-doe" },
+                    { label: "Jim Doe", value: "jim-doe" },
+                    { label: "Jill Doe", value: "jill-doe" },
+                  ],
+                },
+              ]}
+            />
+          }
+        />
       </div>
     </div>
   )

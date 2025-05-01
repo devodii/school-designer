@@ -20,6 +20,8 @@ export const Canvas = ({ pushElementId, ...mixinProps }: CanvasProps) => {
     closeCanvas,
   } = useCanvas()
 
+  const canvasRef = useRef<HTMLDivElement>(null)
+
   const pushElementRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -44,9 +46,30 @@ export const Canvas = ({ pushElementId, ...mixinProps }: CanvasProps) => {
     }
   }, [isOpen, width, position])
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (canvasRef.current && !canvasRef.current.contains(event.target as Node)) closeCanvas()
+    }
+
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeCanvas()
+    }
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+      document.addEventListener("keydown", handleEscapeKey)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("keydown", handleEscapeKey)
+    }
+  }, [isOpen, closeCanvas])
+
   return (
     <div
       {...rest}
+      ref={canvasRef}
       className={cn(
         "fixed top-0 h-full transform rounded-ss-xl rounded-es-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 ease-in-out",
         rest.className,
