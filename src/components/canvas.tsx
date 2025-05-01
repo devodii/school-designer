@@ -31,8 +31,6 @@ export const Canvas = ({ pushElementId, ...mixinProps }: CanvasProps) => {
   useEffect(() => {
     const pushElement = pushElementRef.current
 
-    console.log({ pushElement })
-
     if (pushElement) {
       pushElement.style.transition = "all 300ms ease-in-out"
 

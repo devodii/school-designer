@@ -2,7 +2,9 @@ import { findClassroomById } from "@/actions/classroom"
 import { BlurImage } from "@/components/blur-image"
 import { CanvasTrigger } from "@/components/canvas-trigger"
 import { CardRoot } from "@/components/card-root"
+import { Combobox } from "@/components/combobox"
 import { CommandRoot } from "@/components/command-root"
+import { InviteSuggestedStudents } from "@/components/invite-suggested-students"
 import { ShareClassroomLink } from "@/components/share-classroom-link"
 import { Button } from "@/components/ui/button"
 import { UsersRound } from "lucide-react"
@@ -115,23 +117,7 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
           titleChildren="Invite Classmates"
           descriptionChildren="Add students to your classroom"
           titleClassName="text-xl font-semibold text-start"
-          contentChildren={
-            <CommandRoot
-              options={[
-                {
-                  heading: "Students",
-                  items: [
-                    { label: "Emmanuel Odii", value: "emmanuel-odii" },
-                    { label: "Patrick Silva", value: "patrick-silva" },
-                    { label: "John Doe", value: "john-doe" },
-                    { label: "Jane Doe", value: "jane-doe" },
-                    { label: "Jim Doe", value: "jim-doe" },
-                    { label: "Jill Doe", value: "jill-doe" },
-                  ],
-                },
-              ]}
-            />
-          }
+          contentChildren={<InviteSuggestedStudents />}
         />
       </div>
     </div>

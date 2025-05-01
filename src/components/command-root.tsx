@@ -1,4 +1,4 @@
-import { ComponentProps } from "react"
+import { ComponentProps, Fragment } from "react"
 
 import {
   Command,
@@ -41,17 +41,17 @@ export const CommandRoot = ({ options, ...mixProps }: CommandRootProps) => {
       <CommandInput {...input} />
       <CommandList {...list}>
         <CommandEmpty {...empty} />
-        {options.map((option, index) => (
-          <>
-            <CommandGroup {...group} heading={option.heading}>
-              {option.items.map(({ label, value }) => (
+        {options.map(({ heading, items }, index) => (
+          <Fragment key={index}>
+            <CommandGroup {...group} heading={heading}>
+              {items.map(({ label, value }) => (
                 <CommandItem key={value} value={value} {...option}>
                   {label}
                 </CommandItem>
               ))}
             </CommandGroup>
             {index < options.length - 1 && <CommandSeparator {...separator} />}
-          </>
+          </Fragment>
         ))}
       </CommandList>
     </Command>

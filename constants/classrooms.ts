@@ -86,3 +86,9 @@ export const mockSuggestedUsers = [
   { id: 103, name: "Taylor Wilson" },
   { id: 104, name: "Morgan Lee" },
 ]
+
+export const mockSuggestedStudents = [
+  { label: "Emmanuel Odii", value: "emmanuel-odii" },
+  { label: "Patrick Silva", value: "patrick-silva" },
+  { label: "John Doe", value: "john-doe" },
+]

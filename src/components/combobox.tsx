@@ -1,3 +1,5 @@
+"use client"
+
 import { ComponentProps, useState } from "react"
 
 import { MixinProps, splitProps } from "@/lib/mixin"
@@ -6,16 +8,20 @@ import { Popover, PopoverContent, PopoverTrigger } from "@components/ui/popover"
 
 interface ComboboxProps
   extends MixinProps<"trigger", ComponentProps<typeof PopoverTrigger>>,
-    MixinProps<"content", ComponentProps<typeof PopoverContent>>,
+    MixinProps<"content", Omit<ComponentProps<typeof PopoverContent>, "children">>,
     MixinProps<"command", CommandRootProps> {
-  options: { value: string; label: string }[]
-  onSelect: (value: string) => void
+  selected: { label: string; value: string }[]
 }
 
-export const Combobox = ({ options, onSelect, ...mixedProps }: ComboboxProps) => {
+export const Combobox = ({ selected, ...mixedProps }: ComboboxProps) => {
   const [open, setOpen] = useState(false)
 
   const { trigger, content, command } = splitProps(mixedProps, "trigger", "content", "command")
+
+  const filteredOptions = command.options.map(group => ({
+    ...group,
+    items: group.items.filter(item => !selected.some(s => s.value === item.value)),
+  }))
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -23,9 +29,10 @@ export const Combobox = ({ options, onSelect, ...mixedProps }: ComboboxProps) =>
       <PopoverContent {...content}>
         <CommandRoot
           {...command}
+          options={filteredOptions}
           optionOnSelect={currentValue => {
             setOpen(false)
-            onSelect(currentValue)
+            command.optionOnSelect?.(currentValue)
           }}
         />
       </PopoverContent>
