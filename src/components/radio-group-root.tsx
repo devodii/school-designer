@@ -20,7 +20,7 @@ export const RadioGroupRoot = ({ data, ...mixProps }: RadioGroupRootProps) => {
     <RadioGroup {...rest} className={cn("grid gap-1", rest.className)}>
       {data.map(({ value, label: labelText, id }) => (
         <div {...optionContainer} key={value} className={cn("flex items-center space-x-2", optionContainer?.className)}>
-          <RadioGroupItem {...option} value={value} id={id} />
+          <RadioGroupItem {...option} value={value} id={id} key={id} />
           <Label {...label} className="text-md" htmlFor={id}>
             {labelText}
           </Label>

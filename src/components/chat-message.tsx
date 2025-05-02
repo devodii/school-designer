@@ -127,24 +127,16 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
 
                 <CanvasTrigger
                   triggerAsChild
-                  triggerChildren={
-                    <Button
-                      onClick={e => {
-                        console.log("clicked")
-                        e.stopPropagation()
-                        setTimeout(() => {
-                          // This will be handled by CanvasTrigger's onClick
-                          // (so you may not need to do anything here)
-                        }, 0)
-                      }}
-                      className="w-full"
-                    >
-                      Attempt Quiz
-                    </Button>
-                  }
+                  triggerChildren={<Button className="w-full">Attempt Quiz</Button>}
                   canvasId="quiz"
-                  canvasPushElementId="__dashboard-layout-container"
-                  canvasOptions={{ content: <QuizForm quiz={quiz} />, width: "500px", position: "right", id: "quiz" }}
+                  canvasOptions={{
+                    content: <QuizForm quiz={quiz} />,
+                    width: "400px",
+                    position: "right",
+                    id: "quiz",
+                    pushElementId: "__dashboard-layout-container",
+                    wrapperClassName: "h-full p-4",
+                  }}
                 />
               </div>
             }

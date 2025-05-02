@@ -37,8 +37,23 @@ export const DashboardSidebar = () => {
           <h3 className="text-primary-700 text-sm font-semibold">AI Tools</h3>
         </div>
         <div className="flex flex-col gap-1.5">
-          <CreateNotebook
-            trigger={
+          <CanvasTrigger
+            canvasId="create-notebook"
+            canvasOptions={{
+              content: (
+                <CreateNotebook
+                  onSuccess={() => closeCanvas("create-notebook")}
+                  onError={() => toast.error("Failed to create notebook")}
+                />
+              ),
+              width: "400px",
+              position: "right",
+              id: "create-notebook",
+              pushElementId: "__dashboard-layout-container",
+              wrapperClassName: "h-full p-0",
+            }}
+            triggerAsChild
+            triggerChildren={
               <button className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
                 Create Notebook
               </button>
@@ -47,12 +62,13 @@ export const DashboardSidebar = () => {
 
           <CanvasTrigger
             canvasId="ai-chat"
-            canvasPushElementId="__dashboard-layout-container"
             canvasOptions={{
               position: "right",
               width: "400px",
               content: <ChatWindow sessionId="" />,
               id: "ai-chat",
+              pushElementId: "__dashboard-layout-container",
+              wrapperClassName: "h-full p-0",
             }}
             triggerAsChild
             triggerChildren={
@@ -60,18 +76,16 @@ export const DashboardSidebar = () => {
                 AI Chat
               </button>
             }
-            canvasContainerStyle={{ top: 0, borderRadius: "0px" }}
-            canvasContainerClassName="h-full p-0"
           />
 
           <CanvasTrigger
             canvasId="study-helper"
-            canvasPushElementId="__dashboard-layout-container"
             canvasOptions={{
               content: <QuizForm quiz={mockQuiz} />,
               width: "400px",
               position: "right",
               id: "study-helper",
+              pushElementId: "__dashboard-layout-container",
             }}
             triggerAsChild
             triggerChildren={
@@ -83,7 +97,6 @@ export const DashboardSidebar = () => {
 
           <CanvasTrigger
             canvasId="app-feedback"
-            canvasPushElementId="__dashboard-layout-container"
             canvasOptions={{
               content: (
                 <SendFeedback
@@ -96,6 +109,7 @@ export const DashboardSidebar = () => {
               width: "400px",
               position: "right",
               id: "app-feedback",
+              pushElementId: "__dashboard-layout-container",
             }}
             triggerAsChild
             triggerChildren={

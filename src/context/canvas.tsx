@@ -1,56 +1,36 @@
-"use client"
+import React, { createContext, useContext, useState } from "react"
 
-import { createContext, ReactNode, useContext, useState } from "react"
-
+import { CanvasWrapperProps } from "@/components/canvas"
 import { parseElementContext } from "@/lib/parse-context"
 
-type CanvasPosition = "left" | "right"
-
-export type CanvasState = {
+export interface CanvasState extends CanvasWrapperProps {
   id: string
-  isOpen: boolean
   width: string
-  content: ReactNode | null
-  position: CanvasPosition
+  content: React.ReactNode
+  position: "left" | "right"
+  pushElementId: string
 }
 
 type CanvasContextType = {
-  state: CanvasState
-  openCanvas: (options: Omit<CanvasState, "isOpen">) => void
+  canvases: CanvasState[]
+  openCanvas: (options: CanvasState) => void
   closeCanvas: (id?: string) => void
-  activeCanvasId: string | null
 }
 
-export const CanvasContext = createContext({} as CanvasContextType)
+const CanvasContext = createContext({} as CanvasContextType)
 
-export const CanvasProvider = ({ children }: { children: ReactNode }) => {
-  const [state, setState] = useState<CanvasState>({
-    isOpen: false,
-    id: "",
-    width: "300px",
-    content: null,
-    position: "right",
-  })
-  const [activeCanvasId, setActiveCanvasId] = useState<string | null>(null)
+export const CanvasProvider = ({ children }: { children: React.ReactNode }) => {
+  const [canvases, setCanvases] = useState<CanvasState[]>([])
 
-  const openCanvas = (options: Omit<CanvasState, "isOpen">) => {
-    setState(prev => ({ ...prev, ...options, isOpen: true }))
-    setActiveCanvasId(options.id)
+  const openCanvas = (options: CanvasState) => {
+    setCanvases(prev => [...prev, options])
   }
 
   const closeCanvas = (id?: string) => {
-    // Only close if no id provided or if it matches the active canvas
-    if (!id || id === activeCanvasId) {
-      setState(prev => ({ ...prev, isOpen: false }))
-      setActiveCanvasId(null)
-    }
+    setCanvases(prev => (id ? prev.filter(canvas => canvas.id !== id) : prev.slice(0, -1)))
   }
 
-  return (
-    <CanvasContext.Provider value={{ state, openCanvas, closeCanvas, activeCanvasId }}>
-      {children}
-    </CanvasContext.Provider>
-  )
+  return <CanvasContext.Provider value={{ canvases, openCanvas, closeCanvas }}>{children}</CanvasContext.Provider>
 }
 
-export const useCanvas = () => parseElementContext(useContext(CanvasContext), "Canvas")
+export const useCanvas = () => parseElementContext(useContext(CanvasContext), "CanvasContext")

@@ -1,3 +1,4 @@
+import { CanvasStack } from "@/components/canvas-stack"
 import { quicksand } from "@/fonts/quick-sand"
 import { cn } from "@/lib/tw-merge"
 import { Providers } from "@/providers"
@@ -22,6 +23,7 @@ export default function RootLayout({
         <Providers>
           <Toaster />
           {children}
+          <CanvasStack />
         </Providers>
       </body>
     </html>

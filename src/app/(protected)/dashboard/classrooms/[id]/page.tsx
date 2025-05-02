@@ -47,8 +47,8 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
               width: "400px",
               position: "right",
               id: "upcoming-assignments",
+              pushElementId: "__classroom_index",
             }}
-            canvasPushElementId="__classroom_index"
             triggerChildren={
               <CardRoot
                 className="h-[200px]"
@@ -78,7 +78,6 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
                 }
               />
             }
-            canvasContainerStyle={{ top: 20 }}
           />
 
           <CanvasTrigger
@@ -88,8 +87,8 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
               width: "400px",
               position: "right",
               id: "classmates",
+              pushElementId: "__classroom_index",
             }}
-            canvasPushElementId="__classroom_index"
             triggerChildren={
               <CardRoot
                 className="h-[200px]"
@@ -114,7 +113,6 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
                 footerChildren={<div />}
               />
             }
-            canvasContainerStyle={{ top: 20 }}
           />
         </div>
 
