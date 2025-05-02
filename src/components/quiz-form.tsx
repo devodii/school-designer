@@ -9,6 +9,7 @@ import { QuizResults } from "@components/quiz-results"
 import { RadioGroupRoot } from "@components/radio-group-root"
 import { Spinner } from "@components/spinner"
 import { Button } from "@components/ui/button"
+import { snakeCase } from "lodash"
 import { Clock } from "lucide-react"
 import moment from "moment"
 import { Controller, useForm } from "react-hook-form"
@@ -96,7 +97,7 @@ export const QuizForm = ({ quiz }: QuizFormProps) => {
                         checkboxValue={field.value}
                         checkboxName={field.name}
                         key={index}
-                        id={option}
+                        id={snakeCase(`${question.question}-${index}-${option}`)}
                         labelText={option}
                       />
                     ))}
@@ -113,9 +114,11 @@ export const QuizForm = ({ quiz }: QuizFormProps) => {
                   <RadioGroupRoot
                     onValueChange={field.onChange}
                     defaultValue={field.value}
-                    key={question.question}
-                    id={question.question}
-                    data={question.options.map(option => ({ value: option, label: option }))}
+                    data={question.options.map((option, index) => ({
+                      value: option,
+                      label: option,
+                      id: snakeCase(`${question.question}-${index}-${option}`),
+                    }))}
                   />
                 )}
               />

@@ -10,7 +10,7 @@ interface RadioGroupRootProps
     MixinProps<"optionContainer", ComponentProps<"div">>,
     MixinProps<"option", Omit<ComponentProps<typeof RadioGroupItem>, "value" | "id">>,
     MixinProps<"label", ComponentProps<typeof Label>> {
-  data: { value: string; label: string }[]
+  data: { value: string; label: string; id: string }[]
 }
 
 export const RadioGroupRoot = ({ data, ...mixProps }: RadioGroupRootProps) => {
@@ -18,10 +18,10 @@ export const RadioGroupRoot = ({ data, ...mixProps }: RadioGroupRootProps) => {
 
   return (
     <RadioGroup {...rest} className={cn("grid gap-1", rest.className)}>
-      {data.map(({ value, label: labelText }, index) => (
-        <div {...optionContainer} key={index} className={cn("flex items-center space-x-2", optionContainer?.className)}>
-          <RadioGroupItem {...option} value={value} id={value} />
-          <Label {...label} className="text-md" htmlFor={value}>
+      {data.map(({ value, label: labelText, id }) => (
+        <div {...optionContainer} key={value} className={cn("flex items-center space-x-2", optionContainer?.className)}>
+          <RadioGroupItem {...option} value={value} id={id} />
+          <Label {...label} className="text-md" htmlFor={id}>
             {labelText}
           </Label>
         </div>

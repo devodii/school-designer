@@ -35,6 +35,7 @@ export const Canvas = ({ pushElementId, id, ...mixinProps }: CanvasProps) => {
       pushElement.style.marginRight = "0"
       pushElement.style.marginLeft = "0"
     }
+    console.log("closing canvas", id)
     closeCanvas(id)
   }
 
