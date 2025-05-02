@@ -8,15 +8,13 @@ import { ChatMessageSkeleton } from "@components/chat-message-skeleton"
 import { ChatTagPicker } from "@components/chat-tag-picker"
 import { Button } from "@components/ui/button"
 import { Textarea } from "@components/ui/textarea"
-import { mockQuiz } from "~/constants/classrooms"
 import { Plus, SendHorizontal } from "lucide-react"
 import { nanoid } from "nanoid"
+import { mockQuiz } from "~/constants/classrooms"
 
-interface ChatWindowProps {
-  sessionId: string
-}
+interface ChatWindowProps {}
 
-export const ChatWindow = ({ sessionId }: ChatWindowProps) => {
+export const ChatWindow = ({}: ChatWindowProps) => {
   const [selectedTag, setSelectedTag] = useState<ChatMessageTag | null>(null)
   const [tagPickerOpen, setTagPickerOpen] = useState(false)
   const [message, setMessage] = useState("")

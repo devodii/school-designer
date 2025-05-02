@@ -65,7 +65,7 @@ export const DashboardSidebar = () => {
             canvasOptions={{
               position: "right",
               width: "400px",
-              content: <ChatWindow sessionId="" />,
+              content: <ChatWindow />,
               id: "ai-chat",
               pushElementId: "__dashboard-layout-container",
               wrapperClassName: "h-full p-0",

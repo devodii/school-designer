@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, ComponentProps, ComponentPropsWithoutRef } from "react"
+import { useEffect, useState, ComponentPropsWithoutRef } from "react"
 
 import { QuizResponse } from "@/interfaces/chat"
 import { MixinProps, splitProps } from "@/lib/mixin"
@@ -55,7 +55,7 @@ export const QuizForm = ({ quiz, ...mixinProps }: QuizFormProps) => {
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [timeRemaining])
+  }, [timeRemaining, form.getValues, handleSubmit])
 
   if (submitted) {
     return (

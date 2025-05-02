@@ -53,7 +53,7 @@ export const ChatTagPicker = ({ onSelect, onClose }: ChatTagPickerProps) => {
   useEffect(() => {
     document.addEventListener("click", handleClickOutside)
     return () => document.removeEventListener("click", handleClickOutside)
-  }, [onClose])
+  }, [onClose, handleClickOutside])
 
   return (
     <div

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, Suspense } from "react"
 
 import { verifyMagicLinkToken, verifyGoogleToken } from "@/actions/auth"
 import { Spinner } from "@/components/spinner"
@@ -10,8 +10,16 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 export default function VerifyTokenPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <VerifyToken />
+    </Suspense>
+  )
+}
+
+const VerifyToken = () => {
   const searchParams = useSearchParams()
-  const token = searchParams.get("token") as string
+  const token = searchParams?.get("token") as string
   const router = useRouter()
 
   const {
@@ -51,7 +59,7 @@ export default function VerifyTokenPage() {
 
   useEffect(() => {
     ;(() => verifyToken())()
-  }, [])
+  }, [verifyToken])
 
   if (isPending) {
     return (

@@ -77,7 +77,6 @@ export const CreateClassroom = () => {
           render={({ field, fieldState: { error } }) => (
             <TextareaField
               id={field.name}
-              id={field.name}
               labelText="What’s this class about?"
               errorText={error?.message}
               textareaPlaceholder="Learn to fight the dark arts with friends."

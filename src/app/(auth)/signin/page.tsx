@@ -4,7 +4,6 @@ import { useState } from "react"
 
 import { AuthForm } from "@/components/auth-form"
 import { GoogleLogin } from "@/components/google-login"
-import { Google } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 
@@ -17,7 +16,7 @@ export default function SignIn() {
       <div className="flex w-screen flex-col gap-6 px-4 py-6 md:px-8 md:py-12">
         <h2 className="text-center text-3xl font-semibold">Login to School Designer</h2>
         <p className="text-muted-foreground mx-auto w-full max-w-sm text-center text-sm">
-          We've sent a magic link to your email. Please check your inbox.
+          We’ve sent a magic link to your email. Please check your inbox.
         </p>
         <Button className="mx-auto w-full max-w-sm" variant="outline" onClick={() => setShowEmailSent(false)}>
           Back

@@ -38,6 +38,8 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
 
   const { closeCanvas } = useCanvas()
 
+  console.log({})
+
   return (
     <li className={cn("flex w-full flex-col gap-2", persona === "user" ? "items-end" : "items-start")}>
       <Image src={image} alt={name} width={32} height={32} className="size-5 rounded-full" />
@@ -90,10 +92,10 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
                     <h4 className="text-sm font-medium text-gray-500">Recent Activity</h4>
                     <div className="mt-1 space-y-2">
                       <div className="rounded-md bg-gray-50 p-2 text-sm">
-                        Submitted assignment "Chemistry Lab Report" 2 days ago
+                        Submitted assignment &quot;Chemistry Lab Report&quot; 2 days ago
                       </div>
                       <div className="rounded-md bg-gray-50 p-2 text-sm">
-                        Asked a question in "Biology 101" 3 days ago
+                        Asked a question in &quot;Biology 101&quot; 3 days ago
                       </div>
                     </div>
                   </div>

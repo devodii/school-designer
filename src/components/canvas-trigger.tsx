@@ -4,8 +4,6 @@ import { ComponentProps } from "react"
 
 import { useCanvas, CanvasState } from "@/context/canvas"
 import { MixinProps, splitProps } from "@/lib/mixin"
-import { Canvas, CanvasProps } from "@components/canvas"
-import { Portal } from "@radix-ui/react-portal"
 import { Slot } from "@radix-ui/react-slot"
 
 interface CanvasTriggerProps extends MixinProps<"trigger", Omit<ComponentProps<"button">, "onClick">> {

@@ -90,6 +90,7 @@ export const CreateNotebook = ({ onSuccess, onError }: CreateNotebookProps) => {
           name="extraNotes"
           render={({ field, fieldState: { error } }) => (
             <TextareaField
+              id={field.name}
               labelText="Notes (optional)"
               textareaPlaceholder="Add any additional notes you want to include"
               textareaName={field.name}

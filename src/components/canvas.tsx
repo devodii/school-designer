@@ -35,10 +35,8 @@ export const Canvas = ({
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    if (!mounted) {
-      setTimeout(() => setMounted(true), 50) // Small delay to ensure initial state renders
-    }
-  }, [])
+    if (!mounted) setTimeout(() => setMounted(true), 50)
+  }, [mounted])
 
   // Set up push element margin
   useEffect(() => {
