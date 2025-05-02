@@ -2,13 +2,14 @@
 
 import { CanvasTrigger } from "@/components/canvas-trigger"
 import { QuizForm } from "@/components/quiz-form"
+import { useCanvas } from "@/context/canvas"
 import { ChatMessageTag, TaggedChatResponse } from "@/interfaces/chat"
 import { cn } from "@/lib/tw-merge"
 import { BlurImage } from "@components/blur-image"
 import { CardRoot } from "@components/card-root"
 import { DialogRoot } from "@components/dialog-root"
 import { Button } from "@components/ui/button"
-import { Timer } from "lucide-react"
+import { ArrowLeft, Timer } from "lucide-react"
 import Image from "next/image"
 
 export type ChatMessagePersona = "user" | "ai"
@@ -34,6 +35,8 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
   const explanation = structuredResponse && "explanation" in structuredResponse ? structuredResponse.explanation : null
   const summary = structuredResponse && "summary" in structuredResponse ? structuredResponse.summary : null
   const quiz = structuredResponse && "quiz" in structuredResponse ? structuredResponse.quiz : null
+
+  const { closeCanvas } = useCanvas()
 
   return (
     <li className={cn("flex w-full flex-col gap-2", persona === "user" ? "items-end" : "items-start")}>
@@ -130,7 +133,21 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
                   triggerChildren={<Button className="w-full">Attempt Quiz</Button>}
                   canvasId="quiz"
                   canvasOptions={{
-                    content: <QuizForm quiz={quiz} />,
+                    content: (
+                      <QuizForm
+                        quiz={quiz}
+                        headerChildren={
+                          <Button
+                            variant="outline"
+                            className="rounded-full"
+                            size="icon"
+                            onClick={() => closeCanvas("quiz")}
+                          >
+                            <ArrowLeft className="size-4" />
+                          </Button>
+                        }
+                      />
+                    ),
                     width: "400px",
                     position: "right",
                     id: "quiz",
