@@ -1,4 +1,5 @@
 import { CanvasStack } from "@/components/canvas-stack"
+import { Wrapper } from "@/components/wrapper"
 import { quicksand } from "@/fonts/quick-sand"
 import { cn } from "@/lib/tw-merge"
 import { Providers } from "@/providers"
@@ -22,7 +23,7 @@ export default function RootLayout({
       <body className={cn("font-quicksand antialiased", quicksand.className)}>
         <Providers>
           <Toaster />
-          {children}
+          <Wrapper>{children}</Wrapper>
           <CanvasStack />
         </Providers>
       </body>

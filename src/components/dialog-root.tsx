@@ -1,6 +1,6 @@
 "use client"
 
-import { ComponentProps } from "react"
+import { ComponentProps, ComponentType, createElement } from "react"
 
 import {
   Dialog,
@@ -14,24 +14,31 @@ import { MixinProps, splitProps } from "@/lib/mixin"
 
 interface DialogRootProps
   extends ComponentProps<typeof Dialog>,
+    MixinProps<"title", ComponentProps<typeof DialogTitle>>,
+    MixinProps<"description", ComponentProps<typeof DialogDescription>>,
     MixinProps<"trigger", ComponentProps<typeof DialogTrigger>>,
-    MixinProps<"content", ComponentProps<typeof DialogContent>> {
-  title: string
-  description: string
+    MixinProps<"content", Omit<ComponentProps<typeof DialogContent>, "children">> {
+  component: ComponentType
 }
 
-export const DialogRoot = ({ title, description, ...mixProps }: DialogRootProps) => {
-  const { trigger, content, rest } = splitProps(mixProps, "trigger", "content")
+export const DialogRoot = ({ component, ...mixProps }: DialogRootProps) => {
+  const { trigger, content, title, description, rest } = splitProps(
+    mixProps,
+    "trigger",
+    "content",
+    "title",
+    "description",
+  )
 
   return (
     <Dialog {...rest}>
       <DialogTrigger {...trigger} />
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+      <DialogContent {...content}>
+        <DialogHeader className="flex w-full items-center">
+          <DialogTitle {...title} />
+          <DialogDescription {...description} />
         </DialogHeader>
-        {content.children}
+        {createElement(component)}
       </DialogContent>
     </Dialog>
   )

@@ -7,27 +7,27 @@ import { MixinProps, splitProps } from "@/lib/mixin"
 
 interface TabsRootProps
   extends ComponentProps<typeof Tabs>,
-    MixinProps<"list", typeof TabsList>,
-    MixinProps<"trigger", typeof TabsTrigger>,
-    MixinProps<"content", typeof TabsContent> {
-  data: { value: string; label: string; component: ComponentType }[]
+    MixinProps<"list", ComponentProps<typeof TabsList>>,
+    MixinProps<"trigger", Omit<ComponentProps<typeof TabsTrigger>, "value">>,
+    MixinProps<"content", Omit<ComponentProps<typeof TabsContent>, "value">> {
+  data: { value: string; label: ComponentType; component: ComponentType }[]
 }
 
 export const TabsRoot = ({ data, ...mixinProps }: TabsRootProps) => {
   const { list, trigger, content, rest } = splitProps(mixinProps, "list", "trigger", "content")
 
   return (
-    <Tabs defaultValue="account" className="w-[400px]" {...rest}>
+    <Tabs defaultValue="account" {...rest}>
       <TabsList {...list}>
         {data.map(({ value, label }) => (
-          <TabsTrigger value={value} {...trigger}>
-            {label}
+          <TabsTrigger {...trigger} value={value}>
+            {createElement(label)}
           </TabsTrigger>
         ))}
       </TabsList>
 
       {data.map(({ value, component }) => (
-        <TabsContent value={value} {...content}>
+        <TabsContent {...content} value={value}>
           {createElement(component)}
         </TabsContent>
       ))}
