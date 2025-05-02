@@ -30,7 +30,7 @@ export const PricingPlans = () => {
             label: () => (
               <div className="flex cursor-pointer items-center gap-1.5">
                 <span>Yearly</span>
-                <Badge className="text-xs">20% off</Badge>
+                <Badge className="text-xs">25% off</Badge>
               </div>
             ),
             component: () => <div />,
@@ -79,9 +79,9 @@ export const PricingPlans = () => {
           titleChildren={
             <div className="flex flex-col gap-1">
               <span className="text-xl font-bold">Plus</span>
-              <span className="text-3xl font-bold">{activeTab === "monthly" ? "$20" : "$16"}</span>
+              <span className="text-3xl font-bold">{activeTab === "monthly" ? "$12" : "$9"}</span>
               <span className="text-muted-foreground text-sm">
-                {activeTab === "monthly" ? "USD/month" : "USD/month, billed annually ($192)"}
+                {activeTab === "monthly" ? "USD/month" : "USD/month, billed annually ($108)"}
               </span>
             </div>
           }

@@ -27,11 +27,13 @@ export const ShareClassroomLink = ({ trigger, shareLink }: ShareClassroomLinkPro
     <DialogRoot
       open={isOpen}
       onOpenChange={setIsOpen}
-      title="Invite Students"
-      description="Share this link with your friends"
+      titleClassName="text-lg font-semibold"
+      titleChildren="Invite Students"
+      descriptionClassName="text-sm text-muted-foreground"
+      descriptionChildren="Share this link with your friends"
       triggerAsChild
       triggerChildren={trigger}
-      contentChildren={
+      component={() => (
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <TextField
@@ -48,7 +50,7 @@ export const ShareClassroomLink = ({ trigger, shareLink }: ShareClassroomLinkPro
             </Button>
           </div>
         </div>
-      }
+      )}
     />
   )
 }

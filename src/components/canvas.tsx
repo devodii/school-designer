@@ -93,7 +93,7 @@ export const Canvas = ({
       {...rest}
       ref={canvasRef}
       className={cn(
-        "fixed top-0 z-[1000] h-full rounded-ss-xl rounded-es-xl border border-gray-200 bg-white shadow-lg",
+        "fixed top-0 z-[49] h-full rounded-ss-xl rounded-es-xl border border-gray-200 bg-white shadow-lg",
         rest.className,
       )}
       style={{

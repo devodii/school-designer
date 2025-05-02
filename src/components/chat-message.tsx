@@ -11,6 +11,7 @@ import { DialogRoot } from "@components/dialog-root"
 import { Button } from "@components/ui/button"
 import { ArrowLeft, Timer } from "lucide-react"
 import Image from "next/image"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 export type ChatMessagePersona = "user" | "ai"
 
@@ -30,6 +31,10 @@ interface ChatMessageProps {
 }
 
 export const ChatMessage = ({ dto: { persona, name, image, content, tag }, structuredResponse }: ChatMessageProps) => {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+
   const recommendation =
     structuredResponse && "recommendation" in structuredResponse ? structuredResponse.recommendation : null
   const explanation = structuredResponse && "explanation" in structuredResponse ? structuredResponse.explanation : null
@@ -38,7 +43,13 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
 
   const { closeCanvas } = useCanvas()
 
-  console.log({})
+  const handleShowUpgradeModal = (tag: ChatMessageTag) => {
+    const params = new URLSearchParams(searchParams!)
+    params.set("pricing", tag)
+    router.replace(`${pathname}?${params.toString()}`)
+  }
+
+  const accountIsPlus = true
 
   return (
     <li className={cn("flex w-full flex-col gap-2", persona === "user" ? "items-end" : "items-start")}>
@@ -73,9 +84,11 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
                 </div>
               </div>
             }
-            title="Student Profile"
-            description="More information about the student"
-            contentChildren={
+            titleClassName="text-lg font-semibold"
+            titleChildren="Student Profile"
+            descriptionClassName="text-sm text-muted-foreground"
+            descriptionChildren="More information about the student"
+            component={() => (
               <div className="flex flex-col items-center py-4">
                 <Image
                   width={50}
@@ -103,7 +116,7 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
 
                 <Button className="mt-6 w-full">Send Message</Button>
               </div>
-            }
+            )}
           />
         )}
 
@@ -115,7 +128,7 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
                 <h4 className="text-[15px] font-semibold">{quiz.title}</h4>
                 <div className="flex items-center gap-1">
                   <Timer className="text-muted-foreground size-4" />
-                  <span className="text-muted-foreground min-w-max text-sm">{quiz.estimatedTime} minutes</span>
+                  <span className="text-muted-foreground min-w-max text-sm">{quiz.estimatedTime / 10} minutes</span>
                 </div>
               </div>
             }
@@ -130,33 +143,39 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
 
                 <div className="bg-accent w-full rounded-lg p-2 text-sm">{quiz.questions[0].question}</div>
 
-                <CanvasTrigger
-                  triggerAsChild
-                  triggerChildren={<Button className="w-full">Attempt Quiz</Button>}
-                  canvasId="quiz"
-                  canvasOptions={{
-                    content: (
-                      <QuizForm
-                        quiz={quiz}
-                        headerChildren={
-                          <Button
-                            variant="outline"
-                            className="rounded-full"
-                            size="icon"
-                            onClick={() => closeCanvas("quiz")}
-                          >
-                            <ArrowLeft className="size-4" />
-                          </Button>
-                        }
-                      />
-                    ),
-                    width: "400px",
-                    position: "right",
-                    id: "quiz",
-                    pushElementId: "__dashboard-layout-container",
-                    wrapperClassName: "h-full p-4",
-                  }}
-                />
+                {accountIsPlus ? (
+                  <CanvasTrigger
+                    triggerAsChild
+                    triggerChildren={<Button className="w-full">Attempt Quiz</Button>}
+                    canvasId="quiz"
+                    canvasOptions={{
+                      content: (
+                        <QuizForm
+                          quiz={quiz}
+                          headerChildren={
+                            <Button
+                              variant="outline"
+                              className="rounded-full"
+                              size="icon"
+                              onClick={() => closeCanvas("quiz")}
+                            >
+                              <ArrowLeft className="size-4" />
+                            </Button>
+                          }
+                        />
+                      ),
+                      width: "400px",
+                      position: "right",
+                      id: "quiz",
+                      pushElementId: "__dashboard-layout-container",
+                      wrapperClassName: "h-full p-4",
+                    }}
+                  />
+                ) : (
+                  <Button className="w-full" onClick={() => handleShowUpgradeModal("@Quiz")}>
+                    Attempt Quiz
+                  </Button>
+                )}
               </div>
             }
           />

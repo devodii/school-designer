@@ -54,8 +54,12 @@ export const QuizForm = ({ quiz, ...mixinProps }: QuizFormProps) => {
       })
     }, 1000)
 
+    if (submitted) {
+      clearInterval(interval)
+    }
+
     return () => clearInterval(interval)
-  }, [timeRemaining, form.getValues, handleSubmit])
+  }, [timeRemaining, form.getValues, handleSubmit, submitted])
 
   if (submitted) {
     return (
@@ -188,7 +192,6 @@ const QuizResults = ({ quiz, score, userAnswers }: QuizResultProps) => {
               <span>{question.question}</span>
               <div className="text-sm">
                 {(() => {
-                  console.log(userAnswers)
                   const userAnswer = userAnswers[question.question]
                   const isAnswered = userAnswer !== undefined && userAnswer !== null && userAnswer !== ""
                   let isCorrect = false
