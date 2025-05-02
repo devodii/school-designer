@@ -79,7 +79,7 @@ export const QuizForm = ({ quiz }: QuizFormProps) => {
         </div>
       </div>
 
-      <ul className="mt-4 grid grid-cols-1 gap-4 divide-y divide-gray-50">
+      <ul className="mt-4 grid grid-cols-1 gap-4">
         {quiz.questions.map((question, index) => (
           <li key={index} className="grid gap-1">
             <h3 className="text-lg font-normal">{question.question}</h3>
@@ -98,6 +98,12 @@ export const QuizForm = ({ quiz }: QuizFormProps) => {
                         key={index}
                         id={option}
                         labelText={option}
+                        labelOnClick={e => {
+                          console.log("clicked")
+                          e.stopPropagation()
+                          const checkboxElement = document.getElementById(option) as HTMLInputElement
+                          checkboxElement?.click()
+                        }}
                       />
                     ))}
                   </div>

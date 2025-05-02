@@ -5,11 +5,18 @@ import React from "react"
 import { CanvasTrigger } from "@/components/canvas-trigger"
 import { ChatWindow } from "@/components/chat-window"
 import { CreateNotebook } from "@/components/create-notebook"
+import { QuizForm } from "@/components/quiz-form"
+import { SendFeedback } from "@/components/send-feedback"
+import { useCanvas } from "@/context/canvas"
 import { LinkButton } from "@components/link-button"
 import { Book, BookOpen, Calendar, Settings, Sparkle } from "lucide-react"
 import Link from "next/link"
+import { toast } from "sonner"
+import { mockQuiz } from "~/constants/classrooms"
 
 export const DashboardSidebar = () => {
+  const { closeCanvas } = useCanvas()
+
   return (
     <div className="flex h-screen w-64 flex-col border-r border-gray-100 px-3 py-6">
       <div className="mb-12">
@@ -47,7 +54,7 @@ export const DashboardSidebar = () => {
               content: <ChatWindow sessionId="" />,
               id: "ai-chat",
             }}
-            asChild
+            triggerAsChild
             triggerChildren={
               <button className="w-full cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
                 AI Chat
@@ -57,12 +64,38 @@ export const DashboardSidebar = () => {
             canvasContainerClassName="h-full p-0"
           />
 
-          <button className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
-            Study Helper
-          </button>
-          <button className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
-            Study Helper
-          </button>
+          <CanvasTrigger
+            canvasId="study-helper"
+            canvasPushElementId="__dashboard-layout-container"
+            canvasOptions={{
+              content: <QuizForm quiz={mockQuiz} />,
+              width: "400px",
+              position: "right",
+              id: "study-helper",
+            }}
+            triggerClassName="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors"
+            triggerChildren="Quiz Helper"
+          />
+
+          <CanvasTrigger
+            canvasId="app-feedback"
+            canvasPushElementId="__dashboard-layout-container"
+            canvasOptions={{
+              content: (
+                <SendFeedback
+                  onSubmit={() => {
+                    closeCanvas("app-feedback")
+                    toast.success("Feedback sent successfully")
+                  }}
+                />
+              ),
+              width: "400px",
+              position: "right",
+              id: "app-feedback",
+            }}
+            triggerClassName="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors"
+            triggerChildren="Send Feedback"
+          />
         </div>
       </div>
 

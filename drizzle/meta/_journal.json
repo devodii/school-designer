@@ -71,6 +71,13 @@
       "when": 1746020261275,
       "tag": "0009_wandering_shape",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1746174519031,
+      "tag": "0010_whole_bloodstrike",
+      "breakpoints": true
     }
   ]
 }

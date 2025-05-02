@@ -30,19 +30,19 @@ export const DashboardHeader = () => {
 
         <div className="flex items-center gap-3">
           <div className="flex flex-col items-end">
-            <span className="text-md font-medium">{account?.profile?.name}</span>
+            <span className="text-md font-medium">{account?.profile?.fullName}</span>
           </div>
           {profilePicture ? (
             <BlurImage
               src={profilePicture.url}
-              alt={`${account?.profile?.name} on School Designer`}
+              alt={`${account?.profile?.fullName} on School Designer`}
               className="rounded-full"
               width={32}
               height={32}
             />
           ) : (
             <div className="flex size-8 items-center justify-center rounded-full bg-gray-200">
-              <span className="font-medium text-gray-700">{account?.profile?.name.charAt(0)}</span>
+              <span className="font-medium text-gray-700">{account?.profile?.fullName.charAt(0)}</span>
             </div>
           )}
         </div>

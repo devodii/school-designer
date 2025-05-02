@@ -37,17 +37,21 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
   const summary = structuredResponse && "summary" in structuredResponse ? structuredResponse.summary : null
   const quiz = structuredResponse && "quiz" in structuredResponse ? structuredResponse.quiz : null
 
-  const { openCanvas } = useCanvas()
+  const { openCanvas, closeCanvas } = useCanvas()
 
   const handleOpenCanvas = () => {
     if (!quiz) return toast.error("No quiz found", { position: "top-right" })
 
-    openCanvas({
-      id: "quiz",
-      content: <QuizForm quiz={quiz} />,
-      width: "500px",
-      position: "right",
-    })
+    closeCanvas("ai-chat")
+
+    setTimeout(() => {
+      openCanvas({
+        id: "quiz",
+        content: <QuizForm quiz={quiz} />,
+        width: "500px",
+        position: "right",
+      })
+    }, 100)
   }
 
   return (
@@ -140,9 +144,13 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
 
                 <div className="bg-accent w-full rounded-lg p-2 text-sm">{quiz.questions[0].question}</div>
 
-                <Button className="w-full" onClick={handleOpenCanvas}>
-                  Attempt Quiz
-                </Button>
+                <CanvasTrigger
+                  triggerAsChild
+                  triggerChildren={<Button className="w-full">Attempt Quiz</Button>}
+                  canvasId="quiz"
+                  canvasPushElementId="__dashboard-layout-container"
+                  canvasOptions={{ content: <QuizForm quiz={quiz} />, width: "500px", position: "right", id: "quiz" }}
+                />
               </div>
             }
           />

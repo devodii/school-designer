@@ -12,14 +12,19 @@ interface CanvasTriggerProps
     MixinProps<"canvas", CanvasProps> {
   canvasOptions: Omit<CanvasState, "isOpen">
   canvasId: string
-  asChild?: boolean
+  triggerAsChild?: boolean
 }
 
-export const CanvasTrigger = ({ canvasOptions, canvasId, asChild = false, ...mixinProps }: CanvasTriggerProps) => {
+export const CanvasTrigger = ({
+  canvasOptions,
+  canvasId,
+  triggerAsChild = false,
+  ...mixinProps
+}: CanvasTriggerProps) => {
   const { trigger, canvas } = splitProps(mixinProps, "trigger", "canvas", "elementId")
   const { openCanvas } = useCanvas()
 
-  const TriggerComp = asChild ? Slot : "button"
+  const TriggerComp = triggerAsChild ? Slot : "button"
 
   return (
     <>
