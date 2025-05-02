@@ -73,8 +73,12 @@ export const DashboardSidebar = () => {
               position: "right",
               id: "study-helper",
             }}
-            triggerClassName="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors"
-            triggerChildren="Quiz Helper"
+            triggerAsChild
+            triggerChildren={
+              <button className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
+                Quiz Helper
+              </button>
+            }
           />
 
           <CanvasTrigger
@@ -93,8 +97,12 @@ export const DashboardSidebar = () => {
               position: "right",
               id: "app-feedback",
             }}
-            triggerClassName="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors"
-            triggerChildren="Send Feedback"
+            triggerAsChild
+            triggerChildren={
+              <button className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
+                Send Feedback
+              </button>
+            }
           />
         </div>
       </div>

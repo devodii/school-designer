@@ -98,12 +98,6 @@ export const QuizForm = ({ quiz }: QuizFormProps) => {
                         key={index}
                         id={option}
                         labelText={option}
-                        labelOnClick={e => {
-                          console.log("clicked")
-                          e.stopPropagation()
-                          const checkboxElement = document.getElementById(option) as HTMLInputElement
-                          checkboxElement?.click()
-                        }}
                       />
                     ))}
                   </div>

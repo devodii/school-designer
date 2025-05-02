@@ -26,10 +26,11 @@ export const CanvasTrigger = ({
 
   const TriggerComp = triggerAsChild ? Slot : "button"
 
+
   return (
     <>
       <TriggerComp className="cursor-pointer" onClick={() => openCanvas(canvasOptions)} {...trigger} />
-      <Canvas {...canvas} id={canvasId} />
+      <Canvas {...canvas} id={canvasId} key={canvasId} />
     </>
   )
 }

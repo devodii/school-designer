@@ -39,6 +39,7 @@ export const EmptyClassroom = () => {
           canvasId="create-classroom"
           canvasContainerStyle={{ top: -10 }}
           canvasOptions={{ content: <CreateClassroom />, width: "400px", position: "right", id: "create-classroom" }}
+          triggerAsChild
           triggerChildren={<Button>Create Your First Classroom</Button>}
         />
       </div>

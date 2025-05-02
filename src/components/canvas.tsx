@@ -6,7 +6,6 @@ import { useEffect, ComponentProps } from "react"
 import { useCanvas } from "@/context/canvas"
 import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
-import { ChevronsUp } from "lucide-react"
 
 export interface CanvasProps extends ComponentProps<"div">, MixinProps<"container", ComponentProps<"div">> {
   id: string
@@ -29,6 +28,16 @@ export const Canvas = ({ pushElementId, id, ...mixinProps }: CanvasProps) => {
 
   const pushElementRef = useRef<HTMLElement | null>(null)
 
+  const handleClose = () => {
+    const pushElement = document.getElementById(pushElementId)
+    if (pushElement) {
+      pushElement.style.transition = "all 300ms ease-in-out"
+      pushElement.style.marginRight = "0"
+      pushElement.style.marginLeft = "0"
+    }
+    closeCanvas(id)
+  }
+
   useEffect(() => {
     pushElementRef.current = document.getElementById(pushElementId)
   }, [pushElementId])
@@ -36,26 +45,27 @@ export const Canvas = ({ pushElementId, id, ...mixinProps }: CanvasProps) => {
   useEffect(() => {
     const pushElement = pushElementRef.current
 
-    if (pushElement) {
+    if (pushElement && shouldShow) {
       pushElement.style.transition = "all 300ms ease-in-out"
 
       if (position === "right") {
-        pushElement.style.marginRight = shouldShow ? `${width}` : "0"
+        console.log("pushing elements..")
+        pushElement.style.marginRight = `${width}`
         pushElement.style.marginLeft = "0"
       } else {
-        pushElement.style.marginLeft = shouldShow ? `${width}` : "0"
+        pushElement.style.marginLeft = `${width}`
         pushElement.style.marginRight = "0"
       }
     }
-  }, [shouldShow, width, position])
+  }, [shouldShow, width, position, isOpen, pushElementId])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (canvasRef.current && !canvasRef.current.contains(event.target as Node)) closeCanvas(id)
+      if (canvasRef.current && !canvasRef.current.contains(event.target as Node)) handleClose()
     }
 
     const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeCanvas(id)
+      if (event.key === "Escape") handleClose()
     }
 
     if (shouldShow) {

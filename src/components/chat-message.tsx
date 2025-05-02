@@ -39,21 +39,6 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
 
   const { openCanvas, closeCanvas } = useCanvas()
 
-  const handleOpenCanvas = () => {
-    if (!quiz) return toast.error("No quiz found", { position: "top-right" })
-
-    closeCanvas("ai-chat")
-
-    setTimeout(() => {
-      openCanvas({
-        id: "quiz",
-        content: <QuizForm quiz={quiz} />,
-        width: "500px",
-        position: "right",
-      })
-    }, 100)
-  }
-
   return (
     <li className={cn("flex w-full flex-col gap-2", persona === "user" ? "items-end" : "items-start")}>
       <Image src={image} alt={name} width={32} height={32} className="size-5 rounded-full" />

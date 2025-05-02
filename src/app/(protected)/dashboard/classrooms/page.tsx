@@ -32,6 +32,7 @@ export default function ClassroomsPage() {
                 position: "right",
                 id: "create-classroom",
               }}
+              triggerAsChild
               triggerChildren={
                 <button className="group flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed hover:border-gray-100">
                   <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 transition-colors group-hover:bg-gray-100">
