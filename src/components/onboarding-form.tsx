@@ -48,6 +48,7 @@ const UsernameStep = ({ onNext }: StepComponentProps<OnboardingSchema>) => {
         name="username"
         render={({ field, fieldState: { error } }) => (
           <TextField
+            id={field.name}
             labelText="What is your name?"
             inputValue={field.value}
             inputOnChange={field.onChange}
@@ -80,6 +81,7 @@ const ClassroomCodeStep = ({ onNext, onBack }: StepComponentProps<OnboardingSche
         name="classroom_code"
         render={({ field, fieldState: { error } }) => (
           <TextField
+            id={field.name}
             labelText="Enter your classroom code (if you were invited)"
             inputValue={field.value}
             inputOnChange={field.onChange}
@@ -125,6 +127,7 @@ const SchoolNameStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>
         name="school_name"
         render={({ field, fieldState: { error } }) => (
           <TextField
+            id={field.name}
             labelText="What school do you attend?"
             inputValue={field.value}
             inputOnChange={field.onChange}
@@ -280,6 +283,7 @@ const ReferralCodeStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchem
         name="referral_code"
         render={({ field, fieldState: { error } }) => (
           <TextField
+            id={field.name}
             labelText="Customize your referral code"
             inputValue={field.value}
             inputOnChange={field.onChange}
@@ -321,7 +325,7 @@ const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>)
       await updateAccount(session.accountId, {
         level: values.education_level,
         referral_code: values.referral_code,
-        profile: { name: values.username, subjects_offered: values.subjects, pictures: values.photos },
+        profile: { fullName: values.username, subjectsOffered: values.subjects, pictures: values.photos, userName: "" },
         isOnboarded: true,
       })
     },

@@ -37,8 +37,7 @@ export const AuthForm = ({ onSendMagicLink, onError }: AuthFormProps) => {
         render={({ field, fieldState: { error } }) => (
           <TextField
             {...field}
-            labelHtmlFor="email"
-            inputId="email"
+            id={field.name}
             labelText="Email"
             inputValue={field.value}
             inputOnChange={field.onChange}

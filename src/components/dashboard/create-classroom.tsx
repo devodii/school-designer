@@ -59,6 +59,7 @@ export const CreateClassroom = () => {
           control={form.control}
           render={({ field, fieldState: { error } }) => (
             <TextField
+              id={field.name}
               labelText="Classroom Name"
               errorText={error?.message}
               inputPlaceholder="Defense Against Dark Arts"
@@ -75,6 +76,8 @@ export const CreateClassroom = () => {
           control={form.control}
           render={({ field, fieldState: { error } }) => (
             <TextareaField
+              id={field.name}
+              id={field.name}
               labelText="What’s this class about?"
               errorText={error?.message}
               textareaPlaceholder="Learn to fight the dark arts with friends."
@@ -92,6 +95,7 @@ export const CreateClassroom = () => {
           control={form.control}
           render={({ field, fieldState: { error } }) => (
             <TextField
+              id={field.name}
               labelText="Customize your invite code"
               errorText={error?.message}
               inputPlaceholder="Enter your invite code"

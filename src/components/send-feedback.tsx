@@ -51,6 +51,7 @@ export const SendFeedback = ({ onSubmit }: SendFeedbackProps) => {
           name="text"
           render={({ field, fieldState: { error } }) => (
             <TextareaField
+              id={field.name}
               labelText="Feedback"
               textareaPlaceholder="Type your feedback here..."
               textareaClassName="min-h-[100px]"
