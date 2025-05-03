@@ -1,21 +1,23 @@
 "use client"
 
+import { createTimetable as createTimetableAction } from "@/actions/timetable"
+import { SimpleUpload } from "@/components/simple-upload"
+import { TextareaField } from "@/components/text-area-field"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
 import { useCanvas } from "@/context/canvas"
 import { Spinner } from "@components/spinner"
 import { TextField } from "@components/text-field"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { Controller, useForm } from "react-hook-form"
+import { toast } from "sonner"
 import { z } from "zod"
 import { CREATE_TIMETABLE_CANVAS_NAME } from "~/constants/timetables"
 
-import { SimpleUpload } from "./simple-upload"
-import { Label } from "./ui/label"
-
 const createTimetableSchema = z.object({
   name: z.string({ message: "Name is required" }).min(1),
-  description: z.string().nullable(),
+  description: z.string().optional(),
   files: z.array(z.string()).min(1, { message: "At least one file is required" }),
 })
 
@@ -26,7 +28,7 @@ export const CreateTimetable = () => {
 
   const form = useForm<CreateTimetableSchema>({
     resolver: zodResolver(createTimetableSchema),
-    defaultValues: { description: null, files: [], name: "" },
+    defaultValues: { description: undefined, files: [], name: "" },
   })
 
   const {
@@ -35,10 +37,11 @@ export const CreateTimetable = () => {
     error,
   } = useMutation({
     mutationFn: async (dto: CreateTimetableSchema) => {
-      console.log({ dto })
+      await createTimetableAction({ description: dto.description ?? null, fileIds: dto.files, name: dto.name })
     },
     onSuccess: () => {
       closeCanvas(CREATE_TIMETABLE_CANVAS_NAME)
+      toast.success("Timetable created successfully")
     },
   })
 
@@ -66,11 +69,31 @@ export const CreateTimetable = () => {
 
         <Controller
           control={form.control}
+          name="description"
+          render={({ field, fieldState: { error } }) => (
+            <TextareaField
+              id={field.name}
+              labelText="Timetable Description"
+              textareaName={field.name}
+              textareaValue={field.value}
+              textareaOnChange={field.onChange}
+              textareaOnBlur={field.onBlur}
+              textareaPlaceholder="Some extra information about the timetable"
+              errorText={error?.message}
+            />
+          )}
+        />
+
+        <Controller
+          control={form.control}
           name="files"
           render={({ field, fieldState: { error } }) => (
             <div className="flex flex-col gap-2">
               <Label>Upload Timetable Files</Label>
-              <SimpleUpload inputAccept="application/pdf" onChangeFiles={field.onChange} />
+              <SimpleUpload
+                inputAccept="application/pdf"
+                onChangeFiles={files => field.onChange(files.map(file => file.id))}
+              />
               {error && <p className="text-sm text-red-500">{error?.message}</p>}
             </div>
           )}

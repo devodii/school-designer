@@ -10,13 +10,15 @@ import { cn } from "@/lib/tw-merge"
 import { Upload } from "lucide-react"
 import { toast } from "sonner"
 
+type FileWithId = File & { id: string }
+
 interface SimpleUploadProps
   extends MixinProps<"container", ComponentProps<"div">>,
     MixinProps<"trigger", ComponentProps<"button">>,
     MixinProps<"input", InputProps>,
     MixinProps<"file", ComponentProps<"span">>,
     MixinProps<"icon", ComponentProps<"svg">> {
-  onChangeFiles: (files: File[]) => void
+  onChangeFiles: (files: FileWithId[]) => void
 }
 
 export const SimpleUpload = ({ onChangeFiles, ...mixinProps }: SimpleUploadProps) => {
@@ -46,8 +48,8 @@ export const SimpleUpload = ({ onChangeFiles, ...mixinProps }: SimpleUploadProps
       await onUpload([selected])
       if (uploadResult?.success) {
         setFiles(prev => prev.filter(file => file.name !== selected.name))
+        setTimeout(() => onChangeFiles(files.map(file => ({ ...file, id: uploadResult?.data.id }))), 100)
       }
-      setTimeout(() => onChangeFiles(files), 100)
     }
   }
 

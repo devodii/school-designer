@@ -1,0 +1,17 @@
+import { accountSchema } from "@/db/schema/account"
+import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core"
+
+export const timetableSchema = pgTable("timetable", {
+  id: varchar("id").primaryKey(),
+  name: varchar("name").notNull(),
+  fileIds: text("file_ids").array().notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  deletedAt: timestamp("deleted_at"),
+  accountId: varchar("account_id")
+    .notNull()
+    .references(() => accountSchema.id, { onDelete: "set null" }),
+})
+
+export type Timetable = typeof timetableSchema.$inferSelect
