@@ -2,10 +2,10 @@ import { accountSchema } from "@/db/schema/account"
 import { pgTable, varchar, foreignKey, timestamp, pgEnum, index, jsonb } from "drizzle-orm/pg-core"
 
 export type FileMetadata = {
-  scope: "PROFILE"
+  scope: "ACCOUNT_PROFILE" | "COOKBOOK" | "TIMETABLE"
 }
 
-export const fileUploadTypeEnum = pgEnum("fileUploadType", ["IMAGE"])
+export const fileUploadTypeEnum = pgEnum("fileUploadType", ["IMAGE", "PDF"])
 
 export const fileUploadSchema = pgTable(
   "file_upload",

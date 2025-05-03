@@ -10,10 +10,13 @@ import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 import { CREATE_TIMETABLE_CANVAS_NAME } from "~/constants/timetables"
 
+import { SimpleUpload } from "./simple-upload"
+import { Label } from "./ui/label"
+
 const createTimetableSchema = z.object({
   name: z.string({ message: "Name is required" }).min(1),
-  description: z.string({ message: "Description is required" }).min(1),
-  classroomIds: z.array(z.string()).nullable(),
+  description: z.string().nullable(),
+  files: z.array(z.string()).min(1, { message: "At least one file is required" }),
 })
 
 type CreateTimetableSchema = z.infer<typeof createTimetableSchema>
@@ -21,7 +24,10 @@ type CreateTimetableSchema = z.infer<typeof createTimetableSchema>
 export const CreateTimetable = () => {
   const { closeCanvas } = useCanvas()
 
-  const form = useForm({ resolver: zodResolver(createTimetableSchema), defaultValues: { classroomIds: null } })
+  const form = useForm<CreateTimetableSchema>({
+    resolver: zodResolver(createTimetableSchema),
+    defaultValues: { description: null, files: [], name: "" },
+  })
 
   const {
     mutate: createTimetable,
@@ -41,7 +47,7 @@ export const CreateTimetable = () => {
       <h1 className="text-xl font-semibold">Create New Timetable</h1>
       <span className="text-muted-foreground text-sm">Create a new timetable to start your learning journey.</span>
 
-      <form onSubmit={form.handleSubmit(data => createTimetable(data))} className="flex w-full flex-col gap-4 mt-4">
+      <form onSubmit={form.handleSubmit(data => createTimetable(data))} className="mt-4 flex w-full flex-col gap-6">
         <Controller
           control={form.control}
           name="name"
@@ -58,9 +64,21 @@ export const CreateTimetable = () => {
           )}
         />
 
+        <Controller
+          control={form.control}
+          name="files"
+          render={({ field, fieldState: { error } }) => (
+            <div className="flex flex-col gap-2">
+              <Label>Upload Timetable Files</Label>
+              <SimpleUpload inputAccept="application/pdf" onChangeFiles={field.onChange} />
+              {error && <p className="text-sm text-red-500">{error?.message}</p>}
+            </div>
+          )}
+        />
+
         {error && <p className="text-sm text-red-500">{error?.message}</p>}
 
-        <div className="flex w-full items-center justify-end gap-2">
+        <div className="mt-6 flex w-full items-center justify-end gap-2">
           <Button
             type="button"
             className="text-sm"

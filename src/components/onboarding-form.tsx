@@ -310,7 +310,7 @@ const ReferralCodeStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchem
 const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>) => {
   const form = useFormContext()
 
-  const { onUpload, progresses, isUploading } = useFileUpload("image", { defaultUploadedFiles: [] }, error =>
+  const { onUpload, progresses, isUploading } = useFileUpload("profilePic", { defaultUploadedFiles: [] }, error =>
     toast.error(error),
   )
 
