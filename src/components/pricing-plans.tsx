@@ -8,6 +8,9 @@ import { Check } from "lucide-react"
 
 type ActiveTab = "monthly" | "yearly"
 
+const YEARLY_PRICE = 9
+const MONTHLY_PRICE = 12
+
 export const PricingPlans = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>("monthly")
 
@@ -30,7 +33,7 @@ export const PricingPlans = () => {
             label: () => (
               <div className="flex cursor-pointer items-center gap-1.5">
                 <span>Yearly</span>
-                <Badge className="text-xs">25% off</Badge>
+                <Badge className="text-xs">{100 - Math.round((YEARLY_PRICE / MONTHLY_PRICE) * 100)}% off</Badge>
               </div>
             ),
             component: () => <div />,
@@ -76,10 +79,11 @@ export const PricingPlans = () => {
         />
 
         <CardRoot
+          className="border border-black"
           titleChildren={
             <div className="flex flex-col gap-1">
               <span className="text-xl font-bold">Plus</span>
-              <span className="text-3xl font-bold">{activeTab === "monthly" ? "$12" : "$9"}</span>
+              <span className="text-3xl font-bold">${activeTab === "monthly" ? MONTHLY_PRICE : YEARLY_PRICE}</span>
               <span className="text-muted-foreground text-sm">
                 {activeTab === "monthly" ? "USD/month" : "USD/month, billed annually ($108)"}
               </span>

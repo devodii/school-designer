@@ -8,23 +8,22 @@ interface CardRootProps
     MixinProps<"title", ComponentProps<typeof CardTitle>>,
     MixinProps<"description", ComponentProps<typeof CardDescription>>,
     MixinProps<"content", ComponentProps<typeof CardContent>>,
-    MixinProps<"footer", ComponentProps<typeof CardFooter>> {
-  cardHeaderClassname?: string
-}
+    MixinProps<"header", Omit<ComponentProps<typeof CardHeader>, "children">>,
+    MixinProps<"footer", ComponentProps<typeof CardFooter>> {}
 
-export const CardRoot = ({ cardHeaderClassname, ...mixinProps }: CardRootProps) => {
-  const { title, description, content, footer, rest } = splitProps(
+export const CardRoot = (mixinProps: CardRootProps) => {
+  const { title, description, content, footer, header, rest } = splitProps(
     mixinProps,
     "title",
     "description",
     "content",
     "footer",
-    "action",
+    "header",
   )
 
   return (
     <Card {...rest}>
-      <CardHeader className={cardHeaderClassname}>
+      <CardHeader {...header}>
         <CardTitle {...title} />
         <CardDescription {...description} />
       </CardHeader>

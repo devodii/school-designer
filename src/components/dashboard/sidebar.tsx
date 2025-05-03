@@ -29,9 +29,10 @@ export const DashboardSidebar = () => {
         <LinkButton href="/dashboard/classrooms" icon={BookOpen} label="My Classrooms" buttonClassName="w-full" />
         <LinkButton href="/dashboard/timetable" icon={Calendar} label="My Timetable" buttonClassName="w-full" />
         <LinkButton href="/dashboard/cookbooks" icon={Book} label="My Cookbooks" buttonClassName="w-full" />
+        <LinkButton href="?pricing=auto" icon={Sparkle} label="Upgrade to Plus" buttonClassName="w-full" />
       </div>
 
-      <div className="mt-4 mb-2 rounded-xl px-3 py-4">
+      <div className="mt-4 mb-2 rounded-xl px-3 py-4 bg-accent">
         <div className="mb-3 flex items-center gap-2">
           <Sparkle className="text-primary-600 h-5 w-5" />
           <h3 className="text-primary-700 text-sm font-semibold">AI Tools</h3>

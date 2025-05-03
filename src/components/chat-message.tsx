@@ -133,7 +133,7 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
               </div>
             }
             titleClassName="text-lg font-semibold px-4 py-1"
-            cardHeaderClassname="p-0"
+            headerClassName="p-0"
             descriptionChildren={quiz.description}
             descriptionClassName="text-muted-foreground px-4 py-1 text-sm text-start"
             contentClassName="p-0 w-full"

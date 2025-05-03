@@ -58,7 +58,7 @@ export const ChatTagPicker = ({ onSelect, onClose }: ChatTagPickerProps) => {
   return (
     <div
       ref={tagPickerRef}
-      className="absolute right-4 bottom-20 left-4 z-10 max-h-60 max-w-[300px] rounded-lg border bg-white p-2 shadow-lg"
+      className="absolute right-4 bottom-16 left-8 z-10 max-h-60 max-w-[300px] rounded-lg border bg-white p-2 shadow-lg"
     >
       <div className="overflow-y-auto">
         {tags.map(tag => (

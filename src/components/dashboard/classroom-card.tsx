@@ -13,7 +13,7 @@ export const ClassroomCard = ({ backgroundImage, members, name, isJoined }: Clas
   return (
     <CardRoot
       as="li"
-      cardHeaderClassname="p-0"
+      headerClassName="p-0"
       className="pt-0 pb-2"
       titleChildren={
         <div className="relative flex flex-col gap-2">

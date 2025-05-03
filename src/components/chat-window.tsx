@@ -103,17 +103,31 @@ export const ChatWindow = ({}: ChatWindowProps) => {
             <Plus className="h-4 w-4" />
           </Button>
 
-          <Textarea
-            ref={textareaRef}
-            id="__message-input"
-            placeholder="Type your message..."
-            rows={1}
-            className="flex-1"
-            value={message}
-            onChange={e => setMessage(e.target.value)}
-            onKeyDown={handleKeyPress}
-            style={{ minHeight: "36px", maxHeight: "120px" }}
-          />
+          <div className="focus-within:ring-ring/50 border-input focus-within:border-ring relative flex w-full flex-col gap-1 rounded-md border focus-within:ring-2">
+            <Textarea
+              ref={textareaRef}
+              id="__message-input"
+              placeholder="Type your message..."
+              rows={1}
+              className="flex-1 border-0 outline-none focus-visible:border-transparent focus-visible:ring-0"
+              value={message}
+              onChange={e => setMessage(e.target.value)}
+              onKeyDown={handleKeyPress}
+              style={{ minHeight: "65px", maxHeight: "120px" }}
+            />
+            <div className="flex items-center justify-between px-2 py-1">
+              <button
+                type="button"
+                className="text-muted-foreground cursor-pointer font-sans text-lg font-bold transition"
+                onClick={() => setTagPickerOpen(prev => !prev)}
+                tabIndex={-1}
+              >
+                @
+              </button>
+
+              <div />
+            </div>
+          </div>
 
           <Button size="icon" className="h-[36px]" onClick={handleSendMessage} disabled={!message.trim()}>
             <SendHorizontal className="h-4 w-4" />
