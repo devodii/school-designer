@@ -1,27 +1,44 @@
 import { CanvasTrigger } from "@/components/canvas-trigger"
-import { CardRoot } from "@/components/card-root"
 import { CreateTimetable } from "@/components/create-timetable"
+import { ViewTimetable } from "@/components/view-timetable"
 import { Button } from "@components/ui/button"
-import { Calendar, Sparkle } from "lucide-react"
-import { CREATE_TIMETABLE_CANVAS_NAME, mockTimetables } from "~/constants/timetables"
+import { Calendar, Upload } from "lucide-react"
+import { CREATE_TIMETABLE_CANVAS_NAME } from "~/constants/timetables"
 
-const hasTimetables = false
+const hasTimetables = true
 
 export default function TimetablePage() {
   return (
     <div className="flex h-screen w-full flex-col p-4">
       <div className="flex flex-col gap-6" id="__canvas-push-element">
-        <h1 className="flex items-center gap-2 text-2xl font-semibold">
-          <span>My Timetables</span>
-          <Sparkle className="text-primary h-5 w-5" />
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 className="flex items-center gap-2 text-2xl font-semibold">
+            <span>My Timetables</span>
+          </h1>
+
+          {hasTimetables && (
+            <CanvasTrigger
+              canvasId={CREATE_TIMETABLE_CANVAS_NAME}
+              canvasOptions={{
+                content: <CreateTimetable />,
+                width: "400px",
+                position: "right",
+                id: CREATE_TIMETABLE_CANVAS_NAME,
+                pushElementId: "__canvas-push-element",
+              }}
+              triggerAsChild
+              triggerChildren={
+                <Button variant="outline">
+                  <Upload className="size-4" />
+                  <span>Upload Timetable</span>
+                </Button>
+              }
+            />
+          )}
+        </div>
 
         {hasTimetables ? (
-          <ul className="grid w-full max-w-6xl grid-cols-1 gap-4">
-            {mockTimetables.map(t => (
-              <CardRoot contentChildren={JSON.stringify(t)} />
-            ))}
-          </ul>
+          <ViewTimetable />
         ) : (
           <div className="flex h-full flex-col items-center justify-center py-16">
             <div className="mx-auto max-w-md text-center">

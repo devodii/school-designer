@@ -33,3 +33,29 @@ export const findTimetableById = async (id: string) => {
 
   return data[0]
 }
+
+export const updateTimetable = async (id: string, dto: Partial<Timetable>) => {
+  const session = await getSession()
+
+  if (!session) throw new Error("Unauthorized")
+
+  const { data, error } = await tryCatch(db.update(timetableSchema).set(dto).where(eq(timetableSchema.id, id)))
+
+  if (error) throw new Error("Failed to update timetable")
+
+  return data[0]
+}
+
+export const getAccountTimetables = async () => {
+  const session = await getSession()
+
+  if (!session) throw new Error("Unauthorized")
+
+  const { data, error } = await tryCatch(
+    db.select().from(timetableSchema).where(eq(timetableSchema.accountId, session.accountId)),
+  )
+
+  if (error) throw new Error("Failed to get account timetables")
+
+  return data
+}
