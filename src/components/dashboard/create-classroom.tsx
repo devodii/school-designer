@@ -13,6 +13,7 @@ import { nanoid } from "nanoid"
 import { useRouter } from "next/navigation"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
+import { CREATE_CLASSROOM_CANVAS_NAME } from "~/constants/classrooms"
 
 const createClassroomSchema = z.object({
   name: z.string({ message: "Classroom name is required" }).min(1),
@@ -38,7 +39,7 @@ export const CreateClassroom = () => {
       return await createClassroomAction(data)
     },
     onSuccess: data => {
-      closeCanvas()
+      closeCanvas(CREATE_CLASSROOM_CANVAS_NAME)
       form.reset()
       router.push(`/dashboard/classrooms/${data.id}`)
     },
@@ -109,10 +110,15 @@ export const CreateClassroom = () => {
         {isError && <p className="text-sm text-red-500">{error?.message}</p>}
 
         <div className="flex justify-end gap-2">
-          <Button type="button" className="text-sm" variant="outline" onClick={() => closeCanvas()}>
+          <Button
+            type="button"
+            className="text-sm"
+            variant="outline"
+            onClick={() => closeCanvas(CREATE_CLASSROOM_CANVAS_NAME)}
+          >
             Close
           </Button>
-          <Button className="text-sm" type="submit">
+          <Button className="text-sm font-semibold" type="submit" disabled={isPending}>
             Create Classroom
             {isPending && <Spinner className="ml-2" size={20} />}
           </Button>

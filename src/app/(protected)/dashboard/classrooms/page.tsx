@@ -1,9 +1,9 @@
 import { CanvasTrigger } from "@/components/canvas-trigger"
 import { ClassroomCard } from "@/components/dashboard/classroom-card"
 import { CreateClassroom } from "@/components/dashboard/create-classroom"
-import { EmptyClassroom } from "@/components/dashboard/empty-classroom"
+import { EmptyClassroom } from "@/components/empty-classroom"
 import { Plus, Sparkle } from "lucide-react"
-import { mockClassrooms } from "~/constants/classrooms"
+import { CREATE_CLASSROOM_CANVAS_NAME, mockClassrooms } from "~/constants/classrooms"
 
 const hasClassrooms = false
 
@@ -23,12 +23,12 @@ export default function ClassroomsPage() {
             ))}
 
             <CanvasTrigger
-              canvasId="create-classroom"
+              canvasId={CREATE_CLASSROOM_CANVAS_NAME}
               canvasOptions={{
                 content: <CreateClassroom />,
                 width: "400px",
                 position: "right",
-                id: "create-classroom",
+                id: CREATE_CLASSROOM_CANVAS_NAME,
                 pushElementId: "__canvas-push-element",
               }}
               triggerAsChild

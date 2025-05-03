@@ -3,6 +3,7 @@
 import { CanvasTrigger } from "@/components/canvas-trigger"
 import { CreateClassroom } from "@components/dashboard/create-classroom"
 import { Button } from "@components/ui/button"
+import { CREATE_CLASSROOM_CANVAS_NAME } from "~/constants/classrooms"
 
 export const EmptyClassroom = () => {
   return (
@@ -35,16 +36,16 @@ export const EmptyClassroom = () => {
         </p>
 
         <CanvasTrigger
-          canvasId="create-classroom"
+          canvasId={CREATE_CLASSROOM_CANVAS_NAME}
           canvasOptions={{
             content: <CreateClassroom />,
             width: "400px",
             position: "right",
-            id: "create-classroom",
+            id: CREATE_CLASSROOM_CANVAS_NAME,
             pushElementId: "__canvas-push-element",
           }}
           triggerAsChild
-          triggerChildren={<Button>Create Your First Classroom</Button>}
+          triggerChildren={<Button>Create your first classroom</Button>}
         />
       </div>
     </div>

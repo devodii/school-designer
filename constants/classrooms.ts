@@ -1,5 +1,7 @@
 import { QuizResponse } from "@/interfaces/chat"
 
+export const CREATE_CLASSROOM_CANVAS_NAME = "create-classroom"
+
 export const mockClassrooms = [
   {
     id: "1",
