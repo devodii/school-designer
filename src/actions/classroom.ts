@@ -3,7 +3,7 @@
 import { findAccountById } from "@/actions/account"
 import { getSession } from "@/actions/session"
 import db from "@/db"
-import { classroomSchema, ClassroomSchema } from "@/db/schema/classroom"
+import { classroomMemberSchema, classroomSchema, ClassroomSchema } from "@/db/schema/classroom"
 import { tryCatch } from "@/lib/try-catch"
 import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
@@ -16,7 +16,7 @@ export const findClassroomById = async (id: string) => {
   return data[0]
 }
 
-const findClassroomByInviteCode = async (inviteCode: string) => {
+export const findClassroomByInviteCode = async (inviteCode: string) => {
   const { data, error } = await tryCatch(
     db.select().from(classroomSchema).where(eq(classroomSchema.inviteCode, inviteCode)),
   )
@@ -54,6 +54,36 @@ export const createClassroom = async (dto: Pick<ClassroomSchema, "name" | "descr
   )
 
   if (error) throw new Error("Failed to create classroom")
+
+  return { id: data[0].id }
+}
+
+export const postClassroomJoin = async (classroomId: string) => {
+  const session = await getSession()
+
+  if (!session) throw new Error("Unauthorized")
+
+  const account = await findAccountById(session.accountId)
+
+  if (!account) throw new Error("Invalid account")
+
+  const classroom = await findClassroomById(classroomId)
+
+  if (!classroom) throw new Error("Classroom not found")
+
+  const { data, error } = await tryCatch(
+    db
+      .insert(classroomMemberSchema)
+      .values({
+        id: `cm_${nanoid(25)}`,
+        accountId: account.id,
+        classroomId: classroom.id,
+        createdAt: new Date(),
+      })
+      .returning({ id: classroomMemberSchema.id }),
+  )
+
+  if (error) throw new Error("Failed to join classroom")
 
   return { id: data[0].id }
 }

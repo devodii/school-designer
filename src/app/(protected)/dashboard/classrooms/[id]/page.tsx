@@ -20,7 +20,7 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
 
   if (!classroom) return notFound()
 
-  const shareLink = `${process.env.APP_URL}/join?roomId=${id}`
+  const shareLink = `${process.env.APP_URL}/join?room_code=${classroom.inviteCode}`
 
   return (
     <div className="flex h-screen w-full flex-col gap-6 px-4 py-6 md:px-12">
