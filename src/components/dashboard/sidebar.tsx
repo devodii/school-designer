@@ -32,7 +32,7 @@ export const DashboardSidebar = () => {
         <LinkButton href="?pricing=auto" icon={Sparkle} label="Upgrade to Plus" buttonClassName="w-full" />
       </div>
 
-      <div className="mt-4 mb-2 rounded-xl px-3 py-4 bg-accent">
+      <div className="bg-accent mt-4 mb-2 rounded-xl px-3 py-4">
         <div className="mb-3 flex items-center gap-2">
           <Sparkle className="text-primary-600 h-5 w-5" />
           <h3 className="text-primary-700 text-sm font-semibold">AI Tools</h3>

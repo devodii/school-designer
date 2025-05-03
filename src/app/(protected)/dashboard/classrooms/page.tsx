@@ -5,7 +5,7 @@ import { EmptyClassroom } from "@/components/empty-classroom"
 import { Plus, Sparkle } from "lucide-react"
 import { CREATE_CLASSROOM_CANVAS_NAME, mockClassrooms } from "~/constants/classrooms"
 
-const hasClassrooms = false
+const hasClassrooms = true
 
 export default function ClassroomsPage() {
   return (

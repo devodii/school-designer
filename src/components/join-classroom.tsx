@@ -6,9 +6,12 @@ import { getSession } from "@/actions/session"
 import { CardRoot } from "@/components/card-root"
 import { Button } from "@/components/ui/button"
 import { ClassroomSchema } from "@/db/schema/classroom"
+import { sleep } from "@/lib/sleep"
+import { Spinner } from "@components/spinner"
 import { useMutation } from "@tanstack/react-query"
 import { Users } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 interface JoinClassroomProps {
   data: ClassroomSchema
@@ -17,20 +20,23 @@ interface JoinClassroomProps {
 export const JoinClassroom = ({ data }: JoinClassroomProps) => {
   const router = useRouter()
 
-  const { mutate: joinClassroom } = useMutation({
+  const { mutate: joinClassroom, isPending } = useMutation({
     mutationFn: async () => {
       const session = await getSession()
 
-      if (!session) return router.push(`/login?redirect=/join?roomCode=${data.inviteCode}`)
+      await sleep(1000)
+
+      if (!session) return router.push(`/signin?redirect=/join?roomCode=${data.inviteCode}`)
 
       const account = await findAccountById(session.accountId)
 
-      if (!account) return
+      if (!account) return router.push(`/signin?redirect=/join?roomCode=${data.inviteCode}`)
 
       const { id } = await postClassroomJoin(data.id)
 
       router.push(`/dashboard/classrooms/${id}`)
     },
+    onError: error => toast.error(error.message),
   })
 
   return (
@@ -42,7 +48,7 @@ export const JoinClassroom = ({ data }: JoinClassroomProps) => {
             <Users className="h-12 w-12 text-gray-500" />
           </div>
 
-          <h2 className="text-center text-2xl font-semibold">Join ‘${data.name}‘</h2>
+          <h2 className="text-center text-2xl font-semibold">Join ‘{data.name}‘</h2>
         </div>
       }
       descriptionChildren="You‘ve been invited to join Ms. Johnson's classroom"
@@ -54,8 +60,13 @@ export const JoinClassroom = ({ data }: JoinClassroomProps) => {
             participate in class discussions.
           </p>
 
-          <Button onClick={() => joinClassroom()} className="mx-auto w-full max-w-xs text-xs font-semibold">
-            Join Classroom
+          <Button
+            disabled={isPending}
+            onClick={() => joinClassroom()}
+            className="mx-auto flex w-full max-w-xs items-center gap-2"
+          >
+            <span className="text-sm font-semibold"> Join Classroom</span>
+            {isPending && <Spinner size={20} />}
           </Button>
         </div>
       }

@@ -36,7 +36,7 @@ export const TableRoot = <T,>({ data, columns, ...mixinProps }: TableRootProps<T
     getCoreRowModel: getCoreRowModel(),
   })
 
-    // Calculate equal column width based on number of columns
+  // Calculate equal column width based on number of columns
   const columnCount = columns.length
   const columnWidthPercentage = columnCount > 0 ? 100 / columnCount : 100
 

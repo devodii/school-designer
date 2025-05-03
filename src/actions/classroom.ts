@@ -85,5 +85,5 @@ export const postClassroomJoin = async (classroomId: string) => {
 
   if (error) throw new Error("Failed to join classroom")
 
-  return { id: data[0].id }
+  return { id: classroom.id }
 }
