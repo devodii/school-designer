@@ -4,7 +4,7 @@ import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
 import { TabsContent, TabsList, TabsTrigger, Tabs } from "@components/ui/tabs"
 
-interface MenuTabsProps
+interface TabsRootProps
   extends ComponentProps<typeof Tabs>,
     MixinProps<"list", ComponentProps<typeof TabsList>>,
     MixinProps<"trigger", ComponentProps<typeof TabsTrigger>>,
@@ -12,7 +12,7 @@ interface MenuTabsProps
   tabs: { label: string; value: string; component: ComponentType }[]
 }
 
-const MenuTabs = ({ tabs, ...mixinProps }: MenuTabsProps) => {
+export const TabsRoot = ({ tabs, ...mixinProps }: TabsRootProps) => {
   const { list, trigger, content, rest } = splitProps(mixinProps, "list", "trigger", "content")
 
   return (
@@ -41,5 +41,3 @@ const MenuTabs = ({ tabs, ...mixinProps }: MenuTabsProps) => {
     </Tabs>
   )
 }
-
-export default MenuTabs

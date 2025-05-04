@@ -1,7 +1,7 @@
 "use client"
 
+import { QuizForm } from "@/components/ai/quiz-form"
 import { CanvasTrigger } from "@/components/canvas-trigger"
-import { QuizForm } from "@/components/quiz-form"
 import { useCanvas } from "@/context/canvas"
 import { ChatMessageTag, TaggedChatResponse } from "@/interfaces/chat"
 import { cn } from "@/lib/tw-merge"

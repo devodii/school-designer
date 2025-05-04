@@ -1,4 +1,4 @@
-import { JoinWaitlist } from "@/components/join-waitlist"
+import { JoinWaitlist } from "@/components/ai/join-waitlist"
 
 export default function WaitlistPage() {
   return (

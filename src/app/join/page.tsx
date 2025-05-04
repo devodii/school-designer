@@ -1,5 +1,5 @@
 import { findClassroomByInviteCode } from "@/actions/classroom"
-import { JoinClassroom } from "@/components/join-classroom"
+import { JoinClassroom } from "@/components/classroom/join-classroom"
 import { notFound } from "next/navigation"
 
 interface JoinPageProps {

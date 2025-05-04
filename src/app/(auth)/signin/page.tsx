@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 
-import { AuthForm } from "@/components/auth-form"
-import { GoogleLogin } from "@/components/google-login"
+import { AuthForm } from "@/components/auth/auth-form"
+import { GoogleLogin } from "@/components/auth/google-login"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 

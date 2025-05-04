@@ -16,9 +16,10 @@ interface TableRootProps<T>
     MixinProps<"th", Omit<ComponentProps<"th">, "children">> {
   data: T[]
   columns: ColumnDef<NoInfer<T>>[]
+  onRowAction?: (row: T) => void
 }
 
-export const TableRoot = <T,>({ data, columns, ...mixinProps }: TableRootProps<T>) => {
+export const TableRoot = <T,>({ data, columns, onRowAction, ...mixinProps }: TableRootProps<T>) => {
   const { container, table, thead, tbody, tr, td, th } = splitProps(
     mixinProps,
     "container",
@@ -72,7 +73,12 @@ export const TableRoot = <T,>({ data, columns, ...mixinProps }: TableRootProps<T
 
         <tbody {...tbody} className={cn("divide-y divide-gray-100 bg-white", tbody.className)}>
           {reactTable.getRowModel().rows.map(row => (
-            <tr {...tr} key={row.id}>
+            <tr
+              {...tr}
+              key={row.id}
+              onClick={() => onRowAction?.(row.original)}
+              className={cn(onRowAction && "cursor-pointer", tr.className)}
+            >
               {row.getVisibleCells().map(cell => (
                 <td
                   {...td}

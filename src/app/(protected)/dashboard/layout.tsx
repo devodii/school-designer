@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react"
 
-import { DashboardSidebar } from "@/components/dashboard/sidebar"
+import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar"
 
 export default function DashboardLayout({ children }: PropsWithChildren) {
   return (

@@ -2,11 +2,11 @@
 
 import React from "react"
 
+import { QuizForm } from "@/components/ai/quiz-form"
+import { SendFeedback } from "@/components/ai/send-feedback"
 import { CanvasTrigger } from "@/components/canvas-trigger"
-import { ChatWindow } from "@/components/chat-window"
+import { ChatWindow } from "@/components/chat/chat-window"
 import { CreateNotebook } from "@/components/create-notebook"
-import { QuizForm } from "@/components/quiz-form"
-import { SendFeedback } from "@/components/send-feedback"
 import { useCanvas } from "@/context/canvas"
 import { LinkButton } from "@components/link-button"
 import { Book, BookOpen, Calendar, Settings, Sparkle } from "lucide-react"

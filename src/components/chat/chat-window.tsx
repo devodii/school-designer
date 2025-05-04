@@ -3,9 +3,9 @@
 import { useState, KeyboardEvent, useRef } from "react"
 
 import { ChatMessageTag } from "@/interfaces/chat"
-import { ChatMessage, Message } from "@components/chat-message"
-import { ChatMessageSkeleton } from "@components/chat-message-skeleton"
-import { ChatTagPicker } from "@components/chat-tag-picker"
+import { ChatMessage, Message } from "@/components/chat/chat-message"
+import { ChatMessageSkeleton } from "@/components/chat/chat-message-skeleton"
+import { ChatTagPicker } from "@/components/chat/chat-tag-picker"
 import { Button } from "@components/ui/button"
 import { Textarea } from "@components/ui/textarea"
 import { Plus, SendHorizontal } from "lucide-react"

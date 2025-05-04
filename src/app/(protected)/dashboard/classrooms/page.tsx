@@ -1,7 +1,7 @@
 import { CanvasTrigger } from "@/components/canvas-trigger"
-import { ClassroomCard } from "@/components/dashboard/classroom-card"
-import { CreateClassroom } from "@/components/dashboard/create-classroom"
-import { EmptyClassroom } from "@/components/empty-classroom"
+import { ClassroomCard } from "@/components/classroom/classroom-card"
+import { CreateClassroom } from "@/components/classroom/create-classroom"
+import { EmptyClassroom } from "@/components/classroom/empty-classroom"
 import { Plus, Sparkle } from "lucide-react"
 import { CREATE_CLASSROOM_CANVAS_NAME, mockClassrooms } from "~/constants/classrooms"
 

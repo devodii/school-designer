@@ -1,7 +1,7 @@
 "use client"
 
 import { CanvasTrigger } from "@/components/canvas-trigger"
-import { CreateClassroom } from "@components/dashboard/create-classroom"
+import { CreateClassroom } from "@/components/classroom/create-classroom"
 import { Button } from "@components/ui/button"
 import { CREATE_CLASSROOM_CANVAS_NAME } from "~/constants/classrooms"
 

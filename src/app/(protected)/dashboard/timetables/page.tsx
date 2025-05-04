@@ -1,6 +1,6 @@
 import { CanvasTrigger } from "@/components/canvas-trigger"
 import { CreateTimetable } from "@/components/create-timetable"
-import { ViewTimetable } from "@/components/view-timetable"
+import { ViewTimetables } from "@/components/timetable/view-timetables"
 import { Button } from "@components/ui/button"
 import { Calendar, Upload } from "lucide-react"
 import { CREATE_TIMETABLE_CANVAS_NAME } from "~/constants/timetables"
@@ -38,7 +38,7 @@ export default function TimetablePage() {
         </div>
 
         {hasTimetables ? (
-          <ViewTimetable />
+          <ViewTimetables />
         ) : (
           <div className="flex h-full flex-col items-center justify-center py-16">
             <div className="mx-auto max-w-md text-center">
