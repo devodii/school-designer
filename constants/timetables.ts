@@ -1,9 +1,6 @@
-import { Timetable } from "@/db/schema/timetable"
+import { TimetableSchema } from "@/db/schema/timetable"
 
-export const CREATE_TIMETABLE_CANVAS_NAME = "create-timetable"
-export const VIEW_TIMETABLE_CANVAS_NAME = "view-timetable"
-
-export const mockTimetables: Timetable[] = [
+export const mockTimetables: TimetableSchema[] = [
   {
     id: "tt-001",
     name: "Fall Semester 2025",

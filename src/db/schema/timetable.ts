@@ -14,4 +14,4 @@ export const timetableSchema = pgTable("timetable", {
     .references(() => accountSchema.id, { onDelete: "set null" }),
 })
 
-export type Timetable = typeof timetableSchema.$inferSelect
+export type TimetableSchema = typeof timetableSchema.$inferSelect

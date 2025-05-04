@@ -1,0 +1,8 @@
+export const AI_CHAT_CANVAS_NAME = "ai-chat"
+export const CREATE_NOTEBOOK_CANVAS_NAME = "create-notebook"
+export const APP_FEEDBACK_CANVAS_NAME = "app-feedback"
+export const CREATE_TIMETABLE_CANVAS_NAME = "create-timetable"
+export const VIEW_TIMETABLE_CANVAS_NAME = "view-timetable"
+export const QUIZ_CANVAS_NAME = "quiz"
+export const CLASSROOM_ASSIGNMENT_CANVAS_NAME = "classroom-assignment"
+export const CLASSROOM_MEMBERS_CANVAS_NAME = "classroom-members"

@@ -1,9 +1,9 @@
 "use client"
 
 import { QuizForm } from "@/components/ai/quiz-form"
-import { CanvasTrigger } from "@/components/canvas-trigger"
 import { useCanvas } from "@/context/canvas"
-import { ChatMessageTag, TaggedChatResponse } from "@/interfaces/chat"
+import { useUrlState } from "@/hooks/use-url-state"
+import { ChatMessageTag, QuizResponse, TaggedChatResponse } from "@/interfaces/chat"
 import { cn } from "@/lib/tw-merge"
 import { BlurImage } from "@components/blur-image"
 import { CardRoot } from "@components/card-root"
@@ -12,6 +12,7 @@ import { Button } from "@components/ui/button"
 import { ArrowLeft, Timer } from "lucide-react"
 import Image from "next/image"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { QUIZ_CANVAS_NAME } from "~/constants/canvas"
 
 export type ChatMessagePersona = "user" | "ai"
 
@@ -35,21 +36,42 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
   const router = useRouter()
   const pathname = usePathname()
 
+  const { set } = useUrlState()
+
   const recommendation =
     structuredResponse && "recommendation" in structuredResponse ? structuredResponse.recommendation : null
   const explanation = structuredResponse && "explanation" in structuredResponse ? structuredResponse.explanation : null
   const summary = structuredResponse && "summary" in structuredResponse ? structuredResponse.summary : null
   const quiz = structuredResponse && "quiz" in structuredResponse ? structuredResponse.quiz : null
 
-  const { closeCanvas } = useCanvas()
-
-  const handleShowUpgradeModal = (tag: ChatMessageTag) => {
-    const params = new URLSearchParams(searchParams!)
-    params.set("pricing", tag)
-    router.replace(`${pathname}?${params.toString()}`)
-  }
+  const { closeCanvas, openCanvas } = useCanvas()
 
   const accountIsPlus = true
+
+  const handleOpenQuizCanvas = (quiz: QuizResponse["quiz"]) => {
+    openCanvas({
+      id: QUIZ_CANVAS_NAME,
+      width: "400px",
+      position: "right",
+      pushElementId: "__dashboard-layout-container",
+      wrapperClassName: "h-full p-4",
+      content: (
+        <QuizForm
+          quiz={quiz}
+          headerChildren={
+            <Button
+              variant="outline"
+              className="rounded-full"
+              size="icon"
+              onClick={() => closeCanvas(QUIZ_CANVAS_NAME)}
+            >
+              <ArrowLeft className="size-4" />
+            </Button>
+          }
+        />
+      ),
+    })
+  }
 
   return (
     <li className={cn("flex w-full flex-col gap-2", persona === "user" ? "items-end" : "items-start")}>
@@ -143,39 +165,19 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
 
                 <div className="bg-accent w-full rounded-lg p-2 text-sm">{quiz.questions[0].question}</div>
 
-                {accountIsPlus ? (
-                  <CanvasTrigger
-                    triggerAsChild
-                    triggerChildren={<Button className="w-full">Attempt Quiz</Button>}
-                    canvasId="quiz"
-                    canvasOptions={{
-                      content: (
-                        <QuizForm
-                          quiz={quiz}
-                          headerChildren={
-                            <Button
-                              variant="outline"
-                              className="rounded-full"
-                              size="icon"
-                              onClick={() => closeCanvas("quiz")}
-                            >
-                              <ArrowLeft className="size-4" />
-                            </Button>
-                          }
-                        />
-                      ),
-                      width: "400px",
-                      position: "right",
-                      id: "quiz",
-                      pushElementId: "__dashboard-layout-container",
-                      wrapperClassName: "h-full p-4",
-                    }}
-                  />
-                ) : (
-                  <Button className="w-full" onClick={() => handleShowUpgradeModal("@Quiz")}>
-                    Attempt Quiz
-                  </Button>
-                )}
+                <Button
+                  className="w-full"
+                  onClick={e => {
+                    e.stopPropagation()
+
+                    if (accountIsPlus) {
+                      handleOpenQuizCanvas(quiz)
+                      set([{ name: "sid", value: QUIZ_CANVAS_NAME }])
+                    } else set([{ name: "pricing", value: "@Quiz" }])
+                  }}
+                >
+                  Attempt Quiz
+                </Button>
               </div>
             }
           />

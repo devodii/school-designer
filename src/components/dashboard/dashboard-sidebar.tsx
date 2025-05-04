@@ -1,21 +1,74 @@
 "use client"
 
-import React from "react"
+import React, { useEffect } from "react"
 
-import { QuizForm } from "@/components/ai/quiz-form"
 import { SendFeedback } from "@/components/ai/send-feedback"
-import { CanvasTrigger } from "@/components/canvas-trigger"
 import { ChatWindow } from "@/components/chat/chat-window"
 import { CreateNotebook } from "@/components/create-notebook"
 import { useCanvas } from "@/context/canvas"
+import { useUrlState } from "@/hooks/use-url-state"
 import { LinkButton } from "@components/link-button"
 import { Book, BookOpen, Calendar, Settings, Sparkle } from "lucide-react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
-import { mockQuiz } from "~/constants/classrooms"
+import { AI_CHAT_CANVAS_NAME, APP_FEEDBACK_CANVAS_NAME, CREATE_NOTEBOOK_CANVAS_NAME } from "~/constants/canvas"
 
 export const DashboardSidebar = () => {
-  const { closeCanvas } = useCanvas()
+  const { closeCanvas, openCanvas } = useCanvas()
+  const searchParams = useSearchParams()
+  const { set } = useUrlState()
+
+  const handleOpenAIChatCanvas = () => {
+    openCanvas({
+      position: "right",
+      width: "400px",
+      content: <ChatWindow />,
+      id: AI_CHAT_CANVAS_NAME,
+      pushElementId: "__dashboard-layout-container",
+      wrapperClassName: "h-full p-0",
+    })
+  }
+
+  const handleOpenCreateNotebookCanvas = () => {
+    openCanvas({
+      content: (
+        <CreateNotebook
+          onSuccess={() => closeCanvas("create-notebook")}
+          onError={() => toast.error("Failed to create notebook")}
+        />
+      ),
+      width: "400px",
+      position: "right",
+      id: CREATE_NOTEBOOK_CANVAS_NAME,
+      pushElementId: "__dashboard-layout-container",
+      wrapperClassName: "h-full p-0",
+    })
+  }
+
+  const handleOpenAppFeedbackCanvas = () => {
+    openCanvas({
+      content: (
+        <SendFeedback
+          onSubmit={() => {
+            closeCanvas(APP_FEEDBACK_CANVAS_NAME)
+            toast.success("Feedback sent successfully")
+          }}
+        />
+      ),
+      width: "400px",
+      position: "right",
+      id: APP_FEEDBACK_CANVAS_NAME,
+      pushElementId: "__dashboard-layout-container",
+    })
+  }
+
+  useEffect(() => {
+    const sid = searchParams.get("sid")
+    if (sid == AI_CHAT_CANVAS_NAME) handleOpenAIChatCanvas()
+    else if (sid == CREATE_NOTEBOOK_CANVAS_NAME) handleOpenCreateNotebookCanvas()
+    else if (sid == APP_FEEDBACK_CANVAS_NAME) handleOpenAppFeedbackCanvas()
+  }, [searchParams])
 
   return (
     <div className="flex h-screen w-64 flex-col border-r border-gray-100 px-3 py-6">
@@ -38,87 +91,38 @@ export const DashboardSidebar = () => {
           <h3 className="text-primary-700 text-sm font-semibold">AI Tools</h3>
         </div>
         <div className="flex flex-col gap-1.5">
-          <CanvasTrigger
-            canvasId="create-notebook"
-            canvasOptions={{
-              content: (
-                <CreateNotebook
-                  onSuccess={() => closeCanvas("create-notebook")}
-                  onError={() => toast.error("Failed to create notebook")}
-                />
-              ),
-              width: "400px",
-              position: "right",
-              id: "create-notebook",
-              pushElementId: "__dashboard-layout-container",
-              wrapperClassName: "h-full p-0",
+          <button
+            onClick={e => {
+              e.stopPropagation()
+              handleOpenCreateNotebookCanvas()
+              set([{ name: "sid", value: CREATE_NOTEBOOK_CANVAS_NAME }])
             }}
-            triggerAsChild
-            triggerChildren={
-              <button className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
-                Create Notebook
-              </button>
-            }
-          />
+            className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors"
+          >
+            Create Notebook
+          </button>
 
-          <CanvasTrigger
-            canvasId="ai-chat"
-            canvasOptions={{
-              position: "right",
-              width: "400px",
-              content: <ChatWindow />,
-              id: "ai-chat",
-              pushElementId: "__dashboard-layout-container",
-              wrapperClassName: "h-full p-0",
+          <button
+            onClick={e => {
+              e.stopPropagation()
+              handleOpenAIChatCanvas()
+              set([{ name: "sid", value: AI_CHAT_CANVAS_NAME }])
             }}
-            triggerAsChild
-            triggerChildren={
-              <button className="w-full cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
-                AI Chat
-              </button>
-            }
-          />
+            className="w-full cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors"
+          >
+            AI Chat
+          </button>
 
-          <CanvasTrigger
-            canvasId="study-helper"
-            canvasOptions={{
-              content: <QuizForm quiz={mockQuiz} />,
-              width: "400px",
-              position: "right",
-              id: "study-helper",
-              pushElementId: "__dashboard-layout-container",
+          <button
+            onClick={e => {
+              e.stopPropagation()
+              handleOpenAppFeedbackCanvas()
+              set([{ name: "sid", value: APP_FEEDBACK_CANVAS_NAME }])
             }}
-            triggerAsChild
-            triggerChildren={
-              <button className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
-                Quiz Helper
-              </button>
-            }
-          />
-
-          <CanvasTrigger
-            canvasId="app-feedback"
-            canvasOptions={{
-              content: (
-                <SendFeedback
-                  onSubmit={() => {
-                    closeCanvas("app-feedback")
-                    toast.success("Feedback sent successfully")
-                  }}
-                />
-              ),
-              width: "400px",
-              position: "right",
-              id: "app-feedback",
-              pushElementId: "__dashboard-layout-container",
-            }}
-            triggerAsChild
-            triggerChildren={
-              <button className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors">
-                Send Feedback
-              </button>
-            }
-          />
+            className="cursor-pointer rounded-md px-3 py-1.5 text-left text-sm transition-colors"
+          >
+            Send Feedback
+          </button>
         </div>
       </div>
 

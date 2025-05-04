@@ -1,14 +1,14 @@
 "use server"
 
 import db from "@/db"
-import { Timetable, timetableSchema } from "@/db/schema/timetable"
+import { TimetableSchema, timetableSchema } from "@/db/schema/timetable"
 import { tryCatch } from "@/lib/try-catch"
 import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
 
 import { getSession } from "./session"
 
-export const createTimetable = async (dto: Pick<Timetable, "fileIds" | "name" | "description">) => {
+export const createTimetable = async (dto: Pick<TimetableSchema, "fileIds" | "name" | "description">) => {
   const session = await getSession()
 
   if (!session) throw new Error("Unauthorized")
@@ -34,7 +34,7 @@ export const findTimetableById = async (id: string) => {
   return data[0]
 }
 
-export const updateTimetable = async (id: string, dto: Partial<Timetable>) => {
+export const updateTimetable = async (id: string, dto: Partial<TimetableSchema>) => {
   const session = await getSession()
 
   if (!session) throw new Error("Unauthorized")
