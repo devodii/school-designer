@@ -1,5 +1,6 @@
 "use server"
 
+import { findAccountById } from "@/actions/account"
 import { updateAuth } from "@/actions/auth"
 import { verifyJwtToken } from "@/lib/jwt"
 import { cookies } from "next/headers"
@@ -35,4 +36,14 @@ export const updateSession = async (id: string, dto: { accessToken: string; refr
     secure: process.env.NODE_ENV === "production",
     maxAge: 60 * 60 * 24 * 30,
   })
+}
+
+export const getCurrentUser = async () => {
+  const session = await getSession()
+
+  if (!session) throw new Error("Unauthorized")
+
+  const account = await findAccountById(session.accountId)
+
+  return account
 }

@@ -1,23 +1,24 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import { Button, ButtonProps } from "@/components/ui/button"
 import { tryCatch } from "@/lib/try-catch"
-import { UsersRound } from "lucide-react"
+import { cn } from "@/lib/tw-merge"
 import { toast } from "sonner"
 
-export function InviteButton({ shareLink }: { shareLink: string }) {
+interface InviteButtonProps extends Omit<ButtonProps, "onClick"> {
+  shareLink: string
+}
+
+export function InviteButton({ shareLink, ...forwardedProps }: InviteButtonProps) {
   return (
     <Button
-      variant="outline"
-      className="gap-1"
+      className={cn("cursor-pointer gap-1", forwardedProps.className)}
       onClick={async () => {
         const { error } = await tryCatch(navigator.clipboard.writeText(shareLink))
         if (error) return toast.error("Failed to copy link")
         toast.success("Link copied to clipboard")
       }}
-    >
-      <UsersRound className="size-4" />
-      <span className="text-sm">Invite Students</span>
-    </Button>
+      {...forwardedProps}
+    />
   )
 }

@@ -87,7 +87,6 @@ export const ChatWindow = ({}: ChatWindowProps) => {
         <div className="flex w-full flex-col gap-2 border-t bg-white px-2 py-4">
           <SimpleUpload
             endpoint="*"
-            inputAccept="image/*"
             iconClassName="size-4 text-muted-foreground"
             labelEmptyText="Add Context.."
             onChangeFiles={() => []}

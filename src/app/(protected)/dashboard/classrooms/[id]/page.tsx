@@ -1,10 +1,11 @@
+import { findAccountById } from "@/actions/account"
 import { findClassroomById } from "@/actions/classroom"
-import { CardRoot } from "@/components/card-root"
-import { ClassroomActions } from "@/components/classroom/classroom-actions"
+import { getCurrentUser } from "@/actions/session"
+import { ClassroomBody } from "@/components/classroom/classroom-body"
 import { InviteButton } from "@/components/classroom/invite-button"
-import { InviteSuggestedStudents } from "@/components/classroom/invite-suggested-students"
+import { Button } from "@/components/ui/button"
+import { Edit3, UserPlus } from "lucide-react"
 import { notFound } from "next/navigation"
-import { mockAssignments, mockClassmates } from "~/constants/classrooms"
 
 interface ClassroomPageProps {
   params: Promise<{ id: string }>
@@ -17,25 +18,45 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
 
   if (!classroom) return notFound()
 
+  const [owner, account] = await Promise.all([findAccountById(classroom.ownerId), getCurrentUser()])
+
   const shareLink = `${process.env.APP_URL}/join?room_code=${classroom.inviteCode}`
 
   return (
-    <div className="flex h-screen w-full flex-col gap-6 px-4 py-6 md:px-12">
-      <div className="flex flex-col gap-6" id="__classroom_index">
-        <header className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">{classroom.name}</h1>
-          <InviteButton shareLink={shareLink} />
-        </header>
+    <div className="flex h-screen flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto p-6" id="__classroom_index">
+        <div className="mb-6 flex w-full items-center justify-between">
+          <header>
+            <h1 className="mb-1 text-3xl font-bold">{classroom.name}</h1>
+            <p className="text-sm text-gray-500">
+              {classroom.subject} • {owner.id}
+            </p>
+          </header>
 
-        <ClassroomActions assignments={mockAssignments} members={mockClassmates} />
+          <div className="flex items-center gap-3">
+            {account.id == owner.id && (
+              <Button className="gap-2" variant="outline" size="sm">
+                <Edit3 size={16} />
+                <span className="text-sm">Edit</span>
+              </Button>
+            )}
 
-        <CardRoot
-          className="w-full"
-          titleChildren="Invite Classmates"
-          descriptionChildren="Add students to your classroom"
-          titleClassName="text-xl font-semibold text-start"
-          contentChildren={<InviteSuggestedStudents />}
-        />
+            <InviteButton
+              shareLink={shareLink}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              children={
+                <>
+                  <UserPlus size={16} />
+                  <span className="text-sm">Invite</span>
+                </>
+              }
+            />
+          </div>
+        </div>
+
+        <ClassroomBody owner={owner} account={account} room={classroom} />
       </div>
     </div>
   )

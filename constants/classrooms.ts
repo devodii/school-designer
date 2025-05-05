@@ -1,4 +1,4 @@
-import { ClassroomSchema } from "@/db/schema/classroom"
+import { ClassroomActivitySchema, ClassroomSchema } from "@/db/schema/classroom"
 import { QuizResponse } from "@/interfaces/chat"
 
 export const CREATE_CLASSROOM_CANVAS_NAME = "create-classroom"
@@ -72,30 +72,112 @@ export const mockAssignments = [
   { id: "002", title: "Book Report", dueDate: "Due Wednesday" },
 ]
 
-export const mockActivities = [
-  { id: 1, user: "Kavla", avatar: "", content: "Know any fun science experiments?" },
-  { id: 2, user: "David", avatar: "", content: "Shares Study timetable" },
-  { id: 3, user: "Emma", avatar: "", content: "Invite check notes in History noteb" },
+export const mockDocuments = [
+  { id: 1, title: "Study Guide", type: "PDF" },
+  { id: 2, title: "Lecture Notes", type: "Word" },
+  { id: 3, title: "Practice Questions", type: "PDF" },
+]
+
+export const mockActivities: ClassroomActivitySchema[] = [
+  {
+    id: "001",
+    accountId: "10",
+    classroomId: "1212",
+    createdAt: new Date(),
+    type: "NOTE",
+    metadata: {
+      type: "NOTE",
+      content: {
+        title: "Chapter 5",
+        notes: "This is a note about Chapter 5",
+      },
+    },
+  },
+  {
+    id: "002",
+    accountId: "10",
+    classroomId: "1212",
+    createdAt: new Date(),
+    type: "STUDY_PLAN",
+    metadata: {
+      type: "STUDY_PLAN",
+      content: {
+        title: "Finals Study Plan",
+        description: "Study plan for the finals",
+        steps: ["Study Chapter 1", "Study Chapter 2", "Study Chapter 3"],
+      },
+    },
+  },
+  {
+    id: "003",
+    accountId: "10",
+    classroomId: "1212",
+    createdAt: new Date(),
+    type: "HOMEWORK",
+    metadata: {
+      type: "HOMEWORK",
+      content: {
+        title: "Chemistry Homework",
+        description: "Homework for Chemistry",
+        dueDate: new Date(),
+        answers: ["Answer 1", "Answer 2", "Answer 3"],
+      },
+    },
+  },
+  {
+    id: "004",
+    accountId: "10",
+    classroomId: "1212",
+    createdAt: new Date(),
+    type: "QUESTION",
+    metadata: {
+      type: "QUESTION",
+      content: {
+        title: "What is the capital of France?",
+        description: "This is a question about the capital of France",
+      },
+    },
+  },
+  {
+    id: "005",
+    accountId: "10",
+    classroomId: "1212",
+    createdAt: new Date(),
+    type: "HOMEWORK",
+    metadata: {
+      type: "HOMEWORK",
+      content: {
+        title: "Chemistry Homework",
+        description: "Homework for Chemistry",
+        dueDate: new Date(),
+        answers: ["Answer 1", "Answer 2", "Answer 3"],
+      },
+    },
+  },
+
+  {
+    id: "007",
+    accountId: "10",
+    classroomId: "1212",
+    createdAt: new Date(),
+    type: "HOMEWORK",
+    metadata: {
+      type: "HOMEWORK",
+      content: {
+        title: "Chemistry Homework",
+        description: "Homework for Chemistry",
+        dueDate: new Date(),
+        answers: ["Answer 1", "Answer 2", "Answer 3"],
+      },
+    },
+  },
 ]
 
 export const mockClassmates = [
-  { id: "001", name: "Chloe", avartar: "https://randomuser.me/api/portraits/women/32.jpg" },
-  { id: "002", name: "Ethan", avartar: "https://randomuser.me/api/portraits/men/44.jpg" },
-  { id: "003", name: "Maya", avartar: "https://randomuser.me/api/portraits/women/52.jpg" },
-  { id: "004", name: "Jacob", avartar: "https://randomuser.me/api/portraits/men/62.jpg" },
-]
-
-export const mockSuggestedUsers = [
-  { id: 101, name: "Alex Johnson" },
-  { id: 102, name: "Jamie Smith" },
-  { id: 103, name: "Taylor Wilson" },
-  { id: 104, name: "Morgan Lee" },
-]
-
-export const mockSuggestedStudents = [
-  { label: "Emmanuel Odii", value: "emmanuel-odii" },
-  { label: "Patrick Silva", value: "patrick-silva" },
-  { label: "John Doe", value: "john-doe" },
+  { id: "001", name: "Chloe", avartar: "https://randomuser.me/api/portraits/women/32.jpg", role: "Admin" },
+  { id: "002", name: "Ethan", avartar: "https://randomuser.me/api/portraits/men/44.jpg", role: "Member" },
+  { id: "003", name: "Maya", avartar: "https://randomuser.me/api/portraits/women/52.jpg", role: "Member" },
+  { id: "004", name: "Jacob", avartar: "https://randomuser.me/api/portraits/men/62.jpg", role: "Member" },
 ]
 
 export const mockQuiz: QuizResponse["quiz"] = {
@@ -131,3 +213,4 @@ export const mockQuiz: QuizResponse["quiz"] = {
   totalPoints: 60,
   estimatedTime: 60 * 10, // 10 minutes
 }
+
