@@ -11,9 +11,11 @@ interface UseFileUploadOptions<TFileRoute extends AnyFileRoute>
   defaultUploadedFiles?: ClientUploadedFileData<unknown>[]
 }
 
+export type FileUploadEndpoint = keyof OurFileRouter
+
 export function useFileUpload(
-  endpoint: keyof OurFileRouter,
-  forwardedProps: UseFileUploadOptions<OurFileRouter[keyof OurFileRouter]> = {},
+  endpoint: FileUploadEndpoint,
+  forwardedProps: UseFileUploadOptions<OurFileRouter[FileUploadEndpoint]> = {},
   onUploadError: (error: string) => void,
 ) {
   const [progresses, setProgresses] = React.useState<Record<string, number>>({})

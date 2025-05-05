@@ -13,7 +13,7 @@ import { useMutation } from "@tanstack/react-query"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import { CREATE_TIMETABLE_CANVAS_NAME } from "~/constants/timetables"
+import { CREATE_TIMETABLE_CANVAS_NAME } from "~/constants/canvas"
 
 const createTimetableSchema = z.object({
   name: z.string({ message: "Name is required" }).min(1),
@@ -91,7 +91,10 @@ export const CreateTimetable = () => {
             <div className="flex flex-col gap-2">
               <Label>Upload Timetable Files</Label>
               <SimpleUpload
+                labelEmptyText="No file selected"
+                endpoint="pdf"
                 inputAccept="application/pdf"
+                iconClassName="size-4 text-muted-foreground"
                 onChangeFiles={files => field.onChange(files.map(file => file.id))}
               />
               {error && <p className="text-sm text-red-500">{error?.message}</p>}

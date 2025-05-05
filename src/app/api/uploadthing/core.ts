@@ -18,7 +18,7 @@ const uploadthingMiddleware = async () => {
 }
 
 export const ourFileRouter = {
-  profilePic: f(["image/png", "image/jpeg", "image/webp"])
+  image: f(["image/png", "image/jpeg", "image/webp"])
     .middleware(uploadthingMiddleware)
     .onUploadComplete(async ({ file }) => {
       const [response] = await postUploads({
@@ -27,7 +27,7 @@ export const ourFileRouter = {
 
       return response
     }),
-  timetable: f(["application/pdf", "pdf"])
+  pdf: f(["application/pdf", "pdf"])
     .middleware(uploadthingMiddleware)
     .onUploadComplete(async ({ file }) => {
       const [response] = await postUploads({

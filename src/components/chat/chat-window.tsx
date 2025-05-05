@@ -1,14 +1,15 @@
 "use client"
 
-import { useState, KeyboardEvent, useRef } from "react"
+import { useState, useRef } from "react"
 
-import { ChatMessageTag } from "@/interfaces/chat"
 import { ChatMessage, Message } from "@/components/chat/chat-message"
 import { ChatMessageSkeleton } from "@/components/chat/chat-message-skeleton"
 import { ChatTagPicker } from "@/components/chat/chat-tag-picker"
+import { SimpleUpload } from "@/components/simple-upload"
+import { ChatMessageTag } from "@/interfaces/chat"
+import { ContentEditable, ContentEditableRef } from "@components/contenteditable"
 import { Button } from "@components/ui/button"
-import { Textarea } from "@components/ui/textarea"
-import { Plus, SendHorizontal } from "lucide-react"
+import { SendHorizontal } from "lucide-react"
 import { nanoid } from "nanoid"
 import { mockQuiz } from "~/constants/classrooms"
 
@@ -20,7 +21,8 @@ export const ChatWindow = ({}: ChatWindowProps) => {
   const [message, setMessage] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const contentEditableRef = useRef<ContentEditableRef>(null)
 
   const handleSendMessage = () => {
     if (!message.trim()) return
@@ -60,18 +62,9 @@ export const ChatWindow = ({}: ChatWindowProps) => {
     setIsTyping(false)
   }
 
-  const handleKeyPress = (e: KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSendMessage()
-    }
-  }
-
   const handleInsertTag = (tag: ChatMessageTag) => {
-    setSelectedTag(tag)
+    contentEditableRef.current?.insertCustomElement(tag)
     setTagPickerOpen(false)
-    setMessage(message + " " + tag + " ")
-
-    textareaRef.current?.focus()
   }
 
   return (
@@ -91,47 +84,52 @@ export const ChatWindow = ({}: ChatWindowProps) => {
           ))}
         </div>
 
-        <div className="flex w-full items-end gap-1 border-t bg-white px-2 py-4">
-          {tagPickerOpen && <ChatTagPicker onSelect={handleInsertTag} onClose={() => setTagPickerOpen(false)} />}
+        <div className="flex w-full flex-col gap-2 border-t bg-white px-2 py-4">
+          <SimpleUpload
+            endpoint="image"
+            inputAccept="image/*"
+            iconClassName="size-4 text-muted-foreground"
+            labelEmptyText="Add Context.."
+            onChangeFiles={() => []}
+          />
 
-          <Button
-            onClick={() => setTagPickerOpen(prev => !prev)}
-            variant="outline"
-            size="icon"
-            className="h-[36px] flex-shrink-0"
-          >
-            <Plus className="h-4 w-4" />
-          </Button>
+          <div className="flex w-full items-end gap-1">
+            {tagPickerOpen && <ChatTagPicker onSelect={handleInsertTag} onClose={() => setTagPickerOpen(false)} />}
 
-          <div className="focus-within:ring-ring/50 border-input focus-within:border-ring relative flex w-full flex-col gap-1 rounded-md border focus-within:ring-2">
-            <Textarea
-              ref={textareaRef}
-              id="__message-input"
-              placeholder="Type your message..."
-              rows={1}
-              className="flex-1 border-0 outline-none focus-visible:border-transparent focus-visible:ring-0"
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              onKeyDown={handleKeyPress}
-              style={{ minHeight: "65px", maxHeight: "120px" }}
-            />
-            <div className="flex items-center justify-between px-2 py-1">
-              <button
-                type="button"
-                className="text-muted-foreground cursor-pointer font-sans text-lg font-bold transition"
-                onClick={() => setTagPickerOpen(prev => !prev)}
-                tabIndex={-1}
-              >
-                @
-              </button>
+            <div className="focus-within:ring-ring/50 border-input focus-within:border-ring relative flex w-full flex-col rounded-md border focus-within:ring-2">
+              <ContentEditable
+                ref={contentEditableRef}
+                id="__message-input"
+                placeholderText="Ask a question..."
+                placeholderClassName="text-sm -mt-1"
+                onSend={handleSendMessage}
+                className="max-h-[120px] min-h-[65px] border-none text-sm focus-within:border-none focus-within:ring-0"
+                createCustomElement={tag => {
+                  const span = document.createElement("span")
+                  span.textContent = tag
+                  span.className = "text-black font-semibold text-sm mx-1"
+                  span.contentEditable = "false"
+                  return span
+                }}
+              />
 
-              <div />
+              <div className="flex items-center justify-between px-2 py-1">
+                <button
+                  type="button"
+                  className="text-muted-foreground cursor-pointer font-sans text-lg font-bold transition"
+                  onClick={() => setTagPickerOpen(prev => !prev)}
+                  tabIndex={-1}
+                >
+                  @
+                </button>
+
+                <Button className="flex h-[24px] items-center gap-2 font-sans" onClick={handleSendMessage}>
+                  <span className="text-xs font-semibold">Send</span>
+                  <SendHorizontal className="size-4" />
+                </Button>
+              </div>
             </div>
           </div>
-
-          <Button size="icon" className="h-[36px]" onClick={handleSendMessage} disabled={!message.trim()}>
-            <SendHorizontal className="h-4 w-4" />
-          </Button>
         </div>
       </div>
     </div>
