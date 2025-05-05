@@ -36,6 +36,16 @@ export const ourFileRouter = {
 
       return response
     }),
+
+  "*": f(["image/png", "image/jpeg", "image/webp", "application/pdf", "pdf"])
+    .middleware(uploadthingMiddleware)
+    .onUploadComplete(async ({ file }) => {
+      const [response] = await postUploads({
+        data: [{ url: file.ufsUrl, type: "PDF", metadata: { scope: "TIMETABLE" } }],
+      })
+
+      return response
+    }),
 } satisfies FileRouter
 
 export type OurFileRouter = typeof ourFileRouter

@@ -2,12 +2,12 @@
 
 import { useEffect } from "react"
 
+import { BlurImage } from "@/components/blur-image"
 import { CardRoot } from "@/components/card-root"
 import { CreateClassroom } from "@/components/classroom/create-classroom"
 import { Button } from "@/components/ui/button"
 import { useCanvas } from "@/context/canvas"
 import { useUrlState } from "@/hooks/use-url-state"
-import { BlurImage } from "@components/blur-image"
 import { Plus } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { CREATE_CLASSROOM_CANVAS_NAME } from "~/constants/classrooms"

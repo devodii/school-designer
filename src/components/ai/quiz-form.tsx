@@ -2,13 +2,13 @@
 
 import { useEffect, useState, ComponentPropsWithoutRef } from "react"
 
+import { CheckboxRoot } from "@/components/checkbox-root"
+import { RadioGroupRoot } from "@/components/radio-group-root"
+import { Spinner } from "@/components/spinner"
+import { Button } from "@/components/ui/button"
 import { QuizResponse } from "@/interfaces/chat"
 import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
-import { CheckboxRoot } from "@components/checkbox-root"
-import { RadioGroupRoot } from "@components/radio-group-root"
-import { Spinner } from "@components/spinner"
-import { Button } from "@components/ui/button"
 import { snakeCase } from "lodash"
 import { Clock, ArrowLeft } from "lucide-react"
 import moment from "moment"

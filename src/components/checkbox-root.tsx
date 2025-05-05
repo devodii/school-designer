@@ -2,10 +2,10 @@
 
 import { ComponentProps } from "react"
 
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
-import { Checkbox } from "@components/ui/checkbox"
-import { Label } from "@components/ui/label"
 
 interface CheckboxRootProps
   extends ComponentProps<"div">,

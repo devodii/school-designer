@@ -1,9 +1,9 @@
 import React, { ComponentProps } from "react"
 
 import { type LabelProps, Label } from "@/components/ui/label"
+import { Textarea, TextareaProps } from "@/components/ui/textarea"
 import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
-import { Textarea, TextareaProps } from "@components/ui/textarea"
 
 interface TextareaFieldProps
   extends ComponentProps<"div">,

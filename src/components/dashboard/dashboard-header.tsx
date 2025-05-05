@@ -2,9 +2,9 @@
 
 import React from "react"
 
+import { BlurImage } from "@/components/blur-image"
+import { Input } from "@/components/ui/input"
 import { getAccount } from "@/queries/account"
-import { BlurImage } from "@components/blur-image"
-import { Input } from "@components/ui/input"
 import { useQuery } from "@tanstack/react-query"
 import { Search, Bell } from "lucide-react"
 

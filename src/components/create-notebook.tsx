@@ -1,10 +1,10 @@
 "use client"
 
 import { SelectRoot } from "@/components/select-root"
+import { Spinner } from "@/components/spinner"
+import { TextareaField } from "@/components/text-area-field"
+import { Button } from "@/components/ui/button"
 import { getAccount } from "@/queries/account"
-import { Spinner } from "@components/spinner"
-import { TextareaField } from "@components/text-area-field"
-import { Button } from "@components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { BookOpen, Wand } from "lucide-react"

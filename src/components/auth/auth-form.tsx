@@ -4,28 +4,31 @@ import { sendMagicLink as sendMagicLinkAction } from "@/actions/auth"
 import { Spinner } from "@/components/spinner"
 import { TextField } from "@/components/text-field"
 import { Button } from "@/components/ui/button"
+import { AuthIntent } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
+import { LogIn } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
-const authSchema = z.object({ email: z.string() })
+const authSchema = z.object({ email: z.string().email({ message: "Please provide a valid email address" }) })
 
 type AuthSchema = z.infer<typeof authSchema>
 
 interface AuthFormProps {
-  onSendMagicLink: (data: AuthSchema) => void
+  intent: AuthIntent
+  onSendMagicLink: () => void
   onError: (message: string) => void
 }
 
-export const AuthForm = ({ onSendMagicLink, onError }: AuthFormProps) => {
+export const AuthForm = ({ onSendMagicLink, onError, intent }: AuthFormProps) => {
   const { handleSubmit, control } = useForm<AuthSchema>({ resolver: zodResolver(authSchema) })
 
   const { mutate: sendMagicLink, isPending } = useMutation({
     mutationFn: async (data: AuthSchema) => {
-      onSendMagicLink(data)
-      return await sendMagicLinkAction(data)
+      return await sendMagicLinkAction({ ...data, intent })
     },
+    onSuccess: onSendMagicLink,
     onError: ({ message }) => onError(message),
   })
 
@@ -45,12 +48,17 @@ export const AuthForm = ({ onSendMagicLink, onError }: AuthFormProps) => {
             inputName={field.name}
             errorText={error?.message}
             inputDisabled={isPending}
+            inputPlaceholder="johndoe@gmail.com"
           />
         )}
       />
-      <Button className="w-full" disabled={isPending}>
-        {isPending ? "Sending link..." : "Continue"}
-        {isPending && <Spinner size={24} />}
+      <Button className="flex w-full items-center justify-between" disabled={isPending}>
+        <div className="flex flex-1 items-center justify-center gap-2">
+          <LogIn className="size-4" />
+          <span className="text-sm font-semibold">Continue with Email</span>
+        </div>
+
+        {isPending && <Spinner size={20} />}
       </Button>
     </form>
   )

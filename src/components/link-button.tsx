@@ -1,8 +1,8 @@
 "use client"
 
+import { Button, ButtonProps } from "@/components/ui/button"
 import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
-import { Button, ButtonProps } from "@components/ui/button"
 import Link, { LinkProps } from "next/link"
 import { usePathname } from "next/navigation"
 

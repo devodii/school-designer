@@ -1,5 +1,6 @@
 import { accountSchema } from "@/db/schema/account"
-import { foreignKey, index, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core"
+import { AuthMetadata } from "@/types"
+import { foreignKey, index, pgEnum, pgTable, timestamp, varchar, jsonb } from "drizzle-orm/pg-core"
 
 export const authProviderEnum = pgEnum("auth_provider", ["EMAIL", "GOOGLE"])
 
@@ -17,6 +18,7 @@ export const authSchema = pgTable(
     accessToken: varchar("access_token"),
     refreshToken: varchar("refresh_token"),
     provider: authProviderEnum("provider"),
+    metadata: jsonb("metadata").$type<AuthMetadata>(),
   },
   ({ email, token, accountId }) => ({
     accountFk: foreignKey({

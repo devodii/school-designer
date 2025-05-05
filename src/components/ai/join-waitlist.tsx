@@ -2,10 +2,10 @@
 
 import { createWaitlist } from "@/actions/waitlist"
 import { CheckboxRoot } from "@/components/checkbox-root"
+import { Spinner } from "@/components/spinner"
 import { TextareaField } from "@/components/text-area-field"
 import { TextField } from "@/components/text-field"
 import { Button } from "@/components/ui/button"
-import { Spinner } from "@components/spinner"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { Controller, useForm } from "react-hook-form"

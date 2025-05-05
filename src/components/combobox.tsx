@@ -2,9 +2,9 @@
 
 import { ComponentProps, useState } from "react"
 
+import { CommandRootProps, CommandRoot } from "@/components/command-root"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { MixinProps, splitProps } from "@/lib/mixin"
-import { CommandRootProps, CommandRoot } from "@components/command-root"
-import { Popover, PopoverContent, PopoverTrigger } from "@components/ui/popover"
 
 interface ComboboxProps
   extends MixinProps<"trigger", ComponentProps<typeof PopoverTrigger>>,

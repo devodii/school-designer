@@ -5,10 +5,10 @@ import { useState, useRef } from "react"
 import { ChatMessage, Message } from "@/components/chat/chat-message"
 import { ChatMessageSkeleton } from "@/components/chat/chat-message-skeleton"
 import { ChatTagPicker } from "@/components/chat/chat-tag-picker"
+import { ContentEditable, ContentEditableRef } from "@/components/contenteditable"
 import { SimpleUpload } from "@/components/simple-upload"
+import { Button } from "@/components/ui/button"
 import { ChatMessageTag } from "@/interfaces/chat"
-import { ContentEditable, ContentEditableRef } from "@components/contenteditable"
-import { Button } from "@components/ui/button"
 import { SendHorizontal } from "lucide-react"
 import { nanoid } from "nanoid"
 import { mockQuiz } from "~/constants/classrooms"
@@ -86,7 +86,7 @@ export const ChatWindow = ({}: ChatWindowProps) => {
 
         <div className="flex w-full flex-col gap-2 border-t bg-white px-2 py-4">
           <SimpleUpload
-            endpoint="image"
+            endpoint="*"
             inputAccept="image/*"
             iconClassName="size-4 text-muted-foreground"
             labelEmptyText="Add Context.."

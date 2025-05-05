@@ -7,6 +7,7 @@ import { AuthProvider, type AuthSchema, authSchema, GoogleIdTokenPayload } from 
 import { generateJwtTokens } from "@/lib/jwt"
 import { resend } from "@/lib/resend"
 import { tryCatch } from "@/lib/try-catch"
+import { AuthIntent, AuthMetadata } from "@/types"
 import { eq } from "drizzle-orm"
 import { jwtDecode } from "jwt-decode"
 import { nanoid } from "nanoid"
@@ -20,8 +21,13 @@ export const updateAuth = async (id: string, dto: Partial<AuthSchema>) => {
   return data[0]
 }
 
-export const createAuth = async (dto: { email: string; accountId: string; provider: AuthProvider }) => {
-  const { email, accountId, provider } = dto
+export const createAuth = async (dto: {
+  email: string
+  accountId: string
+  provider: AuthProvider
+  metadata: AuthMetadata
+}) => {
+  const { email, accountId, provider, metadata } = dto
 
   const { data: auth, error } = await tryCatch(
     db
@@ -42,6 +48,7 @@ export const createAuth = async (dto: { email: string; accountId: string; provid
         createdAt: new Date(),
         updatedAt: new Date(),
         provider,
+        metadata,
       })
       .returning(),
   )
@@ -59,10 +66,15 @@ export const findByToken = async (token: string) => {
   return auth[0]
 }
 
-export const sendMagicLink = async (dto: { email: string }) => {
+export const sendMagicLink = async (dto: { email: string; intent: AuthIntent }) => {
   const account = await findAccountByEmail(dto.email)
 
-  const auth = await createAuth({ email: dto.email, accountId: account?.id, provider: "EMAIL" })
+  const auth = await createAuth({
+    email: dto.email,
+    accountId: account?.id,
+    provider: "EMAIL",
+    metadata: { intent: dto.intent },
+  })
 
   const token = auth.token
 
@@ -71,11 +83,13 @@ export const sendMagicLink = async (dto: { email: string }) => {
       from: "Acme <onboarding@resend.dev>",
       to: [dto.email],
       subject: "Sign into your account",
-      react: MagicLinkSignIn({ url: `${process.env.APP_URL}/verify?token=${token}` }),
+      react: MagicLinkSignIn({ url: `${process.env.APP_URL}/verify?c_token=${token}` }),
     }),
   )
 
   if (emailData?.error) throw new Error(emailData.error.message)
+
+  return { success: true }
 }
 
 export const verifyMagicLinkToken = async (token: string) => {
@@ -102,10 +116,10 @@ export const verifyMagicLinkToken = async (token: string) => {
 
   await updateSession(auth.id, { accessToken, refreshToken })
 
-  return { isNewAccount, accountId: account.id }
+  return { isNewAccount, accountId: account.id, intent: auth.metadata?.intent }
 }
 
-export const verifyGoogleToken = async (token: string) => {
+export const verifyGoogleToken = async (token: string, intent: AuthIntent) => {
   const decoded = jwtDecode<GoogleIdTokenPayload>(token)
 
   let isNewAccount = false
@@ -121,9 +135,14 @@ export const verifyGoogleToken = async (token: string) => {
 
   const { accessToken, refreshToken } = generateJwtTokens({ accountId: account.id, email: decoded.email })
 
-  const auth = await createAuth({ email: decoded.email, accountId: account.id, provider: "GOOGLE" })
+  const auth = await createAuth({
+    email: decoded.email,
+    accountId: account.id,
+    provider: "GOOGLE",
+    metadata: { intent },
+  })
 
   await updateSession(auth.id, { accessToken, refreshToken })
 
-  return { isNewAccount, accountId: account.id }
+  return { isNewAccount, accountId: account.id, intent: auth.metadata?.intent }
 }

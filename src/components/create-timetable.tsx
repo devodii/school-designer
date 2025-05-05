@@ -2,12 +2,12 @@
 
 import { createTimetable as createTimetableAction } from "@/actions/timetable"
 import { SimpleUpload } from "@/components/simple-upload"
+import { Spinner } from "@/components/spinner"
 import { TextareaField } from "@/components/text-area-field"
+import { TextField } from "@/components/text-field"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { useCanvas } from "@/context/canvas"
-import { Spinner } from "@components/spinner"
-import { TextField } from "@components/text-field"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { Controller, useForm } from "react-hook-form"
@@ -95,7 +95,7 @@ export const CreateTimetable = () => {
                 endpoint="pdf"
                 inputAccept="application/pdf"
                 iconClassName="size-4 text-muted-foreground"
-                onChangeFiles={files => field.onChange(files.map(file => file.id))}
+                onChangeFiles={files => field.onChange(files.map(({ id }) => id))}
               />
               {error && <p className="text-sm text-red-500">{error?.message}</p>}
             </div>

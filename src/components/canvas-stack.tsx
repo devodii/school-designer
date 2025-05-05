@@ -1,8 +1,8 @@
 "use client"
 
+import { Canvas } from "@/components/canvas"
 import { useCanvas } from "@/context/canvas"
 import { useUrlState } from "@/hooks/use-url-state"
-import { Canvas } from "@components/canvas"
 
 export const CanvasStack = () => {
   const { canvases, closeCanvas } = useCanvas()

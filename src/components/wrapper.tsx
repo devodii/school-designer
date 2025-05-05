@@ -35,7 +35,7 @@ export const Wrapper = ({ children, asChild, ...forwardedProps }: WrapperProps) 
         <XIcon className="absolute top-4 right-4 size-6 cursor-pointer" onClick={() => remove(["pricing"])} />
 
         <h2 className="text-2xl font-bold">Choose Your Plan</h2>
-        <PricingPlans />
+        <PricingPlans intent={searchParams?.get("pricing") ?? ""} />
       </div>
     )
   }
@@ -51,7 +51,7 @@ export const Wrapper = ({ children, asChild, ...forwardedProps }: WrapperProps) 
           titleClassName="text-2xl font-bold"
           titleChildren="Choose Your Plan"
           contentClassName="w-full sm:max-w-[700px]"
-          component={PricingPlans}
+          component={() => <PricingPlans intent={searchParams?.get("pricing") ?? ""} />}
         />
       )}
     </Comp>

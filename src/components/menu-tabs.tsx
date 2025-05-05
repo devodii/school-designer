@@ -1,8 +1,8 @@
 import { ComponentProps, ComponentType, createElement } from "react"
 
+import { TabsContent, TabsList, TabsTrigger, Tabs } from "@/components/ui/tabs"
 import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
-import { TabsContent, TabsList, TabsTrigger, Tabs } from "@components/ui/tabs"
 
 interface TabsRootProps
   extends ComponentProps<typeof Tabs>,

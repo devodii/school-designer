@@ -1,18 +1,45 @@
 import { useState } from "react"
 
+import { createPolarCheckoutSession } from "@/actions/subscriptions"
 import { CardRoot } from "@/components/card-root"
+import { Spinner } from "@/components/spinner"
 import { TabsRoot } from "@/components/tabs-root"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useMutation } from "@tanstack/react-query"
 import { Check } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 type ActiveTab = "monthly" | "yearly"
 
 const YEARLY_PRICE = 9
 const MONTHLY_PRICE = 12
 
-export const PricingPlans = () => {
+interface PricingPlansProps {
+  intent: string
+}
+
+export const PricingPlans = ({ intent }: PricingPlansProps) => {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<ActiveTab>("monthly")
+
+  const isMonthlySelected = activeTab === "monthly"
+
+  const { mutate: createCheckoutSession, isPending } = useMutation({
+    mutationFn: async () => {
+      const response = await createPolarCheckoutSession({
+        metadata: { intent },
+        frequency: isMonthlySelected ? "MONTHLY" : "YEARLY",
+      })
+
+      return response
+    },
+    onError: () => {
+      toast.error("Something went wrong")
+    },
+    onSuccess: url => router.push(url),
+  })
 
   return (
     <div className="flex flex-col gap-4">
@@ -96,7 +123,10 @@ export const PricingPlans = () => {
                 Level up productivity and creativity with expanded access.
               </span>
 
-              <Button className="w-full">Get Plus</Button>
+              <Button className="flex w-full items-center justify-center gap-2" onClick={() => createCheckoutSession()}>
+                <span className="text-sm font-semibold">Get Plus</span>
+                {isPending && <Spinner size={20} />}
+              </Button>
 
               <ul className="flex flex-col gap-2">
                 {[

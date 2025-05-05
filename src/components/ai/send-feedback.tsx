@@ -1,9 +1,10 @@
 "use client"
 
 import { createFeedback } from "@/actions/feedback"
+import { SimpleUpload } from "@/components/simple-upload"
 import { Spinner } from "@/components/spinner"
 import { TextareaField } from "@/components/text-area-field"
-import { Button } from "@components/ui/button"
+import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { Controller, useForm } from "react-hook-form"
@@ -15,7 +16,7 @@ interface SendFeedbackProps {
 
 const feedbackSchema = z.object({
   text: z.string({ message: "Feedback is required" }).min(1),
-  fileUploadId: z.string().nullable(),
+  fileIds: z.array(z.string()).nullable(),
 })
 
 type FeedbackSchema = z.infer<typeof feedbackSchema>
@@ -23,7 +24,7 @@ type FeedbackSchema = z.infer<typeof feedbackSchema>
 export const SendFeedback = ({ onSubmit }: SendFeedbackProps) => {
   const form = useForm<FeedbackSchema>({
     resolver: zodResolver(feedbackSchema),
-    defaultValues: { fileUploadId: null, text: "" },
+    defaultValues: { fileIds: null, text: "" },
   })
 
   const {
@@ -46,6 +47,19 @@ export const SendFeedback = ({ onSubmit }: SendFeedbackProps) => {
       </p>
 
       <form onSubmit={form.handleSubmit(data => sendFeedback(data))} className="mt-4 grid grid-cols-1 gap-4">
+        <Controller
+          control={form.control}
+          name="fileIds"
+          render={({ field }) => (
+            <SimpleUpload
+              labelEmptyText="Upload screenshots or PDF files"
+              endpoint="*"
+              iconClassName="size-4 text-muted-foreground"
+              onChangeFiles={files => field.onChange(files.map(({ id }) => id))}
+            />
+          )}
+        />
+
         <Controller
           control={form.control}
           name="text"
