@@ -71,7 +71,7 @@ export const postClassroomJoin = async (classroomId: string) => {
 
   if (!classroom) throw new Error("Classroom not found")
 
-  const { data, error } = await tryCatch(
+  const { error } = await tryCatch(
     db
       .insert(classroomMemberSchema)
       .values({

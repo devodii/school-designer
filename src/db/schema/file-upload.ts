@@ -18,14 +18,12 @@ export const fileUploadSchema = pgTable(
     type: fileUploadTypeEnum().notNull(),
     metadata: jsonb("metadata").$type<FileMetadata>(),
   },
-  ({ accountId }) => ({
-    accountFk: foreignKey({
-      columns: [accountId],
-      foreignColumns: [accountSchema.id],
-      name: "fk__account_file_upload",
-    }).onDelete("cascade"),
-    accountIdIdx: index("account_id_idx").on(accountId),
-  }),
+  ({ accountId }) => [
+    foreignKey({ columns: [accountId], name: `fk__account_file_upload`, foreignColumns: [accountSchema.id] }).onDelete(
+      "cascade",
+    ),
+    index("account_id_idx").on(accountId),
+  ],
 )
 
 export type FileUploadSchema = typeof fileUploadSchema.$inferSelect

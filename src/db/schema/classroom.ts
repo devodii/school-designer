@@ -1,5 +1,5 @@
 import { accountSchema } from "@/db/schema/account"
-import { pgTable, varchar, timestamp } from "drizzle-orm/pg-core"
+import { pgTable, varchar, timestamp, unique } from "drizzle-orm/pg-core"
 
 export const classroomSchema = pgTable("classroom", {
   id: varchar("id").primaryKey(),
@@ -19,12 +19,16 @@ export const classroomInviteSchema = pgTable("classroom_invite", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 })
 
-export const classroomMemberSchema = pgTable("classroom_member", {
-  id: varchar("id").primaryKey(),
-  classroomId: varchar("classroom_id").references(() => classroomSchema.id),
-  accountId: varchar("account_id").references(() => accountSchema.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-})
+export const classroomMemberSchema = pgTable(
+  "classroom_member",
+  {
+    id: varchar("id").primaryKey(),
+    classroomId: varchar("classroom_id").references(() => classroomSchema.id),
+    accountId: varchar("account_id").references(() => accountSchema.id),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  ({ classroomId, accountId }) => [unique("unique_classroom_account").on(classroomId, accountId)],
+)
 
 export type ClassroomSchema = typeof classroomSchema.$inferSelect
 
