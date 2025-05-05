@@ -20,7 +20,7 @@ export default function Home() {
 
       <section className="flex w-full">
         <div className="flex w-full flex-col items-center justify-center gap-3">
-          <h2 className="text-center text-4xl font-semibold">Design your school life</h2>
+          <h2 className="text-center text-4xl font-semibold">F**k whatsapp study groups</h2>
           <p className="text-secondary-foreground max-w-2xl text-center text-[17px]">
             AI-made notebooks, planners, timetables, and class themes that actually match your vibe. Download & print,
             or flex it with your friends
