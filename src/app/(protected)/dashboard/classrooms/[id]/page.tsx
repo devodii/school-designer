@@ -56,7 +56,7 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
           </div>
         </div>
 
-        <ClassroomBody owner={owner} account={account} room={classroom} />
+        <ClassroomBody owner={owner} account={account} classroom={classroom} />
       </div>
     </div>
   )

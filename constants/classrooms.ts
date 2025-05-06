@@ -86,11 +86,8 @@ export const mockActivities: ClassroomActivitySchema[] = [
     createdAt: new Date(),
     type: "NOTE",
     metadata: {
-      type: "NOTE",
-      content: {
-        title: "Chapter 5",
-        notes: "This is a note about Chapter 5",
-      },
+      content: "Chapter 1",
+      description: "Added notes for Chapter 1",
     },
   },
   {
@@ -98,14 +95,10 @@ export const mockActivities: ClassroomActivitySchema[] = [
     accountId: "10",
     classroomId: "1212",
     createdAt: new Date(),
-    type: "STUDY_PLAN",
+    type: "PLAN",
     metadata: {
-      type: "STUDY_PLAN",
-      content: {
-        title: "Finals Study Plan",
-        description: "Study plan for the finals",
-        steps: ["Study Chapter 1", "Study Chapter 2", "Study Chapter 3"],
-      },
+      description: "Study plan for the finals",
+      content: "Study Chapter 1",
     },
   },
   {
@@ -115,27 +108,8 @@ export const mockActivities: ClassroomActivitySchema[] = [
     createdAt: new Date(),
     type: "HOMEWORK",
     metadata: {
-      type: "HOMEWORK",
-      content: {
-        title: "Chemistry Homework",
-        description: "Homework for Chemistry",
-        dueDate: new Date(),
-        answers: ["Answer 1", "Answer 2", "Answer 3"],
-      },
-    },
-  },
-  {
-    id: "004",
-    accountId: "10",
-    classroomId: "1212",
-    createdAt: new Date(),
-    type: "QUESTION",
-    metadata: {
-      type: "QUESTION",
-      content: {
-        title: "What is the capital of France?",
-        description: "This is a question about the capital of France",
-      },
+      content: "Chemistry Homework",
+      description: "Answers to Chapter 2",
     },
   },
   {
@@ -145,30 +119,8 @@ export const mockActivities: ClassroomActivitySchema[] = [
     createdAt: new Date(),
     type: "HOMEWORK",
     metadata: {
-      type: "HOMEWORK",
-      content: {
-        title: "Chemistry Homework",
-        description: "Homework for Chemistry",
-        dueDate: new Date(),
-        answers: ["Answer 1", "Answer 2", "Answer 3"],
-      },
-    },
-  },
-
-  {
-    id: "007",
-    accountId: "10",
-    classroomId: "1212",
-    createdAt: new Date(),
-    type: "HOMEWORK",
-    metadata: {
-      type: "HOMEWORK",
-      content: {
-        title: "Chemistry Homework",
-        description: "Homework for Chemistry",
-        dueDate: new Date(),
-        answers: ["Answer 1", "Answer 2", "Answer 3"],
-      },
+      content: "Chemistry Homework",
+      description: "Answers to Chapter 2",
     },
   },
 ]
@@ -213,4 +165,3 @@ export const mockQuiz: QuizResponse["quiz"] = {
   totalPoints: 60,
   estimatedTime: 60 * 10, // 10 minutes
 }
-

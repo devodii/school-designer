@@ -20,14 +20,14 @@ export const TabsRoot = ({ data, ...mixinProps }: TabsRootProps) => {
     <Tabs defaultValue="account" {...rest}>
       <TabsList {...list}>
         {data.map(({ value, label }) => (
-          <TabsTrigger {...trigger} value={value}>
+          <TabsTrigger key={value} {...trigger} value={value}>
             {createElement(label)}
           </TabsTrigger>
         ))}
       </TabsList>
 
       {data.map(({ value, component }) => (
-        <TabsContent {...content} value={value}>
+        <TabsContent key={value} {...content} value={value}>
           {createElement(component)}
         </TabsContent>
       ))}

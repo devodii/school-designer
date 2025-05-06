@@ -3,11 +3,19 @@
 import { findAccountById } from "@/actions/account"
 import { getSession } from "@/actions/session"
 import db from "@/db"
-import { classroomMemberSchema, classroomSchema, ClassroomSchema } from "@/db/schema/classroom"
+import { accountSchema } from "@/db/schema/account"
+import {
+  ClassroomEventSchema,
+  classroomEventSchema,
+  classroomMemberSchema,
+  classroomSchema,
+  ClassroomSchema,
+} from "@/db/schema/classroom"
 import { tryCatch } from "@/lib/try-catch"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import { nanoid } from "nanoid"
 
+// Classroom
 export const findClassroomById = async (id: string) => {
   const { data, error } = await tryCatch(db.select().from(classroomSchema).where(eq(classroomSchema.id, id)))
 
@@ -58,7 +66,9 @@ export const createClassroom = async (dto: Pick<ClassroomSchema, "name" | "descr
   return { id: data[0].id }
 }
 
-export const postClassroomJoin = async (classroomId: string) => {
+// Classroom Member
+
+export const addClassroomMember = async (classroomId: string) => {
   const session = await getSession()
 
   if (!session) throw new Error("Unauthorized")
@@ -86,4 +96,43 @@ export const postClassroomJoin = async (classroomId: string) => {
   if (error) throw new Error("Failed to join classroom")
 
   return { id: classroom.id }
+}
+
+// Classroom Event
+
+export const createClassroomEvent = async (
+  dto: Pick<ClassroomEventSchema, "classroomId" | "accountId" | "description">,
+) => {
+  const { classroomId, accountId, description } = dto
+
+  const { error, data } = await tryCatch(
+    db
+      .insert(classroomEventSchema)
+      .values({ id: `ce_${nanoid(25)}`, classroomId, accountId, description })
+      .returning({ id: classroomEventSchema.id }),
+  )
+
+  if (error) throw new Error("Failed to create classroom event")
+
+  return { id: data[0].id }
+}
+
+export const getClassroomEvents = async (classroomId: string) => {
+  const { data: events, error } = await tryCatch(
+    db
+      .select({
+        id: classroomEventSchema.id,
+        description: classroomEventSchema.description,
+        createdAt: classroomEventSchema.createdAt,
+        userName: sql<string>`(${accountSchema.profile} ->> 'fullName')`,
+        userAvatar: sql<string>`(${accountSchema.profile} ->> 'pictures' -> 0 ->> 'url')`,
+      })
+      .from(classroomEventSchema)
+      .leftJoin(accountSchema, eq(classroomEventSchema.accountId, accountSchema.id))
+      .where(eq(classroomEventSchema.classroomId, classroomId)),
+  )
+
+  if (error) throw new Error("Failed to get classroom events")
+
+  return events
 }

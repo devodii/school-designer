@@ -1,13 +1,14 @@
 "use client"
 
 import { findAccountById } from "@/actions/account"
-import { postClassroomJoin } from "@/actions/classroom"
+import { addClassroomMember, createClassroomEvent } from "@/actions/classroom"
 import { getSession } from "@/actions/session"
 import { CardRoot } from "@/components/card-root"
 import { Spinner } from "@/components/spinner"
 import { Button } from "@/components/ui/button"
 import { ClassroomSchema } from "@/db/schema/classroom"
 import { sleep } from "@/lib/sleep"
+import { tryCatch } from "@/lib/try-catch"
 import { useMutation } from "@tanstack/react-query"
 import { Users } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -32,9 +33,16 @@ export const JoinClassroom = ({ data }: JoinClassroomProps) => {
 
       if (!account) return router.push(`/signin?redirect=/join?roomCode=${data.inviteCode}`)
 
-      const { id } = await postClassroomJoin(data.id)
+      const { data: classroomMember, error: classroomMemberError } = await tryCatch(
+        Promise.all([
+          addClassroomMember(data.id),
+          createClassroomEvent({ classroomId: data.id, accountId: account.id, description: "Joined classroom" }),
+        ]),
+      )
 
-      router.push(`/dashboard/classrooms/${id}`)
+      if (classroomMemberError) throw new Error("Failed to join classroom")
+
+      router.push(`/dashboard/classrooms/${data.id}`)
     },
     onError: error => toast.error(error.message),
   })

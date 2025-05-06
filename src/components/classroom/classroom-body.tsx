@@ -3,6 +3,7 @@
 import { createElement } from "react"
 
 import { CardRoot } from "@/components/card-root"
+import { AddActivityForm } from "@/components/classroom/add-activity-form"
 import { Spinner } from "@/components/spinner"
 import { TabsRoot } from "@/components/tabs-root"
 import { TextareaField } from "@/components/text-area-field"
@@ -10,11 +11,10 @@ import { TextField } from "@/components/text-field"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { AccountSchema } from "@/db/schema/account"
-import { ClassroomActivityType } from "@/db/schema/classroom"
-import { ClassroomActivityHomeworkMetadata } from "@/types"
+import { ClassroomActivityType, ClassroomSchema } from "@/db/schema/classroom"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
-import { Book, Calendar, MessageSquare, File, ShieldQuestion, Ear, Plus, MoreHorizontal } from "lucide-react"
+import { Book, Calendar, MessageSquare, File, Plus, MoreHorizontal, Link } from "lucide-react"
 import Image from "next/image"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -22,7 +22,7 @@ import { z } from "zod"
 import { mockActivities, mockClassmates, mockDocuments } from "~/constants/classrooms"
 
 interface ClassroomBodyProps {
-  room: { name: string; description: string }
+  classroom: ClassroomSchema
   owner: AccountSchema
   account: AccountSchema
 }
@@ -34,25 +34,19 @@ const editClassroomSchema = z.object({
 
 type EditClassroomForm = z.infer<typeof editClassroomSchema>
 
-export const ClassroomBody = ({ owner, account, room }: ClassroomBodyProps) => {
+export const ClassroomBody = ({ owner, account, classroom }: ClassroomBodyProps) => {
   const getActivityIcon = (type: ClassroomActivityType): any => {
     if (type == "NOTE") return Book
-    else if (type == "ANNOUNCEMENT") return Ear
+    else if (type == "PLAN") return Calendar
     else if (type == "HOMEWORK") return MessageSquare
-    else if (type == "QUESTION") return ShieldQuestion
-    else if (type == "STUDY_PLAN") return Calendar
-    else if (type == "RESOURCE") return File
-    else if (type == "OTHER") return Book
+    else throw new Error("Invalid activity type")
   }
 
   const classmates = mockClassmates.slice(0, 5)
 
   const editClassroomForm = useForm<EditClassroomForm>({
     resolver: zodResolver(editClassroomSchema),
-    defaultValues: {
-      name: room.name,
-      description: room.description,
-    },
+    defaultValues: { name: classroom.name, description: classroom.description },
   })
 
   const { mutate: updateClassroom, isPending: isUpdatingClassroom } = useMutation({
@@ -77,7 +71,8 @@ export const ClassroomBody = ({ owner, account, room }: ClassroomBodyProps) => {
           label: () => <div className="cursor-pointer text-sm font-medium">Feed</div>,
           component: () => (
             <div className="grid w-full max-w-7xl grid-cols-1 gap-6 lg:grid-cols-3">
-              <div className="lg:col-span-2">
+              <div className="space-y-6 lg:col-span-2">
+                <AddActivityForm classroomId={classroom.id} />
                 <CardRoot
                   titleChildren="Recent Activity"
                   className="w-full shadow-sm"
@@ -94,7 +89,7 @@ export const ClassroomBody = ({ owner, account, room }: ClassroomBodyProps) => {
                               <p className="font-medium">{activity.accountId}</p>
                               <span className="text-xs text-gray-500">{activity.createdAt.toLocaleString()}</span>
                             </div>
-                            <p className="mt-1 text-sm">{activity.metadata.content.title}</p>
+                            <p className="mt-1 text-sm">{activity.metadata.description}</p>
                             <div className="mt-2 flex items-center">
                               <Badge
                                 variant="outline"
@@ -115,6 +110,13 @@ export const ClassroomBody = ({ owner, account, room }: ClassroomBodyProps) => {
                     </Button>
                   }
                 />
+                <div className="mt-4 flex justify-center">
+                  <Link to={`/dashboard/classroom/${classroom.id}/activities`}>
+                    <Button variant="outline" size="sm">
+                      View All Activities
+                    </Button>
+                  </Link>
+                </div>
               </div>
 
               {/* Sidebar Content */}
@@ -125,15 +127,14 @@ export const ClassroomBody = ({ owner, account, room }: ClassroomBodyProps) => {
                   contentChildren={
                     <ul className="space-y-4">
                       {mockActivities
-                        .filter(activity => activity.metadata.type === "HOMEWORK")
+                        .filter(activity => activity.type === "HOMEWORK")
                         .map(assignment => {
-                          const homework = assignment.metadata as ClassroomActivityHomeworkMetadata
                           return (
                             <li key={assignment.id} className="flex items-start gap-3">
                               <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-gray-300"></span>
                               <div>
-                                <p className="font-medium">{homework.content.title}</p>
-                                <p className="text-sm text-gray-500">{homework.content.dueDate.toLocaleString()}</p>
+                                <p className="font-medium">{assignment.metadata.content}</p>
+                                <p className="text-sm text-gray-500">{assignment.metadata.description}</p>
                               </div>
                             </li>
                           )
