@@ -66,6 +66,7 @@ export function MultiStepForm<T extends FieldValues>({
           animate="center"
           exit="exit"
           transition={{ duration: 0.25 }}
+          className="px-4"
         >
           <CurrentStepComponent onNext={handleNext} onBack={handleBack} isLastStep={isLastStep} />
         </motion.div>

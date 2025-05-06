@@ -43,13 +43,13 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
 
             <InviteButton
               shareLink={shareLink}
-              variant="outline"
+              variant="default"
               size="sm"
               className="gap-2"
               children={
                 <>
                   <UserPlus size={16} />
-                  <span className="text-sm">Invite</span>
+                  <span className="text-sm text-white">Invite</span>
                 </>
               }
             />

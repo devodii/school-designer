@@ -14,10 +14,13 @@ import { Label } from "@/components/ui/label"
 import { useFileUpload } from "@/hooks/use-file-upload"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
+import { GraduationCap, School } from "lucide-react"
 import { Controller, useForm, useFormContext } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { HIGH_SCHOOL_SUBJECTS, UNIVERSITY_SUBJECTS } from "~/constants/subjects"
+
+import { SelectableCard } from "../selectable-card"
 
 const onboardingSchema = z.object({
   username: z.string({ message: "This is a required field" }).min(3).max(20),
@@ -166,19 +169,27 @@ const EducationLevelStep = ({ onNext, onBack }: StepComponentProps<OnboardingSch
         control={form.control}
         name="education_level"
         render={({ field, fieldState: { error } }) => {
+          const options = [
+            { value: "HIGH SCHOOL", title: "High School", description: "I'm a high school student", icon: School },
+            { value: "COLLEGE", title: "College", description: "I'm a college student", icon: GraduationCap },
+          ]
           return (
-            <SelectRoot
-              labelText="What's your level of education?"
-              triggerClassName="w-[250px]"
-              items={[
-                { label: "High School", value: "HIGH SCHOOL" },
-                { label: "College", value: "COLLEGE" },
-              ]}
-              value={field.value}
-              onValueChange={value => field.onChange(value)}
-              name={field.name}
-              errorText={error?.message}
-            />
+            <>
+              <div className="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
+                {options.map(option => (
+                  <SelectableCard
+                    key={option.value}
+                    titleText={option.title}
+                    descriptionText={option.description}
+                    icon={option.icon}
+                    titleClassName="text-lg font-semibold"
+                    isSelected={field.value === option.value}
+                    onClick={() => field.onChange(option.value)}
+                  />
+                ))}
+              </div>
+              {error?.message && <p className="text-red-500">{error.message}</p>}
+            </>
           )
         }}
       />
@@ -310,7 +321,7 @@ const ReferralCodeStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchem
 const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>) => {
   const form = useFormContext()
 
-  const { onUpload, progresses, isUploading } = useFileUpload("profilePic", { defaultUploadedFiles: [] }, error =>
+  const { onUpload, progresses, isUploading } = useFileUpload("image", { defaultUploadedFiles: [] }, error =>
     toast.error(error),
   )
 

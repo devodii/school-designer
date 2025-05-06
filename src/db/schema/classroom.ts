@@ -25,13 +25,6 @@ export const classroomSchema = pgTable("classroom", {
   updatedAt: timestamp("updated_at", { mode: "date", precision: 3 }).$onUpdate(() => new Date()),
 })
 
-export const classroomInviteSchema = pgTable("classroom_invite", {
-  id: varchar("id").primaryKey(),
-  classroomId: varchar("classroom_id").references(() => classroomSchema.id),
-  email: varchar("email").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-})
-
 export const classroomMemberSchema = pgTable(
   "classroom_member",
   {
@@ -42,6 +35,12 @@ export const classroomMemberSchema = pgTable(
   },
   ({ classroomId, accountId }) => [unique("unique_classroom_account").on(classroomId, accountId)],
 )
+
+export const classroomTimeline = pgTable("classroom_timeline", {
+  id: varchar("id").primaryKey(),
+  classroomId: varchar("classroom_id").references(() => classroomSchema.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+})
 
 export const classroomActivitySchema = pgTable("classroom_activity", {
   id: varchar("id").primaryKey(),
@@ -55,8 +54,6 @@ export const classroomActivitySchema = pgTable("classroom_activity", {
 })
 
 export type ClassroomSchema = typeof classroomSchema.$inferSelect
-
-export type ClassroomInviteSchema = typeof classroomInviteSchema.$inferSelect
 
 export type ClassroomMemberSchema = typeof classroomMemberSchema.$inferSelect
 
