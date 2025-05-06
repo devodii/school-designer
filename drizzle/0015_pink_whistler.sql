@@ -1,1 +1,0 @@
-ALTER TABLE "classroom_member" ADD CONSTRAINT "unique_classroom_account" UNIQUE("classroom_id","account_id");
