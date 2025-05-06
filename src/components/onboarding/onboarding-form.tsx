@@ -3,10 +3,11 @@
 import { useState } from "react"
 
 import { updateAccount } from "@/actions/account"
+import { addClassroomMember, createClassroomEvent } from "@/actions/classroom"
 import { getSession } from "@/actions/session"
 import { FileUploader } from "@/components/file-uploader"
 import { MultiStepForm, Step, StepComponentProps } from "@/components/multi-step-form"
-import { SelectRoot } from "@/components/select-root"
+import { SelectableCard } from "@/components/selectable-card"
 import { Spinner } from "@/components/spinner"
 import { TextField } from "@/components/text-field"
 import { Button } from "@/components/ui/button"
@@ -15,21 +16,19 @@ import { useFileUpload } from "@/hooks/use-file-upload"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { GraduationCap, School } from "lucide-react"
+import { useSearchParams, useRouter } from "next/navigation"
 import { Controller, useForm, useFormContext } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { HIGH_SCHOOL_SUBJECTS, UNIVERSITY_SUBJECTS } from "~/constants/subjects"
 
-import { SelectableCard } from "../selectable-card"
-
 const onboardingSchema = z.object({
   username: z.string({ message: "This is a required field" }).min(3).max(20),
-  classroom_code: z.string().optional(),
   education_level: z.enum(["HIGH SCHOOL", "COLLEGE"]),
   school_name: z.string(),
   subjects: z.array(z.string()).min(1),
   referral_code: z.string().optional(),
-  photos: z.array(z.object({ id: z.string(), url: z.string() })),
+  photos: z.array(z.string()),
 })
 
 type OnboardingSchema = z.infer<typeof onboardingSchema>
@@ -63,52 +62,6 @@ const UsernameStep = ({ onNext }: StepComponentProps<OnboardingSchema>) => {
       />
 
       <Button type="submit">Next</Button>
-    </form>
-  )
-}
-
-const ClassroomCodeStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>) => {
-  const form = useFormContext()
-
-  return (
-    <form
-      onSubmit={async e => {
-        e.preventDefault()
-        const valid = await form.trigger("classroom_code")
-        if (valid) onNext()
-      }}
-      className="mx-auto flex w-full max-w-lg flex-col gap-10"
-    >
-      <Controller
-        control={form.control}
-        name="classroom_code"
-        render={({ field, fieldState: { error } }) => (
-          <TextField
-            id={field.name}
-            labelText="Enter your classroom code (if you were invited)"
-            inputValue={field.value}
-            inputOnChange={field.onChange}
-            inputOnBlur={field.onBlur}
-            inputName={field.name}
-            errorText={error?.message}
-          />
-        )}
-      />
-
-      <div className="flex flex-col gap-4">
-        <div className="flex w-full items-center gap-4">
-          <Button className="flex-1" type="button" variant="outline" onClick={() => onBack()}>
-            Back
-          </Button>
-          <Button className="flex-1" type="submit">
-            Next
-          </Button>
-        </div>
-
-        <Button className="flex-1" type="button" variant="outline" onClick={() => onNext()}>
-          Skip
-        </Button>
-      </div>
     </form>
   )
 }
@@ -178,6 +131,7 @@ const EducationLevelStep = ({ onNext, onBack }: StepComponentProps<OnboardingSch
               <div className="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
                 {options.map(option => (
                   <SelectableCard
+                    type="button"
                     key={option.value}
                     titleText={option.title}
                     descriptionText={option.description}
@@ -318,8 +272,12 @@ const ReferralCodeStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchem
   )
 }
 
-const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>) => {
+const PhotoUrlsStep = ({ onBack }: StepComponentProps<OnboardingSchema>) => {
   const form = useFormContext()
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  const roomCode = searchParams.get("room_code")
 
   const { onUpload, progresses, isUploading } = useFileUpload("image", { defaultUploadedFiles: [] }, error =>
     toast.error(error),
@@ -339,7 +297,27 @@ const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>)
         profile: { fullName: values.username, subjectsOffered: values.subjects, pictures: values.photos, userName: "" },
         isOnboarded: true,
       })
+
+      if (roomCode) {
+        const response = await addClassroomMember(roomCode)
+
+        await createClassroomEvent({
+          classroomId: response.classroomId,
+          accountId: session.accountId,
+          description: "Joined classroom",
+        })
+
+        return response
+      }
+
+      return { success: true }
     },
+    onSuccess: response => {
+      toast.success("Profile updated successfully")
+      if ("classroomId" in response) router.push(`/dashboard/classrooms/${response.classroomId}?first`)
+      else router.push("/dashboard")
+    },
+    onError: () => toast.error("Sorry, something went wrong"),
   })
 
   return (
@@ -347,7 +325,9 @@ const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>)
       onSubmit={async e => {
         e.preventDefault()
         const valid = await form.trigger("photos")
-        if (valid) updateAccountMutation(onNext())
+        const formData = form.getValues() as OnboardingSchema
+        console.log({ formData })
+        if (valid) updateAccountMutation(formData)
       }}
       className="mx-auto flex w-full max-w-lg flex-col gap-10"
     >
@@ -364,8 +344,9 @@ const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>)
                 maxSize={1024 * 1024 * 1} // 1MB
                 progresses={progresses}
                 onUpload={async files => {
-                  await onUpload(files)
-                  field.onChange(files)
+                  const response = await onUpload(files)
+                  if (!response) return
+                  field.onChange((prev: string[]) => [...prev, ...response])
                 }}
                 disabled={isUploading}
               />
@@ -375,12 +356,12 @@ const PhotoUrlsStep = ({ onNext, onBack }: StepComponentProps<OnboardingSchema>)
         }}
       />
 
-      <div className="flex w-full items-center gap-4">
+      <div className="flex w-full flex-col items-center gap-4 md:flex-row">
         <Button className="flex-1" type="button" variant="outline" onClick={() => onBack()}>
           Back
         </Button>
         <Button className="flex-1" type="submit" disabled={isUpdatingAccount}>
-          {isUpdatingAccount ? "Uploading..." : "Next"}
+          {isUpdatingAccount ? "Please wait ..." : "Next"}
           {isUpdatingAccount && <Spinner size={24} />}
         </Button>
       </div>
@@ -398,7 +379,6 @@ export const OnboardingForm = () => {
   const onboardingSteps = [
     { key: "username", component: UsernameStep },
     { key: "education_level", component: EducationLevelStep },
-    { key: "classroom_code", component: ClassroomCodeStep },
     { key: "school_name", component: SchoolNameStep },
     { key: "subjects", component: SubjectsStep },
     { key: "referral_code", component: ReferralCodeStep },

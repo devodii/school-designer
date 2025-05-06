@@ -33,16 +33,17 @@ const VerifyToken = () => {
     isPending: isGoogleTokenPending,
     isError: isGoogleTokenError,
   } = useMutation({
-    mutationFn: async (dto: { googleIdToken: string; intent: AuthIntent }) => {
+    mutationFn: async (dto: { googleIdToken: string; intent: AuthIntent; redirect?: string }) => {
       const response = await verifyGoogleTokenAction(dto.googleIdToken, dto.intent)
 
+      return { ...response, ...dto }
+    },
+    onSuccess: response => {
       setState({
         provider: "GOOGLE",
-        intent: dto.intent,
-        redirectTo: response?.isNewAccount ? "/onboarding" : "/dashboard",
+        intent: response.intent,
+        redirectTo: response?.redirect ? response.redirect : response?.isNewAccount ? "/onboarding" : "/dashboard",
       })
-
-      return response
     },
   })
 
@@ -51,14 +52,17 @@ const VerifyToken = () => {
     isPending: isTokenPending,
     isError: isMagicLinkError,
   } = useMutation({
-    mutationFn: async (dto: { token: string }) => {
+    mutationFn: async (dto: { token: string; redirect?: string }) => {
       const response = await verifyMagicLinkTokenAction(dto.token)
+
+      return { ...response, ...dto }
+    },
+    onSuccess: response => {
       setState({
         provider: "EMAIL",
-        intent: undefined,
-        redirectTo: response?.isNewAccount ? "/onboarding" : "/dashboard",
+        intent: response.intent,
+        redirectTo: response?.redirect ? response.redirect : response?.isNewAccount ? "/onboarding" : "/dashboard",
       })
-      return response
     },
   })
 
@@ -67,27 +71,32 @@ const VerifyToken = () => {
   const getAppIdToken = () => {
     const searchParams = new URLSearchParams(window.location.search)
     const appIdToken = searchParams.get("c_token") as string
-    return { appIdToken }
+    const redirect = searchParams.get("redirect")
+
+    return { appIdToken, ...(redirect && { redirect }) }
   }
 
   const getGoogleIdToken = () => {
     const hashFragment = window.location.hash.substring(1)
     const params = new URLSearchParams(hashFragment)
     const googleIdToken = params.get("id_token") as string
-    const state = JSON.parse(atob(params.get("state") as string)) as { intent: AuthIntent }
+    const state = JSON.parse(atob(params.get("state") as string)) as { intent: AuthIntent; redirect?: string }
 
-    return { googleIdToken, intent: state.intent }
+    return { googleIdToken, state }
   }
 
   useEffect(() => {
     const handleVerifyToken = async () => {
-      const { appIdToken } = getAppIdToken()
+      const { appIdToken, redirect } = getAppIdToken()
 
-      if (appIdToken) return verifyMagicLinkToken({ token: appIdToken })
+      console.log({ redirect })
 
-      const { googleIdToken, intent } = getGoogleIdToken()
+      if (appIdToken) return verifyMagicLinkToken({ token: appIdToken, redirect })
 
-      if (googleIdToken && intent) return verifyGoogleToken({ googleIdToken, intent })
+      const { googleIdToken, state } = getGoogleIdToken()
+
+      if (googleIdToken && state.intent)
+        return verifyGoogleToken({ googleIdToken, intent: state.intent, redirect: state?.redirect })
 
       toast.error("No token provided")
     }
@@ -102,6 +111,8 @@ const VerifyToken = () => {
       </div>
     )
   }
+
+  console.log({ state })
 
   if (isError) {
     return (
@@ -129,12 +140,12 @@ const VerifyToken = () => {
                 variant="outline"
                 onClick={() => {
                   if (state?.provider === "GOOGLE") {
-                    const { googleIdToken, intent } = getGoogleIdToken()
-                    return verifyGoogleToken({ googleIdToken, intent })
+                    const { googleIdToken, state } = getGoogleIdToken()
+                    return verifyGoogleToken({ googleIdToken, intent: state.intent, redirect: state?.redirect })
                   }
 
-                  const { appIdToken } = getAppIdToken()
-                  return verifyMagicLinkToken({ token: appIdToken })
+                  const { appIdToken, redirect } = getAppIdToken()
+                  return verifyMagicLinkToken({ token: appIdToken, redirect })
                 }}
               >
                 Try Again

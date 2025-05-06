@@ -7,7 +7,6 @@ import { CardRoot } from "@/components/card-root"
 import { Spinner } from "@/components/spinner"
 import { Button } from "@/components/ui/button"
 import { ClassroomSchema } from "@/db/schema/classroom"
-import { sleep } from "@/lib/sleep"
 import { tryCatch } from "@/lib/try-catch"
 import { useMutation } from "@tanstack/react-query"
 import { Users } from "lucide-react"
@@ -25,15 +24,13 @@ export const JoinClassroom = ({ data }: JoinClassroomProps) => {
     mutationFn: async () => {
       const session = await getSession()
 
-      await sleep(1000)
-
-      if (!session) return router.push(`/signin?redirect=/join?roomCode=${data.inviteCode}`)
+      if (!session) return router.push(`/signin?redirect=/onboarding?room_code=${data.inviteCode}`)
 
       const account = await findAccountById(session.accountId)
 
-      if (!account) return router.push(`/signin?redirect=/join?roomCode=${data.inviteCode}`)
+      if (!account) return router.push(`/signin?redirect=/onboarding?room_code=${data.inviteCode}`)
 
-      const { data: classroomMember, error: classroomMemberError } = await tryCatch(
+      const { error: classroomMemberError } = await tryCatch(
         Promise.all([
           addClassroomMember(data.id),
           createClassroomEvent({ classroomId: data.id, accountId: account.id, description: "Joined classroom" }),

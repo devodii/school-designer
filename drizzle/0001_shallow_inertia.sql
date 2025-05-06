@@ -1,0 +1,1 @@
+ALTER TABLE "classroom_timeline" ADD COLUMN "metadata" jsonb;

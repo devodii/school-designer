@@ -8,12 +8,17 @@ import { Logo } from "@/components/logo"
 import { Button } from "@/components/ui/button"
 import { nanoid } from "nanoid"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 
 export default function SignIn() {
   const router = useRouter()
   const [emailSent, setEmailSent] = useState(false)
+  const searchParams = useSearchParams()
+
+  const redirect = searchParams.get("redirect ")
+
+  console.log({ redirect })
 
   const handleGoogleSignIn = () => {
     const authUrlDomain = "https://accounts.google.com/o/oauth2/v2/auth"
@@ -25,7 +30,7 @@ export default function SignIn() {
       scope: "openid profile email",
       nonce: nanoid(19),
       prompt: "consent",
-      state: btoa(JSON.stringify({ intent: "SIGN_IN" })),
+      state: btoa(JSON.stringify({ intent: "SIGN_IN", ...(redirect && { redirect }) })),
     }
 
     const authUrl = `${authUrlDomain}?${new URLSearchParams(authUrlParams)}`

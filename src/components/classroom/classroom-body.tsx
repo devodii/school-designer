@@ -1,8 +1,7 @@
 "use client"
 
-import { createElement } from "react"
-
 import { CardRoot } from "@/components/card-root"
+import { ActivityFeed } from "@/components/classroom/activity-feed"
 import { AddActivityForm } from "@/components/classroom/add-activity-form"
 import { Spinner } from "@/components/spinner"
 import { TabsRoot } from "@/components/tabs-root"
@@ -11,7 +10,7 @@ import { TextField } from "@/components/text-field"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { AccountSchema } from "@/db/schema/account"
-import { ClassroomActivityType, ClassroomSchema } from "@/db/schema/classroom"
+import { ClassroomActivityType, ClassroomEventSchema, ClassroomSchema } from "@/db/schema/classroom"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { Book, Calendar, MessageSquare, File, Plus, MoreHorizontal, Link } from "lucide-react"
@@ -25,6 +24,7 @@ interface ClassroomBodyProps {
   classroom: ClassroomSchema
   owner: AccountSchema
   account: AccountSchema
+  activities: Array<{ event: ClassroomEventSchema; userName: string; userAvatar: string }>
 }
 
 const editClassroomSchema = z.object({
@@ -34,7 +34,7 @@ const editClassroomSchema = z.object({
 
 type EditClassroomForm = z.infer<typeof editClassroomSchema>
 
-export const ClassroomBody = ({ owner, account, classroom }: ClassroomBodyProps) => {
+export const ClassroomBody = ({ owner, account, classroom, activities }: ClassroomBodyProps) => {
   const getActivityIcon = (type: ClassroomActivityType): any => {
     if (type == "NOTE") return Book
     else if (type == "PLAN") return Calendar
@@ -73,43 +73,9 @@ export const ClassroomBody = ({ owner, account, classroom }: ClassroomBodyProps)
             <div className="grid w-full max-w-7xl grid-cols-1 gap-6 lg:grid-cols-3">
               <div className="space-y-6 lg:col-span-2">
                 <AddActivityForm classroomId={classroom.id} />
-                <CardRoot
-                  titleChildren="Recent Activity"
-                  className="w-full shadow-sm"
-                  contentChildren={
-                    <ul className="space-y-6">
-                      {mockActivities.map(activity => (
-                        <li key={activity.id} className="flex items-start gap-3">
-                          <div className="flex size-10 items-center justify-center rounded-full bg-gray-100">
-                            {activity.accountId.charAt(0).toUpperCase()}
-                          </div>
 
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <p className="font-medium">{activity.accountId}</p>
-                              <span className="text-xs text-gray-500">{activity.createdAt.toLocaleString()}</span>
-                            </div>
-                            <p className="mt-1 text-sm">{activity.metadata.description}</p>
-                            <div className="mt-2 flex items-center">
-                              <Badge
-                                variant="outline"
-                                className="flex items-center gap-1 rounded-full px-2 py-0.5 text-xs"
-                              >
-                                {createElement(getActivityIcon(activity.type), { className: "size-4 text-gray-500" })}
-                                <span>{activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}</span>
-                              </Badge>
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  }
-                  footerChildren={
-                    <Button variant="ghost" size="sm" className="w-full">
-                      View All Activity
-                    </Button>
-                  }
-                />
+                <ActivityFeed activities={activities} />
+
                 <div className="mt-4 flex justify-center">
                   <Link to={`/dashboard/classroom/${classroom.id}/activities`}>
                     <Button variant="outline" size="sm">

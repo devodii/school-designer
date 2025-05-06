@@ -9,7 +9,7 @@ import { nanoid } from "nanoid"
 export const findAccountByEmail = async (email: string) => {
   const { data, error } = await tryCatch(db.select().from(accountSchema).where(eq(accountSchema.email, email)))
 
-  if (error) throw new Error("Failed to find user")
+  if (error) return null
 
   return data[0]
 }
@@ -17,7 +17,7 @@ export const findAccountByEmail = async (email: string) => {
 export const findAccountById = async (id: string) => {
   const { data, error } = await tryCatch(db.select().from(accountSchema).where(eq(accountSchema.id, id)))
 
-  if (error) throw new Error("Failed to find user")
+  if (error) return null
 
   return data[0]
 }

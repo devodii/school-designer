@@ -4,7 +4,7 @@ import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
 
 interface SelectableCardProps
-  extends ComponentProps<"div">,
+  extends ComponentProps<"button">,
     MixinProps<"title", ComponentProps<"h3">>,
     MixinProps<"description", ComponentProps<"div">> {
   icon: ElementType
@@ -24,7 +24,7 @@ export const SelectableCard = ({
 }: SelectableCardProps) => {
   const { rest, title, description } = splitProps(mixinProps, "title", "description")
   return (
-    <div
+    <button
       {...rest}
       className={cn(
         "relative flex cursor-pointer flex-col items-center rounded-lg border-2 p-6 transition-all",
@@ -57,6 +57,6 @@ export const SelectableCard = ({
           </svg>
         </div>
       )}
-    </div>
+    </button>
   )
 }

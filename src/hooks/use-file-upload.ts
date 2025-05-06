@@ -39,6 +39,7 @@ export function useFileUpload(
       })
 
       setUploadResult({ success: true, data: { url: res[0].serverData.url, id: res[0].serverData.id } })
+      return res.map(file => file.serverData.url)
     } catch (err: unknown) {
       if (err instanceof Error) {
         onUploadError(err.message)

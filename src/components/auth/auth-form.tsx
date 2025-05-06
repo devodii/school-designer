@@ -8,6 +8,7 @@ import { AuthIntent } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { LogIn } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -24,9 +25,12 @@ interface AuthFormProps {
 export const AuthForm = ({ onSendMagicLink, onError, intent }: AuthFormProps) => {
   const { handleSubmit, control } = useForm<AuthSchema>({ resolver: zodResolver(authSchema) })
 
+  const searchParams = useSearchParams()
+  const redirect = searchParams.get("redirect")
+
   const { mutate: sendMagicLink, isPending } = useMutation({
     mutationFn: async (data: AuthSchema) => {
-      return await sendMagicLinkAction({ ...data, intent })
+      return await sendMagicLinkAction({ ...data, intent, ...(redirect && { redirect }) })
     },
     onSuccess: onSendMagicLink,
     onError: ({ message }) => onError(message),

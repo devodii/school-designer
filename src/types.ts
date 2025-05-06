@@ -1,8 +1,10 @@
+import { ClassroomActivityType } from "./db/schema/classroom"
+
 export interface AccountProfile {
   fullName: string
   userName: string
   subjectsOffered: string[]
-  pictures: { id: string; url: string }[]
+  pictures: string[]
 }
 
 // Auth
@@ -25,4 +27,8 @@ export interface CheckoutSessionMetadata {
 
 // Classroom
 
-export type ClassroomActivityMetadata = { content: string; description: string }
+export type NewMemberClassroomEventMetadata = {}
+
+export type NewActivityClassroomEventMetadata = { content: string; description: string; tag: ClassroomActivityType }
+
+export type ClassroomEventMetadata = NewMemberClassroomEventMetadata | NewActivityClassroomEventMetadata

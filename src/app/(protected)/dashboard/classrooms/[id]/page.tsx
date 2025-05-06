@@ -1,5 +1,5 @@
 import { findAccountById } from "@/actions/account"
-import { findClassroomById } from "@/actions/classroom"
+import { findClassroomById, getClassroomEvents } from "@/actions/classroom"
 import { getCurrentUser } from "@/actions/session"
 import { ClassroomBody } from "@/components/classroom/classroom-body"
 import { InviteButton } from "@/components/classroom/invite-button"
@@ -18,7 +18,13 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
 
   if (!classroom) return notFound()
 
-  const [owner, account] = await Promise.all([findAccountById(classroom.ownerId), getCurrentUser()])
+  const [owner, account, activities] = await Promise.all([
+    findAccountById(classroom.ownerId),
+    getCurrentUser(),
+    getClassroomEvents(id),
+  ])
+
+  if (!owner || !account) return notFound()
 
   const shareLink = `${process.env.APP_URL}/join?room_code=${classroom.inviteCode}`
 
@@ -56,7 +62,7 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
           </div>
         </div>
 
-        <ClassroomBody owner={owner} account={account} classroom={classroom} />
+        <ClassroomBody activities={activities.slice(0, 5)} owner={owner} account={account} classroom={classroom} />
       </div>
     </div>
   )

@@ -23,7 +23,7 @@ export const updateAuth = async (id: string, dto: Partial<AuthSchema>) => {
 
 export const createAuth = async (dto: {
   email: string
-  accountId: string
+  accountId: string | null
   provider: AuthProvider
   metadata: AuthMetadata
 }) => {
@@ -53,6 +53,7 @@ export const createAuth = async (dto: {
       .returning(),
   )
 
+  console.log({ error })
   if (error) throw new Error("Failed to create auth session")
 
   return auth[0]
@@ -66,12 +67,12 @@ export const findByToken = async (token: string) => {
   return auth[0]
 }
 
-export const sendMagicLink = async (dto: { email: string; intent: AuthIntent }) => {
+export const sendMagicLink = async (dto: { email: string; intent: AuthIntent; redirect?: string }) => {
   const account = await findAccountByEmail(dto.email)
 
   const auth = await createAuth({
     email: dto.email,
-    accountId: account?.id,
+    accountId: account?.id ?? null,
     provider: "EMAIL",
     metadata: { intent: dto.intent },
   })
@@ -83,7 +84,7 @@ export const sendMagicLink = async (dto: { email: string; intent: AuthIntent }) 
       from: "Acme <onboarding@resend.dev>",
       to: [dto.email],
       subject: "Sign into your account",
-      react: MagicLinkSignIn({ url: `${process.env.APP_URL}/verify?c_token=${token}` }),
+      react: MagicLinkSignIn({ url: `${process.env.APP_URL}/verify?c_token=${token}&redirect=${dto.redirect}` }),
     }),
   )
 

@@ -1,5 +1,7 @@
 "use client"
 
+import { createClassroomEvent } from "@/actions/classroom"
+import { getSession } from "@/actions/session"
 import { CardRoot } from "@/components/card-root"
 import { RadioGroupRoot } from "@/components/radio-group-root"
 import { TextareaField } from "@/components/text-area-field"
@@ -7,10 +9,12 @@ import { TextField } from "@/components/text-field"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { classroomActivityType } from "@/db/schema/classroom"
+import { tryCatch } from "@/lib/try-catch"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Book, Calendar, File } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
+import { toast } from "sonner"
 import { z } from "zod"
 
 const addActivitySchema = z.object({
@@ -32,8 +36,20 @@ export const AddActivityForm = ({ classroomId }: AddActivityFormProps) => {
     mutationFn: async (dto: AddActivitySchema) => {
       console.log({ dto, classroomId })
 
-      return dto
+      const session = await getSession()
+
+      if (!session) throw new Error("Unauthorized")
+
+      const response = await createClassroomEvent({
+        classroomId,
+        accountId: session.accountId,
+        description: dto.description,
+        metadata: { tag: dto.activityType, content: dto.content, description: dto.description },
+      })
+
+      return response
     },
+    onError: () => toast.error("Failed to create activity"),
   })
 
   const handleSubmit = form.handleSubmit(async data => {
@@ -58,7 +74,7 @@ export const AddActivityForm = ({ classroomId }: AddActivityFormProps) => {
                 textareaPlaceholder="What would you like to share?"
                 textareaValue={field.value}
                 textareaOnChange={field.onChange}
-                className="min-h-[100px]"
+                textareaClassName="min-h-[100px] max-h-[150px]"
                 errorText={error?.message}
               />
             )}
@@ -88,12 +104,27 @@ export const AddActivityForm = ({ classroomId }: AddActivityFormProps) => {
                 <RadioGroupRoot
                   errorText={error?.message}
                   data={[
-                    { id: "notes", label: "Notes", icon: () => <Book size={16} />, value: "notes" },
-                    { id: "plan", label: "Study Plan", icon: () => <Calendar size={16} />, value: "plan" },
-                    { id: "homework", label: "Homework", icon: () => <File size={16} />, value: "homework" },
+                    {
+                      id: "notes",
+                      label: "Notes",
+                      icon: () => <Book size={16} />,
+                      value: classroomActivityType.enumValues[0],
+                    },
+                    {
+                      id: "plan",
+                      label: "Study Plan",
+                      icon: () => <Calendar size={16} />,
+                      value: classroomActivityType.enumValues[1],
+                    },
+                    {
+                      id: "homework",
+                      label: "Homework",
+                      icon: () => <File size={16} />,
+                      value: classroomActivityType.enumValues[2],
+                    },
                   ]}
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                 />
               </div>
             )}
