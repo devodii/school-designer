@@ -1,5 +1,5 @@
 import { findAccountById } from "@/actions/account"
-import { findClassroomById, getClassroomEvents } from "@/actions/classroom"
+import { findClassroomById, getClassroomEvents, getClassroomMembers } from "@/actions/classroom"
 import { getCurrentUser } from "@/actions/session"
 import { ClassroomBody } from "@/components/classroom/classroom-body"
 import { InviteButton } from "@/components/classroom/invite-button"
@@ -18,11 +18,14 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
 
   if (!classroom) return notFound()
 
-  const [owner, account, activities] = await Promise.all([
+  const [owner, account, activities, members] = await Promise.all([
     findAccountById(classroom.ownerId),
     getCurrentUser(),
     getClassroomEvents(id),
+    getClassroomMembers(id),
   ])
+
+  console.log({ members })
 
   if (!owner || !account) return notFound()
 
@@ -62,7 +65,13 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
           </div>
         </div>
 
-        <ClassroomBody activities={activities.slice(0, 5)} owner={owner} account={account} classroom={classroom} />
+        <ClassroomBody
+          activities={activities.slice(0, 5)}
+          owner={owner}
+          account={account}
+          classroom={classroom}
+          members={members}
+        />
       </div>
     </div>
   )

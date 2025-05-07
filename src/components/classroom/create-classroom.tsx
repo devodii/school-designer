@@ -6,6 +6,7 @@ import { TextareaField } from "@/components/text-area-field"
 import { TextField } from "@/components/text-field"
 import { Button } from "@/components/ui/button"
 import { useCanvas } from "@/context/canvas"
+import { useUrlState } from "@/hooks/use-url-state"
 import { sleep } from "@/lib/sleep"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
@@ -25,6 +26,7 @@ type ClassroomSchema = z.infer<typeof createClassroomSchema>
 
 export const CreateClassroom = () => {
   const { closeCanvas } = useCanvas()
+  const { remove } = useUrlState()
 
   const router = useRouter()
 
@@ -114,7 +116,10 @@ export const CreateClassroom = () => {
             type="button"
             className="text-sm"
             variant="outline"
-            onClick={() => closeCanvas(CREATE_CLASSROOM_CANVAS_NAME)}
+            onClick={() => {
+              closeCanvas(CREATE_CLASSROOM_CANVAS_NAME)
+              remove(["sid"])
+            }}
           >
             Close
           </Button>

@@ -7,13 +7,14 @@ import { accountSchema } from "@/db/schema/account"
 import {
   ClassroomEventSchema,
   classroomEventSchema,
+  ClassroomMemberAccount,
   classroomMemberSchema,
   classroomSchema,
   ClassroomSchema,
 } from "@/db/schema/classroom"
 import { tryCatch } from "@/lib/try-catch"
 import { ClassroomEventMetadata } from "@/types"
-import { eq, sql } from "drizzle-orm"
+import { desc, eq, sql } from "drizzle-orm"
 import { nanoid } from "nanoid"
 import { revalidatePath } from "next/cache"
 
@@ -28,7 +29,17 @@ export const findClassroomById = async (id: string) => {
 
 export const findClassroomByInviteCode = async (inviteCode: string) => {
   const { data, error } = await tryCatch(
-    db.select().from(classroomSchema).where(eq(classroomSchema.inviteCode, inviteCode)),
+    db
+      .select({
+        id: classroomSchema.id,
+        name: classroomSchema.name,
+        description: classroomSchema.description,
+        inviteCode: classroomSchema.inviteCode,
+        ownerName: sql<string>`(${accountSchema.profile} ->> 'fullName')`,
+      })
+      .from(classroomSchema)
+      .leftJoin(accountSchema, eq(classroomSchema.ownerId, accountSchema.id))
+      .where(eq(classroomSchema.inviteCode, inviteCode)),
   )
 
   if (error) return null
@@ -68,6 +79,30 @@ export const createClassroom = async (dto: Pick<ClassroomSchema, "name" | "descr
   return { id: data[0].id }
 }
 
+export const updateClassroomById = async (id: string, dto: Pick<ClassroomSchema, "name" | "description">) => {
+  const { data, error } = await tryCatch(
+    db.update(classroomSchema).set(dto).where(eq(classroomSchema.id, id)).returning({ id: classroomSchema.id }),
+  )
+
+  if (error) throw new Error("Failed to update classroom")
+
+  return { id: data[0].id }
+}
+
+export const getAccountClassrooms = async (accountId: string) => {
+  const { data, error } = await tryCatch(
+    db
+      .select({ classroom: classroomSchema, member: classroomMemberSchema })
+      .from(classroomSchema)
+      .leftJoin(classroomMemberSchema, eq(classroomSchema.id, classroomMemberSchema.classroomId))
+      .where(eq(classroomMemberSchema.accountId, accountId)),
+  )
+
+  if (error) throw new Error("Failed to get account classrooms")
+
+  return data
+}
+
 // Classroom Member
 
 export const addClassroomMember = async (classroomCode: string) => {
@@ -97,13 +132,38 @@ export const addClassroomMember = async (classroomCode: string) => {
 
   if (error) throw new Error("Failed to join classroom")
 
+  revalidatePath(`/dashboard/classrooms/${classroom.id}`)
+  revalidatePath(`/dashboard/classrooms/${classroom.id}/members`)
+
   return { classroomId: classroom.id }
+}
+
+export const getClassroomMembers = async (classroomId: string) => {
+  const { data, error } = await tryCatch(
+    db
+      .select({
+        id: accountSchema.id,
+        name: sql<string>`(${accountSchema.profile} ->> 'fullName')`,
+        email: accountSchema.email,
+        isOwner: eq(classroomMemberSchema.accountId, classroomSchema.ownerId),
+        joined: classroomMemberSchema.createdAt,
+        avatar: sql<string>`(${accountSchema.profile} -> 'pictures' -> 0)::text`,
+      })
+      .from(classroomMemberSchema)
+      .leftJoin(accountSchema, eq(classroomMemberSchema.accountId, accountSchema.id))
+      .leftJoin(classroomSchema, eq(classroomMemberSchema.classroomId, classroomSchema.id)) // <-- Add this join
+      .where(eq(classroomMemberSchema.classroomId, classroomId)),
+  )
+
+  if (error) throw new Error("Failed to get classroom members")
+
+  return data as ClassroomMemberAccount[]
 }
 
 // Classroom Event
 
 export const createClassroomEvent = async (
-  dto: Pick<ClassroomEventSchema, "classroomId" | "accountId" | "description"> & {
+  dto: Pick<ClassroomEventSchema, "classroomId" | "accountId" | "description" | "fileIds"> & {
     metadata?: ClassroomEventMetadata
   },
 ) => {
@@ -118,7 +178,7 @@ export const createClassroomEvent = async (
 
   if (error) throw new Error("Failed to create classroom event")
 
-  revalidatePath(`/dashboard/classrooms/${dto.classroomId}`)
+  revalidatePath(`/dashboard/classrooms/${dto.classroomId}`, "layout")
 
   return { id: data[0].id }
 }
@@ -133,7 +193,8 @@ export const getClassroomEvents = async (classroomId: string) => {
       })
       .from(classroomEventSchema)
       .leftJoin(accountSchema, eq(classroomEventSchema.accountId, accountSchema.id))
-      .where(eq(classroomEventSchema.classroomId, classroomId)),
+      .where(eq(classroomEventSchema.classroomId, classroomId))
+      .orderBy(desc(classroomEventSchema.createdAt)),
   )
 
   console.log({ error })

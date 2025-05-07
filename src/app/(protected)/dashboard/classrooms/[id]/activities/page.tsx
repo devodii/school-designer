@@ -1,9 +1,10 @@
-import { getClassroomEvents } from "@/actions/classroom"
+import { findClassroomById, getClassroomEvents } from "@/actions/classroom"
 import { ActivityFeed } from "@/components/classroom/activity-feed"
 import { AddActivityForm } from "@/components/classroom/add-activity-form"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft } from "lucide-react"
 import Link from "next/link"
+import { notFound } from "next/navigation"
 
 interface ActivityFeedProps {
   params: Promise<{ id: string }>
@@ -12,11 +13,15 @@ interface ActivityFeedProps {
 export default async function ActivityListPage({ params }: ActivityFeedProps) {
   const { id: classroomId } = await params
 
+  const classroom = await findClassroomById(classroomId)
+
+  if (!classroom) notFound()
+
   const activities = await getClassroomEvents(classroomId)
 
   return (
     <div className="flex h-screen flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="max-w-7xl flex-1 overflow-y-auto p-6">
         <div className="mb-6 flex items-center">
           <Link href={`/dashboard/classrooms/${classroomId}`}>
             <Button variant="outline" size="sm" className="mr-4">
@@ -29,7 +34,7 @@ export default async function ActivityListPage({ params }: ActivityFeedProps) {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <ActivityFeed activities={activities} />
+            <ActivityFeed activities={activities} classroomId={classroomId} hasMore={false} />
           </div>
 
           <AddActivityForm classroomId={classroomId} />

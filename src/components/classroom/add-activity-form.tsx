@@ -8,19 +8,20 @@ import { TextareaField } from "@/components/text-area-field"
 import { TextField } from "@/components/text-field"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { classroomActivityType } from "@/db/schema/classroom"
-import { tryCatch } from "@/lib/try-catch"
+import { ClassroomEventType, classroomEventType } from "@/db/schema/classroom"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import { Book, Calendar, File } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 
+import { Spinner } from "../spinner"
+
 const addActivitySchema = z.object({
   content: z.string({ message: "Content is required" }).min(1),
   description: z.string({ message: "Description is required" }).min(1),
-  activityType: z.enum(classroomActivityType.enumValues, { message: "Please select an activity type" }),
+  activityType: z.enum(classroomEventType.enumValues, { message: "Please select an activity type" }),
 })
 
 type AddActivitySchema = z.infer<typeof addActivitySchema>
@@ -32,15 +33,14 @@ interface AddActivityFormProps {
 export const AddActivityForm = ({ classroomId }: AddActivityFormProps) => {
   const form = useForm<AddActivitySchema>({ resolver: zodResolver(addActivitySchema) })
 
-  const { mutateAsync: addActivity } = useMutation({
+  const { mutateAsync: addActivity, isPending } = useMutation({
     mutationFn: async (dto: AddActivitySchema) => {
-      console.log({ dto, classroomId })
-
       const session = await getSession()
 
       if (!session) throw new Error("Unauthorized")
 
       const response = await createClassroomEvent({
+        fileIds: null,
         classroomId,
         accountId: session.accountId,
         description: dto.description,
@@ -59,7 +59,7 @@ export const AddActivityForm = ({ classroomId }: AddActivityFormProps) => {
   return (
     <CardRoot
       className="shadow-sm"
-      titleChildren="Add activity"
+      titleChildren="Add Activity"
       titleClassName="text-2xl"
       descriptionChildren="Share something with your class"
       contentChildren={
@@ -108,19 +108,19 @@ export const AddActivityForm = ({ classroomId }: AddActivityFormProps) => {
                       id: "notes",
                       label: "Notes",
                       icon: () => <Book size={16} />,
-                      value: classroomActivityType.enumValues[0],
+                      value: classroomEventType.enumValues[0],
                     },
                     {
                       id: "plan",
                       label: "Study Plan",
                       icon: () => <Calendar size={16} />,
-                      value: classroomActivityType.enumValues[1],
+                      value: classroomEventType.enumValues[1],
                     },
                     {
                       id: "homework",
                       label: "Homework",
                       icon: () => <File size={16} />,
-                      value: classroomActivityType.enumValues[2],
+                      value: classroomEventType.enumValues[2],
                     },
                   ]}
                   onValueChange={field.onChange}
@@ -131,7 +131,12 @@ export const AddActivityForm = ({ classroomId }: AddActivityFormProps) => {
           />
         </form>
       }
-      footerChildren={<Button onClick={handleSubmit}>Add Activity</Button>}
+      footerChildren={
+        <Button disabled={isPending} className="flex items-center gap-2" onClick={handleSubmit}>
+          <span className="text-sm font-semibold">Add Activity</span>
+          {isPending && <Spinner size={16} />}
+        </Button>
+      }
     />
   )
 }

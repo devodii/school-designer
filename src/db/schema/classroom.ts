@@ -1,8 +1,8 @@
-import { accountSchema } from "@/db/schema/account"
+import { AccountSchema, accountSchema } from "@/db/schema/account"
 import { ClassroomEventMetadata } from "@/types"
 import { pgTable, varchar, timestamp, unique, pgEnum, jsonb } from "drizzle-orm/pg-core"
 
-export const classroomActivityType = pgEnum("classroom_activity_type", ["NOTE", "PLAN", "HOMEWORK"])
+export const classroomEventType = pgEnum("classroom_activity_type", ["NOTE", "PLAN", "ASSIGNMENT", "NEW_MEMBER"])
 
 export const classroomSchema = pgTable("classroom", {
   id: varchar("id").primaryKey(),
@@ -35,12 +35,20 @@ export const classroomEventSchema = pgTable("classroom_timeline", {
   description: varchar("text").notNull(),
   accountId: varchar("account_id").references(() => accountSchema.id),
   metadata: jsonb("metadata").$type<ClassroomEventMetadata>(),
+  fileIds: varchar("file_ids").array(),
 })
 
 export type ClassroomSchema = typeof classroomSchema.$inferSelect
 
 export type ClassroomMemberSchema = typeof classroomMemberSchema.$inferSelect
 
-export type ClassroomActivityType = (typeof classroomActivityType.enumValues)[number]
+export type ClassroomEventType = (typeof classroomEventType.enumValues)[number]
 
 export type ClassroomEventSchema = typeof classroomEventSchema.$inferSelect
+
+export type ClassroomMemberAccount = Pick<AccountSchema, "id" | "email"> & {
+  name: string
+  joined: Date
+  avatar: string
+  isOwner: boolean
+}

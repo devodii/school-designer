@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 interface JoinClassroomProps {
-  data: ClassroomSchema
+  data: Pick<ClassroomSchema, "id" | "name" | "description" | "inviteCode"> & { ownerName: string }
 }
 
 export const JoinClassroom = ({ data }: JoinClassroomProps) => {
@@ -33,7 +33,13 @@ export const JoinClassroom = ({ data }: JoinClassroomProps) => {
       const { error: classroomMemberError } = await tryCatch(
         Promise.all([
           addClassroomMember(data.id),
-          createClassroomEvent({ classroomId: data.id, accountId: account.id, description: "Joined classroom" }),
+          createClassroomEvent({
+            classroomId: data.id,
+            accountId: account.id,
+            description: "Joined classroom",
+            metadata: { tag: "NEW_MEMBER" },
+            fileIds: null,
+          }),
         ]),
       )
 
@@ -56,7 +62,7 @@ export const JoinClassroom = ({ data }: JoinClassroomProps) => {
           <h2 className="text-center text-2xl font-semibold">Join ‘{data.name}‘</h2>
         </div>
       }
-      descriptionChildren="You‘ve been invited to join Ms. Johnson's classroom"
+      descriptionChildren={`You've been invited to join ${data.ownerName}'s classroom`}
       descriptionClassName="text-center"
       contentChildren={
         <div className="flex w-full flex-col items-center gap-4">

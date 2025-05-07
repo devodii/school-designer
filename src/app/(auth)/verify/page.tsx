@@ -7,14 +7,15 @@ import {
   verifyGoogleToken as verifyGoogleTokenAction,
 } from "@/actions/auth"
 import { CardRoot } from "@/components/card-root"
+import { Logo } from "@/components/logo"
 import { Spinner } from "@/components/spinner"
 import { Button } from "@/components/ui/button"
 import { AuthProvider } from "@/db/schema/auth"
+import { parseJSON } from "@/lib/json"
 import { AuthIntent } from "@/types"
 import { useMutation } from "@tanstack/react-query"
 import { Check, X } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
 
 export default function VerifyTokenPage() {
   return (
@@ -80,25 +81,28 @@ const VerifyToken = () => {
     const hashFragment = window.location.hash.substring(1)
     const params = new URLSearchParams(hashFragment)
     const googleIdToken = params.get("id_token") as string
-    const state = JSON.parse(atob(params.get("state") as string)) as { intent: AuthIntent; redirect?: string }
+    const state = params.get("state")
 
-    return { googleIdToken, state }
+    if (!state) return { googleIdToken, state: { intent: "SIGN_IN", redirect: undefined } }
+
+    const parsedState = parseJSON<{ intent: AuthIntent; redirect?: string }>(state)
+
+    if (parsedState) return { googleIdToken, state: parsedState }
+
+    return { googleIdToken, state: { intent: "SIGN_IN", redirect: undefined } }
   }
 
   useEffect(() => {
     const handleVerifyToken = async () => {
       const { appIdToken, redirect } = getAppIdToken()
 
-      console.log({ redirect })
-
       if (appIdToken) return verifyMagicLinkToken({ token: appIdToken, redirect })
 
       const { googleIdToken, state } = getGoogleIdToken()
 
-      if (googleIdToken && state.intent)
-        return verifyGoogleToken({ googleIdToken, intent: state.intent, redirect: state?.redirect })
-
-      toast.error("No token provided")
+      if (googleIdToken && state.intent) {
+        return verifyGoogleToken({ googleIdToken, intent: state.intent as AuthIntent, redirect: state?.redirect })
+      }
     }
 
     handleVerifyToken()
@@ -111,8 +115,6 @@ const VerifyToken = () => {
       </div>
     )
   }
-
-  console.log({ state })
 
   if (isError) {
     return (
@@ -141,7 +143,11 @@ const VerifyToken = () => {
                 onClick={() => {
                   if (state?.provider === "GOOGLE") {
                     const { googleIdToken, state } = getGoogleIdToken()
-                    return verifyGoogleToken({ googleIdToken, intent: state.intent, redirect: state?.redirect })
+                    return verifyGoogleToken({
+                      googleIdToken,
+                      intent: state.intent as AuthIntent,
+                      redirect: state?.redirect,
+                    })
                   }
 
                   const { appIdToken, redirect } = getAppIdToken()
@@ -167,7 +173,7 @@ const VerifyToken = () => {
           className="w-full max-w-md pt-6 pb-0"
           titleChildren={
             <div className="flex flex-col items-center gap-2">
-              <div className="bg-accent mx-auto flex size-12 items-center justify-center rounded-full md:size-16">
+              <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-green-50 md:size-16">
                 <Check className="text-accent-foreground size-8" />
               </div>
 
@@ -190,4 +196,20 @@ const VerifyToken = () => {
       </div>
     )
   }
+
+  return (
+    <div className="flex min-h-screen w-screen flex-col items-center justify-between gap-4 p-12">
+      <div className="flex flex-col items-center gap-2">
+        <Logo />
+        <h3 className="text-2xl font-semibold">ClassyNotes</h3>
+      </div>
+
+      <div className="flex w-full flex-col items-center gap-4">
+        <p className="font-semibold">Something went wrong, that's all we know </p>
+        <Button onClick={() => router.push("/")}>Go to Home</Button>
+      </div>
+
+      <div />
+    </div>
+  )
 }

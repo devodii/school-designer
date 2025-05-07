@@ -1,8 +1,13 @@
 "use client"
 
+import { useState } from "react"
+
+import { updateClassroomById } from "@/actions/classroom"
 import { CardRoot } from "@/components/card-root"
 import { ActivityFeed } from "@/components/classroom/activity-feed"
 import { AddActivityForm } from "@/components/classroom/add-activity-form"
+import { CreateAssignment } from "@/components/classroom/create-assignment"
+import { DialogRoot } from "@/components/dialog-root"
 import { Spinner } from "@/components/spinner"
 import { TabsRoot } from "@/components/tabs-root"
 import { TextareaField } from "@/components/text-area-field"
@@ -10,21 +15,25 @@ import { TextField } from "@/components/text-field"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { AccountSchema } from "@/db/schema/account"
-import { ClassroomActivityType, ClassroomEventSchema, ClassroomSchema } from "@/db/schema/classroom"
+import { ClassroomEventSchema, ClassroomMemberAccount, ClassroomSchema } from "@/db/schema/classroom"
+import { AssignmentClassroomEventMetadata } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
-import { Book, Calendar, MessageSquare, File, Plus, MoreHorizontal, Link } from "lucide-react"
+import { Calendar, File, FileText, MoreHorizontal, Plus } from "lucide-react"
+import moment from "moment"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import { mockActivities, mockClassmates, mockDocuments } from "~/constants/classrooms"
+import { mockDocuments } from "~/constants/classrooms"
 
 interface ClassroomBodyProps {
   classroom: ClassroomSchema
   owner: AccountSchema
   account: AccountSchema
   activities: Array<{ event: ClassroomEventSchema; userName: string; userAvatar: string }>
+  members: ClassroomMemberAccount[]
 }
 
 const editClassroomSchema = z.object({
@@ -34,16 +43,7 @@ const editClassroomSchema = z.object({
 
 type EditClassroomForm = z.infer<typeof editClassroomSchema>
 
-export const ClassroomBody = ({ owner, account, classroom, activities }: ClassroomBodyProps) => {
-  const getActivityIcon = (type: ClassroomActivityType): any => {
-    if (type == "NOTE") return Book
-    else if (type == "PLAN") return Calendar
-    else if (type == "HOMEWORK") return MessageSquare
-    else throw new Error("Invalid activity type")
-  }
-
-  const classmates = mockClassmates.slice(0, 5)
-
+export const ClassroomBody = ({ owner, account, classroom, activities, members }: ClassroomBodyProps) => {
   const editClassroomForm = useForm<EditClassroomForm>({
     resolver: zodResolver(editClassroomSchema),
     defaultValues: { name: classroom.name, description: classroom.description },
@@ -51,8 +51,7 @@ export const ClassroomBody = ({ owner, account, classroom, activities }: Classro
 
   const { mutate: updateClassroom, isPending: isUpdatingClassroom } = useMutation({
     mutationFn: async (data: EditClassroomForm) => {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      return data
+      return await updateClassroomById(classroom.id, data)
     },
     onSuccess: () => toast.success("Classroom updated successfully"),
     onError: () => toast.error("Something went wrong"),
@@ -60,6 +59,14 @@ export const ClassroomBody = ({ owner, account, classroom, activities }: Classro
 
   const isOwner = owner.id === account.id
 
+  const router = useRouter()
+
+  const upcomingAssignments = activities.filter(activity => activity.event.metadata?.tag === "ASSIGNMENT")
+
+  const [selectedAssignment, setSelectedAssignment] = useState<ClassroomEventSchema | null>(null)
+  const selectedAssignmentMetadata = selectedAssignment?.metadata as AssignmentClassroomEventMetadata | undefined
+
+  console.log({ selectedAssignment })
   return (
     <TabsRoot
       defaultValue="feed"
@@ -74,46 +81,130 @@ export const ClassroomBody = ({ owner, account, classroom, activities }: Classro
               <div className="space-y-6 lg:col-span-2">
                 <AddActivityForm classroomId={classroom.id} />
 
-                <ActivityFeed activities={activities} />
-
-                <div className="mt-4 flex justify-center">
-                  <Link to={`/dashboard/classroom/${classroom.id}/activities`}>
-                    <Button variant="outline" size="sm">
-                      View All Activities
-                    </Button>
-                  </Link>
-                </div>
+                <ActivityFeed activities={activities.slice(0, 3)} classroomId={classroom.id} hasMore={true} />
               </div>
 
               {/* Sidebar Content */}
               <div className="space-y-6">
                 <CardRoot
-                  titleChildren="Upcoming"
+                  titleChildren="Upcoming Assignments"
                   className="Upcoming"
                   contentChildren={
-                    <ul className="space-y-4">
-                      {mockActivities
-                        .filter(activity => activity.type === "HOMEWORK")
-                        .map(assignment => {
-                          return (
-                            <li key={assignment.id} className="flex items-start gap-3">
-                              <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-gray-300"></span>
-                              <div>
-                                <p className="font-medium">{assignment.metadata.content}</p>
-                                <p className="text-sm text-gray-500">{assignment.metadata.description}</p>
-                              </div>
+                    <>
+                      <ul className="space-y-4">
+                        {upcomingAssignments.length > 0 ? (
+                          upcomingAssignments.map(({ event: assignment }) => (
+                            <li
+                              key={assignment.id}
+                              className="flex cursor-pointer items-center justify-between rounded-md bg-gray-50 p-3 transition-colors hover:bg-gray-100"
+                              onClick={() => setSelectedAssignment(assignment)}
+                            >
+                              {assignment.metadata && "title" in assignment.metadata && (
+                                <p className="font-medium">{assignment.metadata.title}</p>
+                              )}
+                              {assignment.metadata && "dueDate" in assignment.metadata && (
+                                <span className="text-xs text-gray-500">
+                                  {assignment.metadata?.tag === "ASSIGNMENT" &&
+                                    "Due: " + moment(assignment.metadata.dueDate).fromNow()}
+                                </span>
+                              )}
                             </li>
-                          )
-                        })}
-                    </ul>
+                          ))
+                        ) : (
+                          <div className="flex flex-col items-center justify-center py-8 text-center">
+                            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                              <Calendar className="h-6 w-6 text-gray-400" />
+                            </div>
+                            <h3 className="text-md mb-2 font-medium">No upcoming assignments</h3>
+                            <p className="max-w-sm text-sm text-gray-500">
+                              When assignments are added, they'll appear here so you can stay on track.
+                            </p>
+                          </div>
+                        )}
+                      </ul>
+
+                      {selectedAssignment && (
+                        <DialogRoot
+                          open={!!selectedAssignment}
+                          onOpenChange={prev => {
+                            if (!prev) setSelectedAssignment(null)
+                          }}
+                          titleClassName="text-start w-full"
+                          titleChildren={selectedAssignmentMetadata?.title}
+                          descriptionClassName="text-start w-full"
+                          descriptionChildren={
+                            <div className="flex items-center text-sm">
+                              <span className="text-sm font-medium">
+                                Due: {moment(selectedAssignmentMetadata?.dueDate).fromNow()}
+                              </span>
+                              {selectedAssignmentMetadata?.points && (
+                                <span className="ml-2">• {selectedAssignmentMetadata.points} Points</span>
+                              )}
+                            </div>
+                          }
+                          triggerClassName="w-full"
+                          component={() => (
+                            <div className="flex flex-col gap-4">
+                              <div className="space-y-4">
+                                {selectedAssignment.description && (
+                                  <div>
+                                    <h4 className="mb-1 text-sm font-medium">Description</h4>
+                                    <p className="text-sm">{selectedAssignment.description}</p>
+                                  </div>
+                                )}
+
+                                {selectedAssignment?.fileIds && selectedAssignment.fileIds.length > 0 && (
+                                  <div>
+                                    <h4 className="mb-2 text-sm font-medium">Attachments</h4>
+                                    <div className="space-y-2">
+                                      {selectedAssignment.fileIds.map((fileId: string) => (
+                                        <a
+                                          key={fileId}
+                                          href={`/api/files/${fileId}`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="flex items-center rounded-md bg-gray-50 p-3 transition-colors hover:bg-gray-100"
+                                        >
+                                          <FileText className="mr-2 h-4 w-4 text-gray-500" />
+                                          <div className="flex-1">
+                                            <p className="truncate text-sm font-medium">{fileId}</p>
+                                            <p className="text-xs text-gray-500">{fileId}</p>
+                                          </div>
+                                          <Badge variant="outline" className="ml-2">
+                                            View
+                                          </Badge>
+                                        </a>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex justify-end">
+                                <Button variant="outline" className="w-max" onClick={() => setSelectedAssignment(null)}>
+                                  Close
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        />
+                      )}
+                    </>
                   }
                   footerChildren={
-                    <Button variant="ghost" size="sm" className="w-full">
-                      <span className="flex items-center gap-2">
-                        <Plus size={16} />
-                        <span className="text-sm font-semibold">Add Assignment</span>
-                      </span>
-                    </Button>
+                    <DialogRoot
+                      titleClassName="text-start w-full"
+                      titleChildren="Add Assignment"
+                      descriptionClassName="text-start w-full"
+                      descriptionChildren="Create a new assignment for your class"
+                      triggerClassName="w-full"
+                      triggerChildren={
+                        <Button variant="ghost" size="sm" className="w-full">
+                          <Plus size={16} />
+                          <span className="text-sm font-semibold">Add Assignment</span>
+                        </Button>
+                      }
+                      component={() => <CreateAssignment classroomId={classroom.id} />}
+                    />
                   }
                 />
 
@@ -121,24 +212,30 @@ export const ClassroomBody = ({ owner, account, classroom, activities }: Classro
                   titleChildren={<div className="text-2xl font-semibold">Classmates</div>}
                   contentChildren={
                     <ul className="space-y-4">
-                      {classmates.map(classmate => (
-                        <li key={classmate.id} className="flex items-center gap-3 rounded-md p-3 hover:bg-gray-50">
-                          <Image
-                            src={classmate.avartar}
-                            alt={classmate.name}
-                            width={40}
-                            height={40}
-                            className="size-12 rounded-full"
-                          />
-
-                          <div className="flex-1">
-                            <p className="font-medium">{classmate.name}</p>
-                            <Badge variant="outline" className="mt-1 text-xs">
-                              {classmate.role}
+                      {members.slice(0, 5).map(({ avatar, name, id, isOwner }) => (
+                        <li key={id} className="flex items-center gap-3 rounded-md hover:bg-gray-50">
+                          <Image src={avatar} alt={name} width={40} height={40} className="size-8 rounded-full" />
+                          <div className="flex flex-1 flex-col gap-1">
+                            <p className="font-medium">{name}</p>
+                            <Badge variant={isOwner ? "default" : "outline"} className="mt-1 text-xs">
+                              {isOwner ? "Admin" : "Member"}
                             </Badge>
                           </div>
                         </li>
                       ))}
+
+                      <li className="flex w-full items-center justify-center">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
+                            router.push(`/dashboard/classrooms/${classroom.id}/members`)
+                          }}
+                        >
+                          <span className="text-sm font-semibold">View All Members ({members.length})</span>
+                        </Button>
+                      </li>
                     </ul>
                   }
                 />
@@ -186,40 +283,6 @@ export const ClassroomBody = ({ owner, account, classroom, activities }: Classro
           ),
         },
         {
-          value: "members",
-          label: () => <div className="cursor-pointer text-sm font-medium">Members</div>,
-          component: () => (
-            <>
-              <CardRoot
-                titleChildren={<div className="text-2xl font-semibold">Classmates</div>}
-                className="w-full max-w-7xl shadow-sm"
-                contentChildren={
-                  <ul className="space-y-4">
-                    {classmates.map(classmate => (
-                      <li className="flex items-center gap-3 rounded-md p-3 hover:bg-gray-50">
-                        <Image
-                          src={classmate.avartar}
-                          alt={`${classmate.name} on ClassyNotes`}
-                          height={50}
-                          width={50}
-                          className="size-10 rounded-full"
-                        />
-
-                        <div className="flex-1">
-                          <p className="font-medium">{classmate.name}</p>
-                          <Badge variant="outline" className="mt-1 text-xs">
-                            {classmate.role}
-                          </Badge>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                }
-              />
-            </>
-          ),
-        },
-        {
           value: "settings",
           label: () => <div className="cursor-pointer text-sm font-medium">Settings</div>,
           component: () => (
@@ -262,10 +325,16 @@ export const ClassroomBody = ({ owner, account, classroom, activities }: Classro
                       )}
                     />
 
-                    <Button disabled={!isOwner || isUpdatingClassroom} type="submit" className="w-full max-w-xs gap-2">
-                      <span className="text-sm font-semibold">Save Changes</span>
-                      {isUpdatingClassroom && <Spinner size={20} />}
-                    </Button>
+                    <div className="flex justify-end">
+                      <Button
+                        disabled={!isOwner || isUpdatingClassroom}
+                        type="submit"
+                        className="flex items-center gap-2"
+                      >
+                        <span className="text-sm font-semibold">Save Changes</span>
+                        {isUpdatingClassroom && <Spinner size={20} />}
+                      </Button>
+                    </div>
                   </form>
                 }
               />

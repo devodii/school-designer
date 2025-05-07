@@ -88,7 +88,7 @@ export const ChatWindow = ({}: ChatWindowProps) => {
           <SimpleUpload
             endpoint="*"
             iconClassName="size-4 text-muted-foreground"
-            labelEmptyText="Add Context.."
+            labelEmptyChildren={<p className="text-muted-foreground text-sm">Add Context..</p>}
             onChangeFiles={() => []}
           />
 

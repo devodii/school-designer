@@ -91,7 +91,7 @@ export const CreateTimetable = () => {
             <div className="flex flex-col gap-2">
               <Label>Upload Timetable Files</Label>
               <SimpleUpload
-                labelEmptyText="No file selected"
+                labelEmptyChildren={<p className="text-muted-foreground text-sm">No file selected</p>}
                 endpoint="pdf"
                 inputAccept="application/pdf"
                 iconClassName="size-4 text-muted-foreground"

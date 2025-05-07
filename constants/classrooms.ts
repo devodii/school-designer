@@ -1,4 +1,3 @@
-import { ClassroomActivitySchema, ClassroomSchema } from "@/db/schema/classroom"
 import { QuizResponse } from "@/interfaces/chat"
 
 export const CREATE_CLASSROOM_CANVAS_NAME = "create-classroom"
@@ -76,60 +75,6 @@ export const mockDocuments = [
   { id: 1, title: "Study Guide", type: "PDF" },
   { id: 2, title: "Lecture Notes", type: "Word" },
   { id: 3, title: "Practice Questions", type: "PDF" },
-]
-
-export const mockActivities: ClassroomActivitySchema[] = [
-  {
-    id: "001",
-    accountId: "10",
-    classroomId: "1212",
-    createdAt: new Date(),
-    type: "NOTE",
-    metadata: {
-      content: "Chapter 1",
-      description: "Added notes for Chapter 1",
-    },
-  },
-  {
-    id: "002",
-    accountId: "10",
-    classroomId: "1212",
-    createdAt: new Date(),
-    type: "PLAN",
-    metadata: {
-      description: "Study plan for the finals",
-      content: "Study Chapter 1",
-    },
-  },
-  {
-    id: "003",
-    accountId: "10",
-    classroomId: "1212",
-    createdAt: new Date(),
-    type: "HOMEWORK",
-    metadata: {
-      content: "Chemistry Homework",
-      description: "Answers to Chapter 2",
-    },
-  },
-  {
-    id: "005",
-    accountId: "10",
-    classroomId: "1212",
-    createdAt: new Date(),
-    type: "HOMEWORK",
-    metadata: {
-      content: "Chemistry Homework",
-      description: "Answers to Chapter 2",
-    },
-  },
-]
-
-export const mockClassmates = [
-  { id: "001", name: "Chloe", avartar: "https://randomuser.me/api/portraits/women/32.jpg", role: "Admin" },
-  { id: "002", name: "Ethan", avartar: "https://randomuser.me/api/portraits/men/44.jpg", role: "Member" },
-  { id: "003", name: "Maya", avartar: "https://randomuser.me/api/portraits/women/52.jpg", role: "Member" },
-  { id: "004", name: "Jacob", avartar: "https://randomuser.me/api/portraits/men/62.jpg", role: "Member" },
 ]
 
 export const mockQuiz: QuizResponse["quiz"] = {

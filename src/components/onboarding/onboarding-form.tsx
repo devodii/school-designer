@@ -305,6 +305,8 @@ const PhotoUrlsStep = ({ onBack }: StepComponentProps<OnboardingSchema>) => {
           classroomId: response.classroomId,
           accountId: session.accountId,
           description: "Joined classroom",
+          fileIds: null,
+          metadata: { tag: "NEW_MEMBER" },
         })
 
         return response

@@ -52,7 +52,7 @@ export const SendFeedback = ({ onSubmit }: SendFeedbackProps) => {
           name="fileIds"
           render={({ field }) => (
             <SimpleUpload
-              labelEmptyText="Upload screenshots or PDF files"
+              labelEmptyChildren={<p className="text-muted-foreground text-sm">Upload screenshots or PDF files</p>}
               endpoint="*"
               iconClassName="size-4 text-muted-foreground"
               onChangeFiles={files => field.onChange(files.map(({ id }) => id))}

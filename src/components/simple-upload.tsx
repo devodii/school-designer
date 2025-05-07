@@ -18,13 +18,12 @@ interface SimpleUploadProps
     MixinProps<"input", InputProps>,
     MixinProps<"file", ComponentProps<"span">>,
     MixinProps<"icon", ComponentProps<"svg">>,
-    MixinProps<"labelEmpty", Omit<ComponentProps<"div">, "children">> {
+    MixinProps<"labelEmpty", ComponentProps<"div">> {
   onChangeFiles: (files: FileWithId[]) => void
-  labelEmptyText: string
   endpoint: FileUploadEndpoint
 }
 
-export const SimpleUpload = ({ onChangeFiles, labelEmptyText, endpoint, ...mixinProps }: SimpleUploadProps) => {
+export const SimpleUpload = ({ onChangeFiles, endpoint, ...mixinProps }: SimpleUploadProps) => {
   const { container, trigger, file, input, labelEmpty, icon } = splitProps(
     mixinProps,
     "container",
@@ -74,9 +73,7 @@ export const SimpleUpload = ({ onChangeFiles, labelEmptyText, endpoint, ...mixin
       {isUploading && <Spinner size={18} />}
 
       {!isUploading && files.length == 0 && (
-        <div {...labelEmpty} className={cn("text-muted-foreground text-sm", labelEmpty.className)}>
-          {labelEmptyText}
-        </div>
+        <div onClick={handleTrigger} {...labelEmpty} className={cn("cursor-pointer", labelEmpty.className)} />
       )}
 
       <ul className="flex flex-wrap gap-2">

@@ -1,20 +1,31 @@
+import { getCurrentUser } from "@/actions/session"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
-export default function Home() {
+export default async function Home() {
+  const user = await getCurrentUser()
+
   return (
     <div className="flex flex-col items-center justify-center gap-20 p-6 md:p-12 lg:p-24">
       <header className="fixed top-4 right-0 left-0 flex w-screen justify-between px-4 md:px-8">
         <h2 className="text-2xl font-semibold">🎒</h2>
 
         <nav className="flex items-center gap-2">
-          <Link href="/signin">
-            <Button variant="outline">Log in</Button>
-          </Link>
+          {user ? (
+            <Link href="/dashboard">
+              <Button>Dashboard</Button>
+            </Link>
+          ) : (
+            <>
+              <Link href="/signin">
+                <Button variant="outline">Log in</Button>
+              </Link>
 
-          <Link href="/signup">
-            <Button>Sign up</Button>
-          </Link>
+              <Link href="/signup">
+                <Button>Sign up</Button>
+              </Link>
+            </>
+          )}
         </nav>
       </header>
 
