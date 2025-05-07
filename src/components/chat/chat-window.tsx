@@ -9,7 +9,7 @@ import { ContentEditable, ContentEditableRef } from "@/components/contenteditabl
 import { SimpleUpload } from "@/components/simple-upload"
 import { Button } from "@/components/ui/button"
 import { ChatMessageTag } from "@/interfaces/chat"
-import { SendHorizontal } from "lucide-react"
+import { MessageCircle, SendHorizontal } from "lucide-react"
 import { nanoid } from "nanoid"
 import { mockQuiz } from "~/constants/classrooms"
 
@@ -73,15 +73,27 @@ export const ChatWindow = ({}: ChatWindowProps) => {
 
       <div className="flex h-full w-full flex-col items-center justify-between">
         <div className="max-h-[calc(100vh-175px)] w-full flex-1 space-y-4 overflow-y-auto p-4">
-          {messages.map(message => (
-            <div key={message.id} className="flex w-full flex-col gap-2">
-              <ChatMessage
-                structuredResponse={message.persona === "user" ? null : { tag: "@Quiz", quiz: mockQuiz }}
-                dto={message}
-              />
-              {isTyping && <ChatMessageSkeleton />}
+          {messages.length > 0 ? (
+            messages.map(message => (
+              <div key={message.id} className="flex w-full flex-col gap-2">
+                <ChatMessage
+                  structuredResponse={message.persona === "user" ? null : { tag: "@Quiz", quiz: mockQuiz }}
+                  dto={message}
+                />
+                {isTyping && <ChatMessageSkeleton />}
+              </div>
+            ))
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center px-6 text-center">
+              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                <MessageCircle className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="mb-2 text-xl font-medium">How can I help you today?</h3>
+              <p className="mb-6 max-w-md text-gray-500">
+                Ask me anything about your studies, homework, or learning materials. I'm here to assist you.
+              </p>
             </div>
-          ))}
+          )}
         </div>
 
         <div className="flex w-full flex-col gap-2 border-t bg-white px-2 py-4">

@@ -62,6 +62,7 @@ export const SimpleUpload = ({ onChangeFiles, endpoint, ...mixinProps }: SimpleU
         {...trigger}
         type="button"
         onClick={handleTrigger}
+        disabled={isUploading}
         className={cn("cursor-pointer", trigger.className)}
         aria-label="Upload file"
       >

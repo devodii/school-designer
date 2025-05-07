@@ -2,7 +2,7 @@ import React from "react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ChevronLeft, BookOpen, Calendar, MessageCircle, FileText } from "lucide-react"
+import { BookOpen, Calendar, MessageCircle, FileText } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
