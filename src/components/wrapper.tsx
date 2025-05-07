@@ -7,17 +7,12 @@ import { PricingPlans } from "@/components/pricing-plans"
 import { useIsMobile } from "@/hooks/use-is-mobile"
 import { useUrlState } from "@/hooks/use-url-state"
 import { cn } from "@/lib/tw-merge"
-import { Slot } from "@radix-ui/react-slot"
 import { XIcon } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 
-interface WrapperProps extends ComponentProps<"div"> {
-  asChild?: boolean
-}
+interface WrapperProps extends ComponentProps<"div"> {}
 
-export const Wrapper = ({ children, asChild, ...forwardedProps }: WrapperProps) => {
-  const Comp = asChild ? Slot : "div"
-
+export const Wrapper = ({ children, ...forwardedProps }: WrapperProps) => {
   const searchParams = useSearchParams()
   const isMobile = useIsMobile()
   const { remove } = useUrlState()
@@ -41,7 +36,7 @@ export const Wrapper = ({ children, asChild, ...forwardedProps }: WrapperProps) 
   }
 
   return (
-    <Comp className={cn(forwardedProps.className)} {...forwardedProps}>
+    <div className={cn(forwardedProps.className)} {...forwardedProps}>
       {children}
 
       {showPriceModal && (
@@ -54,6 +49,6 @@ export const Wrapper = ({ children, asChild, ...forwardedProps }: WrapperProps) 
           component={() => <PricingPlans intent={searchParams?.get("pricing") ?? ""} />}
         />
       )}
-    </Comp>
+    </div>
   )
 }
