@@ -33,15 +33,16 @@ export const Step5 = ({ onBack }: Step5Props) => {
 
     if (file) {
       const reader = new FileReader()
-      reader.onloadend = async () => form.setValue("picture", { ...file, preview: reader.result as string })
+      reader.onloadend = async () => {
+        const fileWithPreview = Object.assign(file, { preview: reader.result as string })
+        form.setValue("picture", fileWithPreview)
+      }
       reader.readAsDataURL(file)
     }
   }
 
   const { mutate: updateAccountMutation, isPending: isUpdatingAccount } = useMutation({
     mutationFn: async (values: OnboardingSchema) => {
-      console.log({ values })
-
       const session = await getSession()
 
       if (!session) throw new Error("Unauthorized")
@@ -93,7 +94,6 @@ export const Step5 = ({ onBack }: Step5Props) => {
           e.preventDefault()
           const valid = await form.trigger("picture")
           const formData = form.getValues() as OnboardingSchema
-          console.log({ formData })
           if (valid) updateAccountMutation(formData)
         }}
         className="mx-auto flex w-full max-w-lg flex-col gap-10"
@@ -104,8 +104,6 @@ export const Step5 = ({ onBack }: Step5Props) => {
           render={({ field, fieldState: { error } }) => {
             const file = field.value as FileWithPreview
             const previewUrl = file?.preview
-
-            console.log({ file, previewUrl })
 
             return (
               <div className="flex w-full flex-col items-center space-y-6">

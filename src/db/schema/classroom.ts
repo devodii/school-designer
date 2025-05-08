@@ -11,7 +11,7 @@ export const classroomSchema = pgTable("classroom", {
   instructor: jsonb("instructor").$type<{ name?: string; avatar?: string }>(),
   ownerId: varchar("owner_id")
     .notNull()
-    .references(() => accountSchema.id),
+    .references(() => accountSchema.id, { onDelete: "cascade" }),
   subject: varchar("subject").notNull(),
   description: varchar("description").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -22,8 +22,8 @@ export const classroomMemberSchema = pgTable(
   "classroom_member",
   {
     id: varchar("id").primaryKey(),
-    classroomId: varchar("classroom_id").references(() => classroomSchema.id),
-    accountId: varchar("account_id").references(() => accountSchema.id),
+    classroomId: varchar("classroom_id").references(() => classroomSchema.id, { onDelete: "cascade" }),
+    accountId: varchar("account_id").references(() => accountSchema.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   ({ classroomId, accountId }) => [unique("unique_classroom_account").on(classroomId, accountId)],
@@ -31,10 +31,10 @@ export const classroomMemberSchema = pgTable(
 
 export const classroomEventSchema = pgTable("classroom_timeline", {
   id: varchar("id").primaryKey(),
-  classroomId: varchar("classroom_id").references(() => classroomSchema.id),
+  classroomId: varchar("classroom_id").references(() => classroomSchema.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   description: varchar("text").notNull(),
-  accountId: varchar("account_id").references(() => accountSchema.id),
+  accountId: varchar("account_id").references(() => accountSchema.id, { onDelete: "cascade" }),
   metadata: jsonb("metadata").$type<ClassroomEventMetadata>(),
   fileIds: varchar("file_ids").array(),
 })

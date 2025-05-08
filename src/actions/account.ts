@@ -1,9 +1,9 @@
 "use server"
 
 import db from "@/db"
-import { accountSchema, AccountSchema, profileSchema, ProfileSchema } from "@/db/schema/account"
+import { accountSchema, AccountSchema, profileSchema, ProfileSchema, educationLevelEnum } from "@/db/schema/account"
 import { tryCatch } from "@/lib/try-catch"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import { nanoid } from "nanoid"
 
 export const findAccountByEmail = async (email: string) => {
@@ -23,19 +23,34 @@ export const findAccountById = async (id: string) => {
 }
 
 export const updateAccount = async (id: string, data: Partial<AccountSchema>) => {
-  const [user] = await db.update(accountSchema).set(data).where(eq(accountSchema.id, id)).returning()
-  return user
+  const { data: account, error } = await tryCatch(
+    db
+      .update(accountSchema)
+      .set({ ...data, [accountSchema.educationLevel.name]: data.educationLevel as any })
+      .where(eq(accountSchema.id, id))
+      .returning(),
+  )
+
+  console.log({ account, error })
+
+  if (error) throw new Error("Failed to update account")
+
+  return account[0]
 }
 
 export const createProfile = async (
   accountId: string,
-  data: Pick<ProfileSchema, "fullName" | "pictureUrl" | "schoolName">,
+  dto: Pick<ProfileSchema, "fullName" | "pictureUrl" | "schoolName">,
 ) => {
-  const [user] = await db
-    .insert(profileSchema)
-    .values({ ...data, accountId })
-    .returning({ id: profileSchema.id })
-  return user
+  const { data, error } = await tryCatch(
+    db
+      .insert(profileSchema)
+      .values({ ...dto, accountId })
+      .returning({ id: profileSchema.id }),
+  )
+  if (error) throw new Error("Failed to create profile")
+
+  return data[0]
 }
 
 export const createAccount = async (dto: { email: string }) => {

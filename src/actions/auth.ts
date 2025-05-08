@@ -63,7 +63,6 @@ export const findByToken = async (token: string) => {
   const { data: auth, error } = await tryCatch(db.select().from(authSchema).where(eq(authSchema.token, token)))
 
   if (error) throw new Error("Failed to find auth session")
-
   return auth[0]
 }
 
@@ -79,12 +78,19 @@ export const sendMagicLink = async (dto: { email: string; intent: AuthIntent; re
 
   const token = auth.token
 
+  const authUrlParams = new URLSearchParams({
+    c_token: token,
+    ...(dto.redirect ? { redirect: dto.redirect } : {}),
+  }).toString()
+
+  console.log({ authUrlParams })
+
   const { data: emailData } = await tryCatch(
     resend.emails.send({
       from: "Acme <onboarding@resend.dev>",
       to: [dto.email],
       subject: "Sign into your account",
-      react: MagicLinkSignIn({ url: `${process.env.APP_URL}/verify?c_token=${token}&redirect=${dto.redirect}` }),
+      react: MagicLinkSignIn({ url: `${process.env.APP_URL}/verify?${authUrlParams}` }),
     }),
   )
 

@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1746530883747,
-      "tag": "0000_military_imperial_guard",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1746534915105,
-      "tag": "0001_shallow_inertia",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1746542583980,
-      "tag": "0002_magenta_liz_osborn",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1746652835481,
-      "tag": "0003_magical_vector",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1746698136036,
-      "tag": "0004_gray_forge",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1746701620602,
-      "tag": "0005_slippery_songbird",
+      "when": 1746704284632,
+      "tag": "0000_green_angel",
       "breakpoints": true
     }
   ]

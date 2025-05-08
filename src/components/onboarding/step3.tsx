@@ -9,7 +9,7 @@ interface Step3Props extends StepComponentProps<OnboardingSchema> {}
 export const Step3 = ({ onNext, onBack }: Step3Props) => {
   const form = useFormContext()
 
-  const educationLevel = form.getValues("education_level") as OnboardingSchema["education_level"]
+  const educationLevel = form.getValues("educationLevel") as OnboardingSchema["educationLevel"]
 
   return (
     <div className="space-y-6">
@@ -21,14 +21,14 @@ export const Step3 = ({ onNext, onBack }: Step3Props) => {
       <form
         onSubmit={async e => {
           e.preventDefault()
-          const valid = await form.trigger("school_name")
+          const valid = await form.trigger("schoolName")
           if (valid) onNext()
         }}
         className="mx-auto flex w-full max-w-lg flex-col gap-10"
       >
         <Controller
           control={form.control}
-          name="school_name"
+          name="schoolName"
           render={({ field, fieldState: { error } }) => (
             <TextField
               id={field.name}

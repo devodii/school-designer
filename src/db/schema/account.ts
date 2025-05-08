@@ -1,7 +1,7 @@
 import { boolean, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core"
 import { nanoid } from "nanoid"
 
-export const educationLevelEnum = pgEnum("education_level", ["COLLEGE", "HIGH SCHOOL"])
+export const educationLevelEnum = pgEnum("education_level", ["COLLEGE", "HIGH_SCHOOL"])
 
 export const accountSchema = pgTable("account", {
   id: varchar("id")

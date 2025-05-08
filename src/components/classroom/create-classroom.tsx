@@ -44,9 +44,13 @@ export const CreateClassroom = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+
     if (file) {
       const reader = new FileReader()
-      reader.onloadend = () => form.setValue("instructorPicture", { ...file, preview: reader.result as string })
+      reader.onloadend = async () => {
+        const fileWithPreview = Object.assign(file, { preview: reader.result as string })
+        form.setValue("instructorPicture", fileWithPreview)
+      }
       reader.readAsDataURL(file)
     }
   }

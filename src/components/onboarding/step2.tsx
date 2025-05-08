@@ -5,6 +5,21 @@ import { Button } from "@/components/ui/button"
 import { GraduationCap, School } from "lucide-react"
 import { Controller, useFormContext } from "react-hook-form"
 
+const options = [
+  {
+    value: "HIGH_SCHOOL",
+    title: "High School",
+    description: "I'm a high school student",
+    icon: School,
+  },
+  {
+    value: "COLLEGE",
+    title: "College",
+    description: "I'm a college student",
+    icon: GraduationCap,
+  },
+]
+
 interface Step2Props extends StepComponentProps<OnboardingSchema> {}
 
 export const Step2 = ({ onNext, onBack }: Step2Props) => {
@@ -20,19 +35,15 @@ export const Step2 = ({ onNext, onBack }: Step2Props) => {
       <form
         onSubmit={async e => {
           e.preventDefault()
-          const valid = await form.trigger("education_level")
+          const valid = await form.trigger("educationLevel")
           if (valid) onNext()
         }}
         className="mx-auto flex w-full max-w-lg flex-col gap-10"
       >
         <Controller
           control={form.control}
-          name="education_level"
+          name="educationLevel"
           render={({ field, fieldState: { error } }) => {
-            const options = [
-              { value: "HIGH SCHOOL", title: "High School", description: "I'm a high school student", icon: School },
-              { value: "COLLEGE", title: "College", description: "I'm a college student", icon: GraduationCap },
-            ]
             return (
               <>
                 <div className="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2">

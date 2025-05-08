@@ -19,14 +19,14 @@ export const Step1 = ({ onNext }: Step1Props) => {
       <form
         onSubmit={async e => {
           e.preventDefault()
-          const valid = await form.trigger("username")
+          const valid = await form.trigger("fullName")
           if (valid) onNext()
         }}
         className="mx-auto flex w-full max-w-lg flex-col gap-10"
       >
         <Controller
           control={form.control}
-          name="username"
+          name="fullName"
           render={({ field, fieldState: { error } }) => (
             <TextField
               id={field.name}

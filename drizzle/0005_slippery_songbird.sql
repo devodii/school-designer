@@ -1,1 +1,0 @@
-ALTER TABLE "classroom" ADD COLUMN "instructor" jsonb;

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import { MultiStepForm, Step } from "@/components/multi-step-form"
 import { onboardingSchema, OnboardingSchema } from "@/components/onboarding/schema"
@@ -9,12 +9,20 @@ import { Step2 } from "@/components/onboarding/step2"
 import { Step3 } from "@/components/onboarding/step3"
 import { Step4 } from "@/components/onboarding/step4"
 import { Step5 } from "@/components/onboarding/step5"
+import { getAccount } from "@/queries/account"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQuery } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 
 export const OnboardingForm = () => {
+  const { data: account } = useQuery(getAccount())
   const [currentStep, setCurrentStep] = useState(0)
+
   const form = useForm<OnboardingSchema>({ resolver: zodResolver(onboardingSchema) })
+
+  useEffect(() => {
+    if (account?.referralCode) form.setValue("referralCode", account.referralCode)
+  }, [account])
 
   const onboardingSteps = [
     { key: "fullName", component: Step1 },

@@ -26,7 +26,7 @@ export const Step4 = ({ onNext, onBack }: Step4Props) => {
       >
         <Controller
           control={form.control}
-          name="referral_code"
+          name="referralCode"
           render={({ field, fieldState: { error } }) => (
             <TextField
               id={field.name}
@@ -36,7 +36,6 @@ export const Step4 = ({ onNext, onBack }: Step4Props) => {
               inputOnBlur={field.onBlur}
               inputName={field.name}
               errorText={error?.message}
-              defaultValue="re_je8ud90m3c"
             />
           )}
         />
