@@ -42,9 +42,6 @@ export const CreateAssignment = ({ classroomId }: CreateAssignmentProps) => {
 
   const { mutate: createAssignment, isPending: isCreatingAssignment } = useMutation({
     mutationFn: async (data: CreateAssignmentForm) => {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      console.log(data)
-
       const session = await getSession()
 
       if (!session) throw new Error("Unauthorized")
@@ -63,7 +60,7 @@ export const CreateAssignment = ({ classroomId }: CreateAssignmentProps) => {
       return data
     },
     onSuccess: () => toast.success("Assignment created successfully"),
-    onError: () => toast.error("Something went wrong"),
+    onError: (error: Error) => toast.error(error.message),
   })
 
   const onSubmit = (data: CreateAssignmentForm) => {
@@ -125,8 +122,8 @@ export const CreateAssignment = ({ classroomId }: CreateAssignmentProps) => {
                   <Calendar
                     id="dueDate"
                     onDayClick={field.onChange}
-                    min={new Date().getTime()}
                     selected={field.value}
+                    disabled={field.value && moment(field.value).isBefore(moment())}
                   />
                 }
               />

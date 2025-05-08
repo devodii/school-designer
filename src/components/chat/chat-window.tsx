@@ -9,6 +9,8 @@ import { ContentEditable, ContentEditableRef } from "@/components/contenteditabl
 import { SimpleUpload } from "@/components/simple-upload"
 import { Button } from "@/components/ui/button"
 import { ChatMessageTag } from "@/interfaces/chat"
+import { getAccount } from "@/queries/account"
+import { useQuery } from "@tanstack/react-query"
 import { MessageCircle, SendHorizontal } from "lucide-react"
 import { nanoid } from "nanoid"
 import { mockQuiz } from "~/constants/classrooms"
@@ -21,10 +23,15 @@ export const ChatWindow = ({}: ChatWindowProps) => {
   const [message, setMessage] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
+  const { data: account } = useQuery(getAccount())
+
+  const profilePicture = account?.profile?.pictures[0]!
 
   const contentEditableRef = useRef<ContentEditableRef>(null)
 
   const handleSendMessage = () => {
+    console.log("sending message", message)
+
     if (!message.trim()) return
 
     setIsTyping(true)
@@ -36,7 +43,7 @@ export const ChatWindow = ({}: ChatWindowProps) => {
         content: message,
         persona: "user",
         name: "You",
-        image: "https://randomuser.me/api/portraits/men/82.jpg",
+        image: profilePicture,
         timestamp: Date.now(),
         tag: selectedTag,
       },
@@ -111,6 +118,7 @@ export const ChatWindow = ({}: ChatWindowProps) => {
               <ContentEditable
                 ref={contentEditableRef}
                 id="__message-input"
+                onContentChange={setMessage}
                 placeholderText="Ask a question..."
                 placeholderClassName="text-sm -mt-1"
                 onSend={handleSendMessage}

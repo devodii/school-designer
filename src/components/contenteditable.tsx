@@ -9,6 +9,7 @@ export interface ContentEditableProps
   onSend: (content: string) => void
   placeholderText: string
   createCustomElement?: (data: any) => HTMLElement
+  onContentChange: (content: string) => void
 }
 
 export interface ContentEditableRef {
@@ -16,7 +17,7 @@ export interface ContentEditableRef {
 }
 
 export const ContentEditable = forwardRef<ContentEditableRef, ContentEditableProps>(
-  ({ onSend, placeholderText = "Type your message...", createCustomElement, ...mixinProps }, ref) => {
+  ({ onSend, placeholderText = "Type your message...", createCustomElement, onContentChange, ...mixinProps }, ref) => {
     const { placeholder, rest } = splitProps(mixinProps, "placeholder")
 
     const divRef = useRef<HTMLDivElement>(null)
@@ -31,6 +32,7 @@ export const ContentEditable = forwardRef<ContentEditableRef, ContentEditablePro
       if (content) {
         onSend(content)
         if (divRef.current) divRef.current.innerHTML = ""
+        onContentChange("")
       }
     }
 
@@ -84,6 +86,7 @@ export const ContentEditable = forwardRef<ContentEditableRef, ContentEditablePro
           ref={divRef}
           className={cn("flex-1 overflow-y-auto px-2 py-2 outline-none", rest.className)}
           contentEditable
+          onInput={e => onContentChange(e.currentTarget.textContent ?? "")}
           data-placeholder={placeholderText}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
