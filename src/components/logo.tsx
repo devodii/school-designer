@@ -11,7 +11,7 @@ export const Logo = (mixinProps: LogoProps) => {
   return (
     <div
       {...wrapper}
-      className={cn("flex h-10 w-10 items-center justify-center rounded-lg bg-black", wrapper.className)}
+      className={cn("flex h-10 w-10 items-center justify-center rounded-full bg-black", wrapper.className)}
       {...rest}
     >
       <span {...text} className={cn("font-display text-lg font-bold text-white", text.className)}>

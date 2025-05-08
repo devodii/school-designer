@@ -1,13 +1,18 @@
 import { useState } from "react"
 
-import { createPolarCheckoutSession } from "@/actions/subscriptions"
+import {
+  createPolarCheckoutSession,
+  createCustomerPortalSession as createCustomerPortalSessionAction,
+} from "@/actions/subscriptions"
 import { CardRoot } from "@/components/card-root"
 import { Spinner } from "@/components/spinner"
 import { TabsRoot } from "@/components/tabs-root"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { useMutation } from "@tanstack/react-query"
-import { Check } from "lucide-react"
+import { getAccountSubscriptions } from "@/queries/subscriptions"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { BadgePlus, Check } from "lucide-react"
+import moment from "moment"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
@@ -20,9 +25,17 @@ interface PricingPlansProps {
   intent: string
 }
 
+const Benefit = ({ text }: { text: string }) => (
+  <div className="mb-4 flex items-start gap-2">
+    <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-black" />
+    <span className="text-sm">{text}</span>
+  </div>
+)
+
 export const PricingPlans = ({ intent }: PricingPlansProps) => {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<ActiveTab>("monthly")
+  const { data: subscriptions, isLoading: isFetchingSubscriptions } = useQuery(getAccountSubscriptions())
 
   const isMonthlySelected = activeTab === "monthly"
 
@@ -41,8 +54,62 @@ export const PricingPlans = ({ intent }: PricingPlansProps) => {
     onSuccess: url => router.push(url),
   })
 
+  const { mutate: createCustomerPortalSession, isPending: isCreatingCustomerPortalSession } = useMutation({
+    mutationFn: createCustomerPortalSessionAction,
+    onError: (error: Error) => toast.error(error.message),
+    onSuccess: url => router.push(url),
+  })
+
+  const activeSubscription = subscriptions?.find(it => it.status === "active")
+
+  if (isFetchingSubscriptions) {
+    return (
+      <div className="flex w-full items-center justify-center">
+        <Spinner size={25} />
+      </div>
+    )
+  }
+
+  if (activeSubscription) {
+    return (
+      <div className="py-8 text-center">
+        <div className="mb-4 flex justify-center">
+          <Badge className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-purple-600 to-purple-400 px-2 py-0.5 text-white">
+            <BadgePlus className="size-4" />
+            <span className="text-xs font-medium">Plus</span>
+          </Badge>
+        </div>
+        <h2 className="mb-4 text-center text-2xl font-bold md:text-3xl">You're a Plus Member!</h2>
+        <p className="mx-auto mb-6 max-w-md text-gray-600">
+          Thank you for your support. Your subscription is active until{" "}
+          {moment(activeSubscription.expiresAt).format("MMM D, YYYY")}.
+        </p>
+
+        <div className="mx-auto mb-6 max-w-md rounded-lg bg-gray-50 p-6">
+          <h3 className="mb-4 text-xl font-bold">Your Plus Benefits</h3>
+          <div className="space-y-3 text-left">
+            <Benefit text="Unlimited AI study quiz generation" />
+            <Benefit text="Advanced notebook templates and customization" />
+            <Benefit text="Speech-to-text note taking" />
+            <Benefit text="Create unlimited classrooms" />
+            <Benefit text="Priority AI chat assistance" />
+            <Benefit text="Custom anime-style notebook covers" />
+          </div>
+        </div>
+
+        <div className="mx-auto flex max-w-md items-center justify-center gap-4">
+          <Button onClick={() => createCustomerPortalSession()} className="w-full">
+            <span className="text-sm font-semibold">Manage Subscription</span>
+            {isCreatingCustomerPortalSession && <Spinner size={16} />}
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col gap-4">
+      <h2 className="text-center text-2xl font-bold md:text-3xl">Choose Your Plan</h2>
       <TabsRoot
         defaultValue={activeTab}
         onValueChange={value => setActiveTab(value as ActiveTab)}
@@ -125,7 +192,7 @@ export const PricingPlans = ({ intent }: PricingPlansProps) => {
 
               <Button className="flex w-full items-center justify-center gap-2" onClick={() => createCheckoutSession()}>
                 <span className="text-sm font-semibold">Get Plus</span>
-                {isPending && <Spinner size={20} />}
+                {isPending && <Spinner size={16} />}
               </Button>
 
               <ul className="flex flex-col gap-2">

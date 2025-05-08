@@ -1,4 +1,4 @@
-import { createProfile, updateAccount } from "@/actions/account"
+import { createProfile, findAccountById, updateAccount } from "@/actions/account"
 import { addClassroomMember, createClassroomEvent } from "@/actions/classroom"
 import { getSession } from "@/actions/session"
 import { StepComponentProps } from "@/components/multi-step-form"
@@ -47,6 +47,10 @@ export const Step5 = ({ onBack }: Step5Props) => {
 
       if (!session) throw new Error("Unauthorized")
 
+      const account = await findAccountById(session.accountId)
+
+      if (!account) throw new Error("Invalid account")
+
       const response = await onUpload([values.picture])
 
       if (!response) throw new Error("Failed to upload picture")
@@ -59,7 +63,7 @@ export const Step5 = ({ onBack }: Step5Props) => {
       ])
 
       if (roomCode) {
-        const response = await addClassroomMember(roomCode)
+        const response = await addClassroomMember(roomCode, account.id)
 
         await createClassroomEvent({
           classroomId: response.classroomId,
@@ -76,7 +80,7 @@ export const Step5 = ({ onBack }: Step5Props) => {
     },
     onSuccess: response => {
       toast.success("Profile updated successfully")
-      if ("classroomId" in response) router.push(`/dashboard/classrooms/${response.classroomId}?first`)
+      if ("classroomId" in response) router.push(`/dashboard/classrooms/${response.classroomId}?first_time=true`)
       else router.push("/dashboard")
     },
     onError: () => toast.error("Sorry, something went wrong"),

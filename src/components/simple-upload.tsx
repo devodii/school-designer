@@ -7,7 +7,7 @@ import { Input, InputProps } from "@/components/ui/input"
 import { useFileUpload, type FileUploadEndpoint } from "@/hooks/use-file-upload"
 import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
-import { Upload } from "lucide-react"
+import { Paperclip, Upload } from "lucide-react"
 import { toast } from "sonner"
 
 type FileWithId = File & { id: string }
@@ -66,7 +66,7 @@ export const SimpleUpload = ({ onChangeFiles, endpoint, ...mixinProps }: SimpleU
         className={cn("cursor-pointer", trigger.className)}
         aria-label="Upload file"
       >
-        <Upload className={cn("size-5", icon.className)} {...icon} />
+        <Paperclip className={cn("size-5", icon.className)} {...icon} />
       </button>
 
       <Input {...input} ref={inputRef} type="file" className="hidden" onChange={handleChange} />

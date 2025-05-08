@@ -2,12 +2,15 @@
 
 import { useRef } from "react"
 
-import { createClassroom as createClassroomAction } from "@/actions/classroom"
+import { findAccountById } from "@/actions/account"
+import { addClassroomMember, createClassroom as createClassroomAction } from "@/actions/classroom"
+import { getSession } from "@/actions/session"
 import { AvatarRoot } from "@/components/avatar-root"
 import { Spinner } from "@/components/spinner"
 import { TextareaField } from "@/components/text-area-field"
 import { TextField } from "@/components/text-field"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useCanvas } from "@/context/canvas"
 import { useFileUpload } from "@/hooks/use-file-upload"
 import { useUrlState } from "@/hooks/use-url-state"
@@ -20,9 +23,7 @@ import { useRouter } from "next/navigation"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import { CREATE_CLASSROOM_CANVAS_NAME } from "~/constants/classrooms"
-
-import { Input } from "../ui/input"
+import { CREATE_CLASSROOM_CANVAS_NAME } from "~/constants/canvas"
 
 const createClassroomSchema = z.object({
   name: z.string({ message: "Classroom name is required" }).min(1),
@@ -66,6 +67,14 @@ export const CreateClassroom = () => {
     mutationFn: async (data: ClassroomSchema) => {
       let instructorAvatar = undefined
 
+      const session = await getSession()
+
+      if (!session) throw new Error("Unauthorized")
+
+      const account = await findAccountById(session.accountId)
+
+      if (!account) throw new Error("Invalid account")
+
       if (data.instructorPicture) {
         const { preview, ...file } = data.instructorPicture
 
@@ -78,10 +87,14 @@ export const CreateClassroom = () => {
 
       const { instructorName, instructorPicture, ...rest } = data
 
-      return await createClassroomAction({
+      const response = await createClassroomAction({
         ...rest,
         instructor: { name: instructorName, avatar: instructorAvatar },
       })
+
+      await addClassroomMember(response.inviteCode, account.id)
+
+      return response
     },
     onSuccess: data => {
       closeCanvas(CREATE_CLASSROOM_CANVAS_NAME)

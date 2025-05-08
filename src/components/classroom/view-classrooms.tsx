@@ -2,24 +2,19 @@
 
 import { useEffect } from "react"
 
-import { BlurImage } from "@/components/blur-image"
+import { AvatarRoot } from "@/components/avatar-root"
 import { CardRoot } from "@/components/card-root"
 import { CreateClassroom } from "@/components/classroom/create-classroom"
 import { Button } from "@/components/ui/button"
 import { useCanvas } from "@/context/canvas"
 import { useUrlState } from "@/hooks/use-url-state"
 import { Plus } from "lucide-react"
+import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { CREATE_CLASSROOM_CANVAS_NAME } from "~/constants/classrooms"
+import { CREATE_CLASSROOM_CANVAS_NAME } from "~/constants/canvas"
 
 interface ViewClassroomsProps {
-  classrooms: Array<{
-    id: string
-    name: string
-    backgroundImage: string
-    members: Array<{ id: string; name: string; avartar: string }>
-    isJoined: boolean
-  }>
+  classrooms: Array<{ classroomId: string; name: string; members: Array<{ id: string; avatar: string }> }>
 }
 
 export const ViewClassrooms = ({ classrooms }: ViewClassroomsProps) => {
@@ -88,40 +83,31 @@ export const ViewClassrooms = ({ classrooms }: ViewClassroomsProps) => {
 
   return (
     <ul className="grid w-full max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {classrooms.map(({ backgroundImage, name, members, isJoined }) => (
+      {classrooms.map(({ name, members, classroomId }) => (
         <CardRoot
           as="li"
           headerClassName="p-0"
-          className="pt-0 pb-2"
-          titleChildren={
-            <div className="relative flex flex-col gap-2">
-              <div
-                className="top-0 right-0 left-0 h-24 rounded-ss-xl rounded-se-xl bg-cover bg-center opacity-30"
-                style={{ backgroundImage: `url(${backgroundImage})` }}
-              />
-            </div>
-          }
+          className=""
           contentChildren={
-            <div className="-mt-6 flex flex-col items-start gap-2">
-              <div className="text-md font-semibold">{name}</div>
-              <div>
-                {members.map(m => (
-                  <BlurImage
-                    key={m.id}
-                    src={m.avartar}
-                    alt={m.name}
-                    width={32}
-                    height={32}
-                    className="-ml-2 inline-flex rounded-full"
-                  />
-                ))}
+            <Link href={`/dashboard/classrooms/${classroomId}`}>
+              <div className="-mt-8 flex flex-col items-start gap-2">
+                <div className="text-md font-semibold">{name}</div>
+                <div>
+                  {members.slice(0, 6).map(({ id, avatar }) => (
+                    <AvatarRoot
+                      key={id}
+                      imageSrc={avatar}
+                      imageWidth={32}
+                      imageHeight={32}
+                      imageAlt={id}
+                      className="-ml-2 inline-flex rounded-full"
+                      fallbackClassName="bg-gray-100"
+                      fallbackChildren={<p className="text-sm text-gray-500">{id.slice(0, 2)}</p>}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          }
-          footerChildren={
-            <div className="flex w-full items-center justify-end">
-              {isJoined ? <Button>Open</Button> : <Button>Join</Button>}
-            </div>
+            </Link>
           }
         />
       ))}

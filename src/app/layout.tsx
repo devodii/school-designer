@@ -9,8 +9,8 @@ import { Toaster } from "sonner"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "School Designer",
-  description: "Design your school life",
+  title: "classynotes",
+  description: "Classroom notes made easy",
 }
 
 export default function RootLayout({

@@ -1,11 +1,14 @@
 import { AccountSchema, accountSchema } from "@/db/schema/account"
 import { ClassroomEventMetadata } from "@/types"
 import { pgTable, varchar, timestamp, unique, pgEnum, jsonb } from "drizzle-orm/pg-core"
+import { nanoid } from "nanoid"
 
 export const classroomEventType = pgEnum("classroom_activity_type", ["NOTE", "PLAN", "ASSIGNMENT", "NEW_MEMBER"])
 
 export const classroomSchema = pgTable("classroom", {
-  id: varchar("id").primaryKey(),
+  id: varchar("id")
+    .primaryKey()
+    .$defaultFn(() => `cl_${nanoid(25)}`),
   name: varchar("name").notNull(),
   inviteCode: varchar("invite_code").notNull().unique(),
   instructor: jsonb("instructor").$type<{ name?: string; avatar?: string }>(),
@@ -21,7 +24,9 @@ export const classroomSchema = pgTable("classroom", {
 export const classroomMemberSchema = pgTable(
   "classroom_member",
   {
-    id: varchar("id").primaryKey(),
+    id: varchar("id")
+      .primaryKey()
+      .$defaultFn(() => `cm_${nanoid(25)}`),
     classroomId: varchar("classroom_id").references(() => classroomSchema.id, { onDelete: "cascade" }),
     accountId: varchar("account_id").references(() => accountSchema.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -30,7 +35,9 @@ export const classroomMemberSchema = pgTable(
 )
 
 export const classroomEventSchema = pgTable("classroom_timeline", {
-  id: varchar("id").primaryKey(),
+  id: varchar("id")
+    .primaryKey()
+    .$defaultFn(() => `ce_${nanoid(25)}`),
   classroomId: varchar("classroom_id").references(() => classroomSchema.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   description: varchar("text").notNull(),

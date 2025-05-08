@@ -3,8 +3,7 @@ import { findClassroomById, getClassroomEvents, getClassroomMembers } from "@/ac
 import { getCurrentUser } from "@/actions/session"
 import { ClassroomBody } from "@/components/classroom/classroom-body"
 import { InviteButton } from "@/components/classroom/invite-button"
-import { Button } from "@/components/ui/button"
-import { Edit3, UserPlus } from "lucide-react"
+import { UserPlus } from "lucide-react"
 import { notFound } from "next/navigation"
 
 interface ClassroomPageProps {
@@ -43,13 +42,6 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
           </header>
 
           <div className="flex items-center gap-3">
-            {account.id == owner.id && (
-              <Button className="gap-2" variant="outline" size="sm">
-                <Edit3 size={16} />
-                <span className="text-sm">Edit</span>
-              </Button>
-            )}
-
             <InviteButton
               shareLink={shareLink}
               variant="default"

@@ -38,7 +38,7 @@ export const Step3 = ({ onNext, onBack }: Step3Props) => {
               inputOnBlur={field.onBlur}
               inputName={field.name}
               errorText={error?.message}
-              inputPlaceholder={educationLevel === "HIGH SCHOOL" ? "Baris High School" : "University of Michigan"}
+              inputPlaceholder={educationLevel === "HIGH_SCHOOL" ? "Baris High School" : "University of Michigan"}
             />
           )}
         />

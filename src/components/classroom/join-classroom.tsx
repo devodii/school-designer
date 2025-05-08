@@ -32,7 +32,7 @@ export const JoinClassroom = ({ data }: JoinClassroomProps) => {
 
       const { error: classroomMemberError } = await tryCatch(
         Promise.all([
-          addClassroomMember(data.id),
+          addClassroomMember(data.inviteCode, account.id),
           createClassroomEvent({
             classroomId: data.id,
             accountId: account.id,

@@ -9,6 +9,8 @@ import { useCanvas } from "@/context/canvas"
 import { useUrlState } from "@/hooks/use-url-state"
 import { ChatMessageTag, QuizResponse, TaggedChatResponse } from "@/interfaces/chat"
 import { cn } from "@/lib/tw-merge"
+import { getAccountSubscriptions } from "@/queries/subscriptions"
+import { useQuery } from "@tanstack/react-query"
 import { ArrowLeft, Timer } from "lucide-react"
 import Image from "next/image"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
@@ -32,9 +34,7 @@ interface ChatMessageProps {
 }
 
 export const ChatMessage = ({ dto: { persona, name, image, content, tag }, structuredResponse }: ChatMessageProps) => {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const pathname = usePathname()
+  const { data: subscriptions } = useQuery(getAccountSubscriptions())
 
   const { set } = useUrlState()
 
@@ -46,7 +46,7 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
 
   const { closeCanvas, openCanvas } = useCanvas()
 
-  const accountIsPlus = true
+  const accountIsPlus = subscriptions?.some(subscription => subscription.status === "active")
 
   const handleOpenQuizCanvas = (quiz: QuizResponse["quiz"]) => {
     openCanvas({
@@ -150,7 +150,7 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
                 <h4 className="text-[15px] font-semibold">{quiz.title}</h4>
                 <div className="flex items-center gap-1">
                   <Timer className="text-muted-foreground size-4" />
-                  <span className="text-muted-foreground min-w-max text-sm">{quiz.estimatedTime / 10} minutes</span>
+                  <span className="text-muted-foreground min-w-max text-sm">{quiz.estimatedTime / 10} min</span>
                 </div>
               </div>
             }

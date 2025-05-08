@@ -1,11 +1,12 @@
-"use server"
-
 import { findAccountById } from "@/actions/account"
 import { getSession } from "@/actions/session"
 import db from "@/db"
 import { FileMetadata, FileUploadSchema, fileUploadSchema, FileUploadType } from "@/db/schema/file-upload"
 import { tryCatch } from "@/lib/try-catch"
+import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
+
+;("use server")
 
 interface PostUploadsDto {
   data: Array<{ url: string; type: FileUploadType; metadata?: FileMetadata }>
@@ -37,4 +38,12 @@ export const postUploads = async (dto: PostUploadsDto) => {
   if (error) throw new Error("Failed to save uploaded files")
 
   return data.map((d: FileUploadSchema) => ({ id: d.id, url: d.url }))
+}
+
+export const getFileById = async (id: string) => {
+  const { data, error } = await tryCatch(db.select().from(fileUploadSchema).where(eq(fileUploadSchema.id, id)))
+
+  if (error) throw new Error("Failed to get file")
+
+  return data[0]
 }

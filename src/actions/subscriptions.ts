@@ -1,6 +1,6 @@
 "use server"
 
-import { findAccountById } from "@/actions/account"
+import { findAccountById, updateAccount } from "@/actions/account"
 import { getSession } from "@/actions/session"
 import db from "@/db"
 import {
@@ -39,6 +39,8 @@ export const findAccountSubscriptions = async (accountId: string) => {
   const { data: subscription, error } = await tryCatch(
     db.select().from(subscriptionSchema).where(eq(subscriptionSchema.accountId, accountId)),
   )
+
+  console.log({ error })
 
   if (error) throw new Error(error.message)
 
@@ -107,7 +109,29 @@ export const createPolarCheckoutSession = async (
 
   if (error) throw new Error(error.message)
 
+  if (account.customerId !== data.customerId) {
+    await updateAccount(account.id, { customerId: data.customerId })
+  }
+
   await createCheckoutSession({ accountId: account.id, metadata, providerId: data.id })
 
   return data.url
+}
+
+export const createCustomerPortalSession = async () => {
+  const session = await getSession()
+
+  if (!session) throw new Error("Unauthorized")
+
+  const account = await findAccountById(session.accountId)
+
+  if (!account) throw new Error("Invalid account")
+
+  if (!account.customerId) throw new Error("Customer ID not found")
+
+  const { data, error } = await tryCatch(polar.customerSessions.create({ customerId: account.customerId }))
+
+  if (error) throw new Error(error.message)
+
+  return data.customerPortalUrl
 }

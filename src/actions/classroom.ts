@@ -14,7 +14,7 @@ import {
 } from "@/db/schema/classroom"
 import { tryCatch } from "@/lib/try-catch"
 import { ClassroomEventMetadata } from "@/types"
-import { desc, eq } from "drizzle-orm"
+import { desc, eq, sql } from "drizzle-orm"
 import { nanoid } from "nanoid"
 import { revalidatePath } from "next/cache"
 
@@ -62,13 +62,13 @@ export const createClassroom = async (
   const { data, error } = await tryCatch(
     db
       .insert(classroomSchema)
-      .values({ ...dto, id: `cl_${nanoid(25)}`, ownerId: session.accountId, subject: "EMPTY" })
-      .returning({ id: classroomSchema.id }),
+      .values({ ...dto, ownerId: session.accountId, subject: "EMPTY" })
+      .returning({ id: classroomSchema.id, inviteCode: classroomSchema.inviteCode }),
   )
 
   if (error) throw new Error("Failed to create classroom")
 
-  return { id: data[0].id }
+  return { id: data[0].id, inviteCode: dto.inviteCode }
 }
 
 export const updateClassroomById = async (id: string, dto: Pick<ClassroomSchema, "name" | "description">) => {
@@ -82,9 +82,18 @@ export const updateClassroomById = async (id: string, dto: Pick<ClassroomSchema,
 }
 
 export const getAccountClassrooms = async (accountId: string) => {
-  const { data, error } = await tryCatch(
+  const { data: classrooms, error } = await tryCatch(
     db
-      .select({ classroom: classroomSchema, member: classroomMemberSchema })
+      .select({
+        classroomId: classroomSchema.id,
+        name: classroomSchema.name,
+        members: sql<{ id: string; avatar: string }[]>`
+          (SELECT json_agg(json_build_object('id', cm.account_id, 'avatar', p.picture_url))
+          FROM ${classroomMemberSchema} cm
+          LEFT JOIN ${profileSchema} p ON cm.account_id = p.account_id
+          WHERE cm.classroom_id = ${classroomSchema.id})
+        `,
+      })
       .from(classroomSchema)
       .leftJoin(classroomMemberSchema, eq(classroomSchema.id, classroomMemberSchema.classroomId))
       .where(eq(classroomMemberSchema.accountId, accountId)),
@@ -92,20 +101,12 @@ export const getAccountClassrooms = async (accountId: string) => {
 
   if (error) throw new Error("Failed to get account classrooms")
 
-  return data
+  return classrooms
 }
 
 // Classroom Member
 
-export const addClassroomMember = async (classroomCode: string) => {
-  const session = await getSession()
-
-  if (!session) throw new Error("Unauthorized")
-
-  const account = await findAccountById(session.accountId)
-
-  if (!account) throw new Error("Invalid account")
-
+export const addClassroomMember = async (classroomCode: string, accountId: string) => {
   const classroom = await findClassroomByInviteCode(classroomCode)
 
   if (!classroom) throw new Error("Classroom not found")
@@ -113,12 +114,7 @@ export const addClassroomMember = async (classroomCode: string) => {
   const { error } = await tryCatch(
     db
       .insert(classroomMemberSchema)
-      .values({
-        id: `cm_${nanoid(25)}`,
-        accountId: account.id,
-        classroomId: classroom.id,
-        createdAt: new Date(),
-      })
+      .values({ accountId, classroomId: classroom.id, createdAt: new Date() })
       .returning({ id: classroomMemberSchema.id }),
   )
 
@@ -165,7 +161,7 @@ export const createClassroomEvent = async (
   const { error, data } = await tryCatch(
     db
       .insert(classroomEventSchema)
-      .values({ id: `ce_${nanoid(25)}`, classroomId, accountId, description, metadata })
+      .values({ classroomId, accountId, description, metadata })
       .returning({ id: classroomEventSchema.id }),
   )
 

@@ -1,7 +1,9 @@
 import { accountSchema } from "@/db/schema/account"
 import { CheckoutSessionMetadata, SubscriptionMetadata } from "@/types"
-import { SubscriptionStatus } from "@polar-sh/sdk/models/components/subscriptionstatus.js"
+import { SubscriptionStatus as PolarSubscriptionStatus } from "@polar-sh/sdk/models/components/subscriptionstatus.js"
 import { pgTable, varchar, timestamp, pgEnum, jsonb } from "drizzle-orm/pg-core"
+
+export type SubscriptionStatus = PolarSubscriptionStatus
 
 export const subscriptionFrequencyEnum = pgEnum("subscription_frequency", ["MONTHLY", "YEARLY"])
 

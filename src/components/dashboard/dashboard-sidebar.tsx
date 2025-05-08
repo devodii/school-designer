@@ -14,6 +14,8 @@ import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { AI_CHAT_CANVAS_NAME, APP_FEEDBACK_CANVAS_NAME, CREATE_NOTEBOOK_CANVAS_NAME } from "~/constants/canvas"
 
+import { Logo } from "../logo"
+
 export const DashboardSidebar = () => {
   const { closeCanvas, openCanvas } = useCanvas()
   const searchParams = useSearchParams()
@@ -74,7 +76,7 @@ export const DashboardSidebar = () => {
     <div className="flex h-screen w-64 flex-col border-r border-gray-100 px-3 py-6">
       <div className="mb-12">
         <Link href="/dashboard">
-          <h1 className="min-w-max text-xl font-semibold"> 🎒School Designer</h1>
+          <Logo />
         </Link>
       </div>
 

@@ -12,6 +12,7 @@ export const accountSchema = pgTable("account", {
   referralCode: varchar("referral_code").unique(),
   educationLevel: educationLevelEnum("education_level"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  customerId: varchar("customer_id"),
   updatedAt: timestamp("updated_at", { mode: "date", precision: 3 }).$onUpdate(() => new Date()),
   isOnboarded: boolean("is_onboarded").default(false),
 })

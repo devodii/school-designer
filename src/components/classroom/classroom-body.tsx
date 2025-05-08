@@ -19,14 +19,13 @@ import { ClassroomEventSchema, ClassroomMemberAccount, ClassroomSchema } from "@
 import { AssignmentClassroomEventMetadata } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
-import { Calendar, File, FileText, MoreHorizontal, Plus } from "lucide-react"
+import { Calendar, FileText, Plus } from "lucide-react"
 import moment from "moment"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import { mockDocuments } from "~/constants/classrooms"
 
 interface ClassroomBodyProps {
   classroom: ClassroomSchema
@@ -244,44 +243,6 @@ export const ClassroomBody = ({ owner, account, classroom, activities, members }
           ),
         },
 
-        {
-          value: "documents",
-          label: () => <div className="cursor-pointer text-sm font-medium">Documents</div>,
-          component: () => (
-            <CardRoot
-              className="max-w-7xl shadow-sm"
-              titleClassName="flex flex-row items-center justify-between pb-"
-              titleChildren={
-                <>
-                  <div className="text-xl font-semibold">Documents</div>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Plus size={16} />
-                    <span className="text-sm font-semibold">Upload</span>
-                  </Button>
-                </>
-              }
-              contentChildren={
-                <ul className="space-y-4">
-                  {mockDocuments.map(doc => (
-                    <li key={doc.id} className="flex items-center gap-3 rounded-md p-3 hover:bg-gray-50">
-                      <div className="flex h-10 w-10 items-center justify-center rounded bg-gray-100">
-                        <File className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium">{doc.title}</p>
-                        <p className="text-xs text-gray-500">{doc.type}</p>
-                      </div>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              }
-              footerChildren={<div className="text-sm text-gray-500">View All Documents</div>}
-            />
-          ),
-        },
         {
           value: "settings",
           label: () => <div className="cursor-pointer text-sm font-medium">Settings</div>,
