@@ -81,7 +81,7 @@ export const DashboardSidebar = () => {
       <div className="flex flex-1 flex-col gap-1">
         <LinkButton href="/dashboard/classrooms" icon={BookOpen} label="My Classrooms" buttonClassName="w-full" />
         <LinkButton href="/dashboard/timetables" icon={Calendar} label="My Timetable" buttonClassName="w-full" />
-        <LinkButton href="/dashboard/cookbooks" icon={Book} label="My Cookbooks" buttonClassName="w-full" />
+        <LinkButton href="/dashboard/notes" icon={Book} label="My Notes" buttonClassName="w-full" />
         <LinkButton href="?pricing=auto" icon={Sparkle} label="Upgrade to Plus" buttonClassName="w-full" />
       </div>
 
