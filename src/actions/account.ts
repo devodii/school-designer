@@ -1,7 +1,7 @@
 "use server"
 
 import db from "@/db"
-import { accountSchema, AccountSchema } from "@/db/schema/account"
+import { accountSchema, AccountSchema, profileSchema, ProfileSchema } from "@/db/schema/account"
 import { tryCatch } from "@/lib/try-catch"
 import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
@@ -27,20 +27,22 @@ export const updateAccount = async (id: string, data: Partial<AccountSchema>) =>
   return user
 }
 
+export const createProfile = async (
+  accountId: string,
+  data: Pick<ProfileSchema, "fullName" | "pictureUrl" | "schoolName">,
+) => {
+  const [user] = await db
+    .insert(profileSchema)
+    .values({ ...data, accountId })
+    .returning({ id: profileSchema.id })
+  return user
+}
+
 export const createAccount = async (dto: { email: string }) => {
   const { data: user, error } = await tryCatch(
     db
       .insert(accountSchema)
-      .values({
-        id: `ac_${nanoid(25)}`,
-        email: dto.email,
-        created_at: new Date(),
-        updated_at: new Date(),
-        isOnboarded: false,
-        referral_code: `ref+${nanoid(10)}`,
-        profile: null,
-        level: null,
-      })
+      .values({ email: dto.email, isOnboarded: false, referralCode: `ref_${nanoid(25)}` })
       .returning({ id: accountSchema.id }),
   )
 

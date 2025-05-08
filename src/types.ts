@@ -1,12 +1,5 @@
 import { ClassroomEventType } from "./db/schema/classroom"
 
-export interface AccountProfile {
-  fullName: string
-  userName: string
-  subjectsOffered: string[]
-  pictures: string[]
-}
-
 // Auth
 
 export type AuthIntent = "SIGN_IN" | "SIGN_UP"

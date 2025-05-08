@@ -3,7 +3,7 @@
 import { findAccountById } from "@/actions/account"
 import { getSession } from "@/actions/session"
 import db from "@/db"
-import { accountSchema } from "@/db/schema/account"
+import { accountSchema, profileSchema } from "@/db/schema/account"
 import {
   ClassroomEventSchema,
   classroomEventSchema,
@@ -35,10 +35,11 @@ export const findClassroomByInviteCode = async (inviteCode: string) => {
         name: classroomSchema.name,
         description: classroomSchema.description,
         inviteCode: classroomSchema.inviteCode,
-        ownerName: sql<string>`(${accountSchema.profile} ->> 'fullName')`,
+        ownerName: profileSchema.fullName,
       })
       .from(classroomSchema)
       .leftJoin(accountSchema, eq(classroomSchema.ownerId, accountSchema.id))
+      .leftJoin(profileSchema, eq(accountSchema.id, profileSchema.accountId))
       .where(eq(classroomSchema.inviteCode, inviteCode)),
   )
 
@@ -143,15 +144,16 @@ export const getClassroomMembers = async (classroomId: string) => {
     db
       .select({
         id: accountSchema.id,
-        name: sql<string>`(${accountSchema.profile} ->> 'fullName')`,
+        name: profileSchema.fullName,
         email: accountSchema.email,
         isOwner: eq(classroomMemberSchema.accountId, classroomSchema.ownerId),
         joined: classroomMemberSchema.createdAt,
-        avatar: sql<string>`(${accountSchema.profile} -> 'pictures' -> 0)::text`,
+        avatar: profileSchema.pictureUrl,
       })
       .from(classroomMemberSchema)
       .leftJoin(accountSchema, eq(classroomMemberSchema.accountId, accountSchema.id))
-      .leftJoin(classroomSchema, eq(classroomMemberSchema.classroomId, classroomSchema.id)) // <-- Add this join
+      .leftJoin(profileSchema, eq(accountSchema.id, profileSchema.accountId))
+      .leftJoin(classroomSchema, eq(classroomMemberSchema.classroomId, classroomSchema.id))
       .where(eq(classroomMemberSchema.classroomId, classroomId)),
   )
 
@@ -188,16 +190,15 @@ export const getClassroomEvents = async (classroomId: string) => {
     db
       .select({
         event: classroomEventSchema,
-        userName: sql<string>`(${accountSchema.profile} ->> 'fullName')`,
-        userAvatar: sql<string>`(${accountSchema.profile} -> 'pictures' -> 0)::text`,
+        userName: profileSchema.fullName,
+        userAvatar: profileSchema.pictureUrl,
       })
       .from(classroomEventSchema)
       .leftJoin(accountSchema, eq(classroomEventSchema.accountId, accountSchema.id))
+      .leftJoin(profileSchema, eq(accountSchema.id, profileSchema.accountId))
       .where(eq(classroomEventSchema.classroomId, classroomId))
       .orderBy(desc(classroomEventSchema.createdAt)),
   )
-
-  console.log({ error })
 
   if (error) throw new Error("Failed to get classroom events")
 

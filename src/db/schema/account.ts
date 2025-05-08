@@ -1,17 +1,34 @@
-import { AccountProfile } from "@/types"
-import { boolean, jsonb, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core"
+import { boolean, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core"
+import { nanoid } from "nanoid"
 
-export const levelEnum = pgEnum("level", ["COLLEGE", "HIGH SCHOOL"])
+export const educationLevelEnum = pgEnum("education_level", ["COLLEGE", "HIGH SCHOOL"])
 
 export const accountSchema = pgTable("account", {
-  id: varchar("id").primaryKey().notNull(),
+  id: varchar("id")
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => `ac_${nanoid(25)}`),
   email: varchar("email").unique().notNull(),
-  referral_code: varchar("referral_code").unique(),
-  level: levelEnum("level"),
-  created_at: timestamp("created_at").defaultNow().notNull(),
-  updated_at: timestamp("updated_at", { mode: "date", precision: 3 }).$onUpdate(() => new Date()),
-  profile: jsonb("profile").$type<AccountProfile>(),
+  referralCode: varchar("referral_code").unique(),
+  educationLevel: educationLevelEnum("education_level"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date", precision: 3 }).$onUpdate(() => new Date()),
   isOnboarded: boolean("is_onboarded").default(false),
 })
 
 export type AccountSchema = typeof accountSchema.$inferSelect
+
+export const profileSchema = pgTable("profile", {
+  id: varchar("id")
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => `pr_${nanoid(25)}`),
+  fullName: varchar("full_name").notNull(),
+  pictureUrl: varchar("picture_url").notNull(),
+  schoolName: varchar("school_name").notNull(),
+  accountId: varchar("account_id").references(() => accountSchema.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date", precision: 3 }).$onUpdate(() => new Date()),
+})
+
+export type ProfileSchema = typeof profileSchema.$inferSelect
