@@ -22,15 +22,7 @@ export const TiptapRoot = ({ onChange, groupedControls, ...mixinProps }: TiptapR
   const editor = useEditor({
     ...params,
     extensions: [
-      StarterKit.configure({
-        heading: { levels: [1, 2], HTMLAttributes: { class: "font-bold" } },
-        bulletList: { keepMarks: true, keepAttributes: false, HTMLAttributes: { class: "list-disc" } },
-        orderedList: { keepMarks: true, keepAttributes: false, HTMLAttributes: { class: "list-decimal" } },
-        code: { HTMLAttributes: { class: "bg-gray-100 p-2 rounded-md" } },
-        italic: { HTMLAttributes: { class: "italic" } },
-        bold: { HTMLAttributes: { class: "font-bold" } },
-        strike: { HTMLAttributes: { class: "line-through" } },
-      }),
+      StarterKit,
       Placeholder.configure({ placeholder: "What's on your mind?", emptyEditorClass: "is-empty" }),
       Underline,
     ],
@@ -56,7 +48,7 @@ export const TiptapRoot = ({ onChange, groupedControls, ...mixinProps }: TiptapR
       <EditorContent
         {...contentProps}
         className={cn(
-          "h-full [&_.ProseMirror]:h-full [&_.ProseMirror]:p-4 [&_.ProseMirror]:outline-none [&_h1]:text-3xl [&_h2]:text-2xl",
+          "h-full [&_.ProseMirror]:h-full [&_.ProseMirror]:p-4 [&_.ProseMirror]:outline-none [&_b]:font-bold [&_code]:rounded-md [&_code]:bg-gray-100 [&_code]:p-2 [&_h1]:text-3xl [&_h2]:text-2xl [&_i]:italic [&_ol]:list-decimal [&_ol]:pl-4 [&_s]:line-through [&_ul]:list-disc [&_ul]:pl-4",
           contentProps.className,
         )}
         editor={editor}
