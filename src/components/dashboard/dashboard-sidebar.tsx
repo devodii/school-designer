@@ -22,7 +22,7 @@ export const DashboardSidebar = () => {
   const handleOpenAIChatCanvas = () => {
     openCanvas({
       position: "right",
-      width: "400px",
+      width: "350px",
       content: <ChatWindow />,
       id: AI_CHAT_CANVAS_NAME,
       pushElementId: "__dashboard-layout-container",
@@ -38,7 +38,7 @@ export const DashboardSidebar = () => {
           onError={() => toast.error("Failed to create notebook")}
         />
       ),
-      width: "400px",
+      width: "350px",
       position: "right",
       id: CREATE_NOTEBOOK_CANVAS_NAME,
       pushElementId: "__dashboard-layout-container",
@@ -56,7 +56,7 @@ export const DashboardSidebar = () => {
           }}
         />
       ),
-      width: "400px",
+      width: "350px",
       position: "right",
       id: APP_FEEDBACK_CANVAS_NAME,
       pushElementId: "__dashboard-layout-container",

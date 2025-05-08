@@ -51,7 +51,7 @@ export const ChatMessage = ({ dto: { persona, name, image, content, tag }, struc
   const handleOpenQuizCanvas = (quiz: QuizResponse["quiz"]) => {
     openCanvas({
       id: QUIZ_CANVAS_NAME,
-      width: "400px",
+      width: "350px",
       position: "right",
       pushElementId: "__dashboard-layout-container",
       wrapperClassName: "h-full p-4",

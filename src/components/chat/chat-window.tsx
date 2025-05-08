@@ -1,16 +1,19 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 
+import { TagExtension } from "@/components/chat/chat-editor-extensions"
 import { ChatMessage, Message } from "@/components/chat/chat-message"
 import { ChatMessageSkeleton } from "@/components/chat/chat-message-skeleton"
 import { ChatTagPicker } from "@/components/chat/chat-tag-picker"
-import { ContentEditable, ContentEditableRef } from "@/components/contenteditable"
 import { SimpleUpload } from "@/components/simple-upload"
 import { Button } from "@/components/ui/button"
 import { ChatMessageTag } from "@/interfaces/chat"
-import { getAccount } from "@/queries/account"
+import { getProfile } from "@/queries/account"
 import { useQuery } from "@tanstack/react-query"
+import Placeholder from "@tiptap/extension-placeholder"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
 import { MessageCircle, SendHorizontal } from "lucide-react"
 import { nanoid } from "nanoid"
 import { mockQuiz } from "~/constants/classrooms"
@@ -23,11 +26,20 @@ export const ChatWindow = ({}: ChatWindowProps) => {
   const [message, setMessage] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
-  const { data: account } = useQuery(getAccount())
+  const { data: profile } = useQuery(getProfile())
 
-  const profilePicture = account?.profile?.pictures[0]!
+  const editor = useEditor({
+    extensions: [TagExtension, StarterKit, Placeholder.configure({ placeholder: "Ask a question..." })],
+    content: message,
+    onUpdate: ({ editor }) => setMessage(editor.getHTML()),
+  })
 
-  const contentEditableRef = useRef<ContentEditableRef>(null)
+  const handleInsertTag = (tag: ChatMessageTag) => {
+    if (editor) editor.commands.insertContent({ type: "tag", attrs: { content: tag } })
+    setTagPickerOpen(false)
+  }
+
+  const profilePicture = profile?.pictureUrl ?? ""
 
   const handleSendMessage = () => {
     console.log("sending message", message)
@@ -67,11 +79,6 @@ export const ChatWindow = ({}: ChatWindowProps) => {
     }, 1000)
 
     setIsTyping(false)
-  }
-
-  const handleInsertTag = (tag: ChatMessageTag) => {
-    contentEditableRef.current?.insertCustomElement(tag)
-    setTagPickerOpen(false)
   }
 
   return (
@@ -115,22 +122,13 @@ export const ChatWindow = ({}: ChatWindowProps) => {
             {tagPickerOpen && <ChatTagPicker onSelect={handleInsertTag} onClose={() => setTagPickerOpen(false)} />}
 
             <div className="focus-within:ring-ring/50 border-input focus-within:border-ring relative flex w-full flex-col rounded-md border focus-within:ring-2">
-              <ContentEditable
-                ref={contentEditableRef}
-                id="__message-input"
-                onContentChange={setMessage}
-                placeholderText="Ask a question..."
-                placeholderClassName="text-sm -mt-1"
-                onSend={handleSendMessage}
-                className="max-h-[120px] min-h-[65px] border-none text-sm focus-within:border-none focus-within:ring-0"
-                createCustomElement={tag => {
-                  const span = document.createElement("span")
-                  span.textContent = tag
-                  span.className = "text-black font-semibold text-sm mx-1"
-                  span.contentEditable = "false"
-                  return span
-                }}
-              />
+              <div className="h-[90px] overflow-hidden">
+                <EditorContent
+                  editor={editor}
+                  className="h-full [&_.ProseMirror]:h-full [&_.ProseMirror]:overflow-y-auto [&_.ProseMirror]:p-2 [&_.ProseMirror]:outline-none"
+                  id="__message-input"
+                />
+              </div>
 
               <div className="flex items-center justify-between px-2 py-1">
                 <button

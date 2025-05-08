@@ -51,7 +51,7 @@ export const ViewTimetables = ({ timetables }: ViewTimetablesProps) => {
       content: <ViewTimetable timetable={timetable} />,
       position: "right",
       pushElementId: "__canvas-push-element",
-      width: "400px",
+      width: "350px",
     })
   }
 
@@ -66,7 +66,7 @@ export const ViewTimetables = ({ timetables }: ViewTimetablesProps) => {
   const handleOpenCreateTimetableCanvas = () => {
     openCanvas({
       content: <CreateTimetable />,
-      width: "400px",
+      width: "350px",
       position: "right",
       id: CREATE_TIMETABLE_CANVAS_NAME,
       pushElementId: "__canvas-push-element",

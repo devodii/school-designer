@@ -30,7 +30,7 @@ export const ViewClassrooms = ({ classrooms }: ViewClassroomsProps) => {
   const handleOpenCanvas = () => {
     openCanvas({
       position: "right",
-      width: "400px",
+      width: "350px",
       content: <CreateClassroom />,
       id: CREATE_CLASSROOM_CANVAS_NAME,
       pushElementId: "__canvas-push-element",

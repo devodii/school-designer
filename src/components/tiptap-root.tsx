@@ -48,7 +48,7 @@ export const TiptapRoot = ({ onChange, groupedControls, ...mixinProps }: TiptapR
       <EditorContent
         {...contentProps}
         className={cn(
-          "h-full [&_.ProseMirror]:h-full [&_.ProseMirror]:p-4 [&_.ProseMirror]:outline-none [&_b]:font-bold [&_code]:rounded-md [&_code]:bg-gray-100 [&_code]:p-2 [&_h1]:text-3xl [&_h2]:text-2xl [&_i]:italic [&_ol]:list-decimal [&_ol]:pl-4 [&_s]:line-through [&_ul]:list-disc [&_ul]:pl-4",
+          "[&_a]:text-underline h-full [&_.ProseMirror]:h-full [&_.ProseMirror]:p-4 [&_.ProseMirror]:outline-none [&_b]:font-bold [&_code]:rounded-md [&_code]:bg-gray-100 [&_code]:p-2 [&_h1]:text-3xl [&_h1]:font-semibold [&_h2]:text-2xl [&_h2]:font-semibold [&_h3]:font-bold [&_i]:italic [&_ol]:list-decimal [&_ol]:pl-4 [&_s]:line-through [&_ul]:list-disc [&_ul]:pl-4",
           contentProps.className,
         )}
         editor={editor}

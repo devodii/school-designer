@@ -53,6 +53,14 @@ export const createProfile = async (
   return data[0]
 }
 
+export const findProfileByAccountId = async (accountId: string) => {
+  const { data, error } = await tryCatch(db.select().from(profileSchema).where(eq(profileSchema.accountId, accountId)))
+
+  if (error) return null
+
+  return data[0]
+}
+
 export const createAccount = async (dto: { email: string }) => {
   const { data: user, error } = await tryCatch(
     db

@@ -19,7 +19,7 @@ export const TimetableHeader = ({ timetables }: TimetableHeaderProps) => {
   const handleOpenCanvas = () => {
     openCanvas({
       content: <CreateTimetable />,
-      width: "400px",
+      width: "350px",
       position: "right",
       id: CREATE_TIMETABLE_CANVAS_NAME,
       pushElementId: "__canvas-push-element",
