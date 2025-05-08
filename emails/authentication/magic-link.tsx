@@ -35,7 +35,7 @@ const MagicLinkEmail = ({ url }: MagicLinkEmailProps) => {
               marginBottom: "24px",
             }}
           >
-            🎒 Welcome Back!
+            Welcome Back!
           </Heading>
 
           <Text

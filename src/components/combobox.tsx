@@ -7,34 +7,19 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { MixinProps, splitProps } from "@/lib/mixin"
 
 interface ComboboxProps
-  extends MixinProps<"trigger", ComponentProps<typeof PopoverTrigger>>,
+  extends Omit<ComponentProps<typeof Popover>, "children">,
+    MixinProps<"trigger", ComponentProps<typeof PopoverTrigger>>,
     MixinProps<"content", Omit<ComponentProps<typeof PopoverContent>, "children">>,
-    MixinProps<"command", CommandRootProps> {
-  selected: { label: string; value: string }[]
-}
+    MixinProps<"command", CommandRootProps> {}
 
-export const Combobox = ({ selected, ...mixedProps }: ComboboxProps) => {
-  const [open, setOpen] = useState(false)
-
-  const { trigger, content, command } = splitProps(mixedProps, "trigger", "content", "command")
-
-  const filteredOptions = command.options.map(group => ({
-    ...group,
-    items: group.items.filter(item => !selected.some(s => s.value === item.value)),
-  }))
+export const Combobox = (mixinProps: ComboboxProps) => {
+  const { trigger, content, command, rest } = splitProps(mixinProps, "trigger", "content", "command")
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover {...rest}>
       <PopoverTrigger {...trigger} />
       <PopoverContent {...content}>
-        <CommandRoot
-          {...command}
-          options={filteredOptions}
-          optionOnSelect={currentValue => {
-            setOpen(false)
-            command.optionOnSelect?.(currentValue)
-          }}
-        />
+        <CommandRoot {...command} />
       </PopoverContent>
     </Popover>
   )

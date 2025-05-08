@@ -2,6 +2,11 @@
 
 import React, { useState } from "react"
 
+import { CodeButton } from "@/components/tiptap-controls"
+import { HeadingButton, ItalicButton, StrikethroughButton, SubHeadingButton } from "@/components/tiptap-controls"
+import { BoldButton, NumberedListButton } from "@/components/tiptap-controls"
+import { BulletListButton } from "@/components/tiptap-controls"
+import { TiptapRoot } from "@/components/tiptap-root"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Book, Search, Plus } from "lucide-react"
@@ -183,8 +188,17 @@ const NotesPage = () => {
                 </Button>
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-6">
-              <div>Tip tap here</div>
+            <div className="h-full flex-1 overflow-y-auto p-6">
+              <TiptapRoot
+                onChange={content => console.log({ content })}
+                groupedControls={[
+                  [HeadingButton, SubHeadingButton],
+                  [BoldButton, ItalicButton, StrikethroughButton, CodeButton],
+                  [BulletListButton, NumberedListButton],
+                ]}
+                paramsContent={"<h1>Title</h1>"}
+                contentClassName="h-[calc(100vh-15rem)] border"
+              />
             </div>
           </>
         ) : (

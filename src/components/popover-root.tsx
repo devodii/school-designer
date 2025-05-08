@@ -4,7 +4,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { MixinProps, splitProps } from "@/lib/mixin"
 
 interface PopoverRootProps
-  extends ComponentProps<typeof Popover>,
+  extends Omit<ComponentProps<typeof Popover>, "children">,
     MixinProps<"trigger", ComponentProps<typeof PopoverTrigger>>,
     MixinProps<"content", ComponentProps<typeof PopoverContent>> {}
 
