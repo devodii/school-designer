@@ -1,9 +1,6 @@
 import { educationLevelEnum } from "@/db/schema/account"
+import { FileWithPreview } from "@/types"
 import { z } from "zod"
-
-export interface FileWithPreview extends File {
-  preview: string
-}
 
 export const onboardingSchema = z.object({
   fullName: z.string({ message: "This is a required field" }).min(3).max(20),

@@ -8,6 +8,7 @@ export const classroomSchema = pgTable("classroom", {
   id: varchar("id").primaryKey(),
   name: varchar("name").notNull(),
   inviteCode: varchar("invite_code").notNull().unique(),
+  instructor: jsonb("instructor").$type<{ name?: string; avatar?: string }>(),
   ownerId: varchar("owner_id")
     .notNull()
     .references(() => accountSchema.id),

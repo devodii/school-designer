@@ -14,7 +14,7 @@ import {
 } from "@/db/schema/classroom"
 import { tryCatch } from "@/lib/try-catch"
 import { ClassroomEventMetadata } from "@/types"
-import { desc, eq, sql } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
 import { revalidatePath } from "next/cache"
 
@@ -48,7 +48,9 @@ export const findClassroomByInviteCode = async (inviteCode: string) => {
   return data[0]
 }
 
-export const createClassroom = async (dto: Pick<ClassroomSchema, "name" | "description" | "inviteCode">) => {
+export const createClassroom = async (
+  dto: Pick<ClassroomSchema, "name" | "description" | "inviteCode" | "instructor">,
+) => {
   const session = await getSession()
 
   if (!session) throw new Error("Unauthorized")
@@ -57,21 +59,10 @@ export const createClassroom = async (dto: Pick<ClassroomSchema, "name" | "descr
 
   if (!account) throw new Error("Invalid account")
 
-  const existingClassroom = await findClassroomByInviteCode(dto.inviteCode)
-
-  if (existingClassroom) throw new Error("Sorry, this invite code is being used by another classroom")
-
   const { data, error } = await tryCatch(
     db
       .insert(classroomSchema)
-      .values({
-        ...dto,
-        id: `cl_${nanoid(25)}`,
-        ownerId: session.accountId,
-        subject: "EMPTY",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
+      .values({ ...dto, id: `cl_${nanoid(25)}`, ownerId: session.accountId, subject: "EMPTY" })
       .returning({ id: classroomSchema.id }),
   )
 

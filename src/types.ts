@@ -1,4 +1,8 @@
-import { ClassroomEventType } from "./db/schema/classroom"
+import { ClassroomEventType } from "@/db/schema/classroom"
+
+export interface FileWithPreview extends File {
+  preview: string
+}
 
 // Auth
 
