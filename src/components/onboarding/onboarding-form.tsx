@@ -9,13 +9,12 @@ import { Step2 } from "@/components/onboarding/step2"
 import { Step3 } from "@/components/onboarding/step3"
 import { Step4 } from "@/components/onboarding/step4"
 import { Step5 } from "@/components/onboarding/step5"
-import { getAccount } from "@/queries/account"
+import { useGetAccount } from "@/queries/account"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQuery } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 
 export const OnboardingForm = () => {
-  const { data: account } = useQuery(getAccount())
+  const { data: account } = useGetAccount()
   const [currentStep, setCurrentStep] = useState(0)
 
   const form = useForm<OnboardingSchema>({ resolver: zodResolver(onboardingSchema) })

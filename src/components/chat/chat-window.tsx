@@ -9,13 +9,13 @@ import { ChatTagPicker } from "@/components/chat/chat-tag-picker"
 import { SimpleUpload } from "@/components/simple-upload"
 import { Button } from "@/components/ui/button"
 import { ChatMessageTag } from "@/interfaces/chat"
-import { getProfile } from "@/queries/account"
-import { useQuery } from "@tanstack/react-query"
+import { useGetProfile } from "@/queries/account"
 import Placeholder from "@tiptap/extension-placeholder"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import { MessageCircle, SendHorizontal } from "lucide-react"
 import { nanoid } from "nanoid"
+import { useHotkeys } from "react-hotkeys-hook"
 import { mockQuiz } from "~/constants/classrooms"
 
 interface ChatWindowProps {}
@@ -26,7 +26,7 @@ export const ChatWindow = ({}: ChatWindowProps) => {
   const [message, setMessage] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
-  const { data: profile } = useQuery(getProfile())
+  const { data: profile } = useGetProfile()
 
   const editor = useEditor({
     extensions: [TagExtension, StarterKit, Placeholder.configure({ placeholder: "Ask a question..." })],
@@ -42,8 +42,6 @@ export const ChatWindow = ({}: ChatWindowProps) => {
   const profilePicture = profile?.pictureUrl ?? ""
 
   const handleSendMessage = () => {
-    console.log("sending message", message)
-
     if (!message.trim()) return
 
     setIsTyping(true)
@@ -80,6 +78,8 @@ export const ChatWindow = ({}: ChatWindowProps) => {
 
     setIsTyping(false)
   }
+
+  useHotkeys("mod+enter", handleSendMessage)
 
   return (
     <div className="flex h-full w-full flex-col gap-4 p-0 pt-4">
@@ -125,7 +125,7 @@ export const ChatWindow = ({}: ChatWindowProps) => {
               <div className="h-[90px] overflow-hidden">
                 <EditorContent
                   editor={editor}
-                  className="h-full [&_.ProseMirror]:h-full [&_.ProseMirror]:overflow-y-auto [&_.ProseMirror]:p-2 [&_.ProseMirror]:outline-none"
+                  className="h-full text-sm [&_.ProseMirror]:h-full [&_.ProseMirror]:overflow-y-auto [&_.ProseMirror]:p-2 [&_.ProseMirror]:outline-none"
                   id="__message-input"
                 />
               </div>

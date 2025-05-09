@@ -2,16 +2,17 @@
 
 import React from "react"
 
-import { BlurImage } from "@/components/blur-image"
+import { AvatarRoot } from "@/components/avatar-root"
 import { Input } from "@/components/ui/input"
-import { getAccount } from "@/queries/account"
-import { useQuery } from "@tanstack/react-query"
+import { ProfileSchema } from "@/db/schema/account"
 import { Search, Bell } from "lucide-react"
 
-export const DashboardHeader = () => {
-  const { data: account } = useQuery(getAccount())
+interface DashboardHeaderProps {
+  profile: ProfileSchema
+}
 
-  const profilePicture = account?.profile?.pictures[0]
+export const DashboardHeader = ({ profile }: DashboardHeaderProps) => {
+  const profilePicture = profile?.pictureUrl
 
   return (
     <header className="flex h-16 w-full items-center justify-between border-b border-gray-100 px-6">
@@ -30,21 +31,17 @@ export const DashboardHeader = () => {
 
         <div className="flex items-center gap-3">
           <div className="flex flex-col items-end">
-            <span className="text-md font-medium">{account?.profile?.fullName}</span>
+            <span className="text-md font-medium">{profile?.fullName}</span>
           </div>
-          {profilePicture ? (
-            <BlurImage
-              src={profilePicture.url}
-              alt={`${account?.profile?.fullName} on School Designer`}
-              className="rounded-full"
-              width={32}
-              height={32}
-            />
-          ) : (
-            <div className="flex size-8 items-center justify-center rounded-full bg-gray-200">
-              <span className="font-medium text-gray-700">{account?.profile?.fullName.charAt(0)}</span>
-            </div>
-          )}
+
+          <AvatarRoot
+            fallbackChildren={profile?.fullName.charAt(0)}
+            imageSrc={profilePicture}
+            imageWidth={32}
+            imageHeight={32}
+            imageClassName="rounded-full"
+            imageAlt={`${profile?.fullName} on classynotes`}
+          />
         </div>
       </div>
     </header>

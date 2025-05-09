@@ -68,6 +68,7 @@
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.56.1",
+    "react-hotkeys-hook": "^5.0.1",
     "react-pdf": "^9.2.1",
     "react-useanimations": "^2.10.0",
     "resend": "^4.4.1",

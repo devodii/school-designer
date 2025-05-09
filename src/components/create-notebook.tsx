@@ -4,9 +4,9 @@ import { SelectRoot } from "@/components/select-root"
 import { Spinner } from "@/components/spinner"
 import { TextareaField } from "@/components/text-area-field"
 import { Button } from "@/components/ui/button"
-import { getAccount } from "@/queries/account"
+import { useGetAccount } from "@/queries/account"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import { BookOpen, Wand } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
@@ -20,7 +20,6 @@ const notebookSize = z.enum([
 ])
 
 const createNotebookSchema = z.object({
-  subject: z.string(),
   extraNotes: z.string().optional(),
   size: notebookSize,
 })
@@ -35,7 +34,7 @@ export const CreateNotebook = ({ onSuccess, onError }: CreateNotebookProps) => {
     resolver: zodResolver(createNotebookSchema),
   })
 
-  const { data: account } = useQuery(getAccount())
+  const { data: account } = useGetAccount()
 
   const { mutate: createNotebook, isPending } = useMutation({
     mutationFn: async (data: z.infer<typeof createNotebookSchema>) => onSuccess(),
@@ -54,21 +53,6 @@ export const CreateNotebook = ({ onSuccess, onError }: CreateNotebookProps) => {
 
       <form onSubmit={form.handleSubmit(data => createNotebook(data))} className="flex h-full flex-col gap-4">
         <div className="flex flex-col gap-4"></div>
-
-        <Controller
-          control={form.control}
-          name="subject"
-          render={({ field, fieldState: { error } }) => (
-            <SelectRoot
-              labelText="📚 Pick your subject"
-              items={account?.profile?.subjectsOffered?.map(i => ({ label: i, value: i })) ?? []}
-              onValueChange={value => field.onChange(value)}
-              triggerClassName="w-full"
-              name={field.name}
-              errorText={error?.message}
-            />
-          )}
-        />
 
         <Controller
           control={form.control}

@@ -1,3 +1,5 @@
+"use server"
+
 import { findAccountById } from "@/actions/account"
 import { getSession } from "@/actions/session"
 import db from "@/db"
@@ -5,8 +7,6 @@ import { FileMetadata, FileUploadSchema, fileUploadSchema, FileUploadType } from
 import { tryCatch } from "@/lib/try-catch"
 import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
-
-;("use server")
 
 interface PostUploadsDto {
   data: Array<{ url: string; type: FileUploadType; metadata?: FileMetadata }>

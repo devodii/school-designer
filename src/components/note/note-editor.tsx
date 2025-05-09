@@ -105,7 +105,7 @@ export const NoteEditor = ({ notes }: NoteEditorProps) => {
                 [BulletListButton, NumberedListButton],
               ]}
               paramsContent={editorContent}
-              contentClassName="h-[calc(100vh-15rem)]"
+              contentClassName="h-[calc(100vh-15rem)] text-md"
             />
           </div>
         </>
