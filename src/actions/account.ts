@@ -1,9 +1,9 @@
 "use server"
 
 import db from "@/db"
-import { accountSchema, AccountSchema, profileSchema, ProfileSchema, educationLevelEnum } from "@/db/schema/account"
+import { accountSchema, AccountSchema, profileSchema, ProfileSchema } from "@/db/schema/account"
 import { tryCatch } from "@/lib/try-catch"
-import { eq, sql } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
 
 export const findAccountByEmail = async (email: string) => {

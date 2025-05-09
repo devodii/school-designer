@@ -1,4 +1,4 @@
-import React, { ComponentProps } from "react"
+import { ComponentProps } from "react"
 
 import { type LabelProps, Label } from "@/components/ui/label"
 import { Textarea, TextareaProps } from "@/components/ui/textarea"

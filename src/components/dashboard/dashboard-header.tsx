@@ -1,11 +1,9 @@
 "use client"
 
-import React from "react"
-
 import { AvatarRoot } from "@/components/avatar-root"
 import { Input } from "@/components/ui/input"
 import { ProfileSchema } from "@/db/schema/account"
-import { Search, Bell } from "lucide-react"
+import { Bell, Search } from "lucide-react"
 
 interface DashboardHeaderProps {
   profile: ProfileSchema

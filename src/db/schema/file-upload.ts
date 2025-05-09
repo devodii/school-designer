@@ -1,5 +1,5 @@
 import { accountSchema } from "@/db/schema/account"
-import { pgTable, varchar, foreignKey, timestamp, pgEnum, index, jsonb } from "drizzle-orm/pg-core"
+import { foreignKey, index, jsonb, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core"
 
 export type FileMetadata = {
   scope: "ACCOUNT_PROFILE" | "COOKBOOK" | "TIMETABLE"

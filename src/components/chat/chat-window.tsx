@@ -31,12 +31,18 @@ export const ChatWindow = ({}: ChatWindowProps) => {
   const editor = useEditor({
     extensions: [TagExtension, StarterKit, Placeholder.configure({ placeholder: "Ask a question..." })],
     content: message,
-    onUpdate: ({ editor }) => setMessage(editor.getHTML()),
+    onUpdate: ({ editor }) => setMessage(editor.getText()),
   })
 
   const handleInsertTag = (tag: ChatMessageTag) => {
-    if (editor) editor.commands.insertContent({ type: "tag", attrs: { content: tag } })
-    setTagPickerOpen(false)
+    if (editor) {
+      editor
+        .chain()
+        .focus()
+        .insertContent({ type: "tag", attrs: { content: tag } })
+        .run()
+      setTagPickerOpen(false)
+    }
   }
 
   const profilePicture = profile?.pictureUrl ?? ""
@@ -60,6 +66,7 @@ export const ChatWindow = ({}: ChatWindowProps) => {
     ])
     setMessage("")
     setSelectedTag(null)
+    editor?.commands.clearContent()
 
     setTimeout(() => {
       setMessages(prev => [
@@ -79,7 +86,7 @@ export const ChatWindow = ({}: ChatWindowProps) => {
     setIsTyping(false)
   }
 
-  useHotkeys("mod+enter", handleSendMessage)
+  useHotkeys("mod+enter", handleSendMessage, { enableOnContentEditable: true })
 
   return (
     <div className="flex h-full w-full flex-col gap-4 p-0 pt-4">

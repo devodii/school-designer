@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, Suspense, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 
 import {
-  verifyMagicLinkToken as verifyMagicLinkTokenAction,
   verifyGoogleToken as verifyGoogleTokenAction,
+  verifyMagicLinkToken as verifyMagicLinkTokenAction,
 } from "@/actions/auth"
 import { CardRoot } from "@/components/card-root"
 import { Logo } from "@/components/logo"

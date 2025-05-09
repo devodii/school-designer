@@ -1,7 +1,7 @@
-import React, { ComponentProps } from "react"
+import { ComponentProps } from "react"
 
 import { Input, type InputProps } from "@/components/ui/input"
-import { type LabelProps, Label } from "@/components/ui/label"
+import { Label, type LabelProps } from "@/components/ui/label"
 import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
 

@@ -1,8 +1,8 @@
 "use client"
 
-import { ComponentProps, useState } from "react"
+import { ComponentProps } from "react"
 
-import { CommandRootProps, CommandRoot } from "@/components/command-root"
+import { CommandRoot, CommandRootProps } from "@/components/command-root"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { MixinProps, splitProps } from "@/lib/mixin"
 

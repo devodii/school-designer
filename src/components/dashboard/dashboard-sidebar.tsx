@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from "react"
+import { useEffect } from "react"
 
 import { SendFeedback } from "@/components/ai/send-feedback"
 import { ChatWindow } from "@/components/chat/chat-window"

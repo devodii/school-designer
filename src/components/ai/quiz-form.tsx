@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, ComponentPropsWithoutRef } from "react"
+import { ComponentPropsWithoutRef, useEffect, useState } from "react"
 
 import { CheckboxRoot } from "@/components/checkbox-root"
 import { RadioGroupRoot } from "@/components/radio-group-root"
@@ -10,7 +10,7 @@ import { QuizResponse } from "@/interfaces/chat"
 import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
 import { snakeCase } from "lodash"
-import { Clock, ArrowLeft } from "lucide-react"
+import { ArrowLeft, Clock } from "lucide-react"
 import moment from "moment"
 import { Controller, useForm } from "react-hook-form"
 

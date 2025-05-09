@@ -12,7 +12,7 @@ export const ViewTimetable = ({ timetable }: ViewTimetableProps) => {
   const searchParams = useSearchParams()
 
   const fileId = searchParams.get("rowid")
-  
+
   const { data: file } = useGetFileById(fileId)
 
   return (

@@ -2,7 +2,7 @@
 
 import { ComponentType, useState } from "react"
 
-import { motion, AnimatePresence } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form"
 
 export interface StepComponentProps<T> {

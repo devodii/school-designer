@@ -1,6 +1,6 @@
 "use client"
 
-import { ComponentType, ComponentProps, createElement } from "react"
+import { ComponentProps, ComponentType, createElement } from "react"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MixinProps, splitProps } from "@/lib/mixin"

@@ -3,7 +3,7 @@
 import db from "@/db"
 import { NoteSchema, noteSchema } from "@/db/schema/note"
 import { tryCatch } from "@/lib/try-catch"
-import { eq, desc } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 import { getSession } from "./session"

@@ -1,5 +1,3 @@
-import * as React from "react"
-
 import { Body, Button, Heading, Html, Section, Text } from "@react-email/components"
 
 interface MagicLinkEmailProps {

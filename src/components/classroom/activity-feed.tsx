@@ -1,10 +1,8 @@
-import { createElement } from "react"
-
 import { CardRoot } from "@/components/card-root"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ClassroomEventSchema, ClassroomEventType } from "@/db/schema/classroom"
-import { Book, BookOpen, Calendar, FileText } from "lucide-react"
+import { BookOpen, Calendar, FileText } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 

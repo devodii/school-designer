@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 
-import { updateNote as updateNoteAction, createNote as createNoteAction } from "@/actions/note"
+import { createNote as createNoteAction, updateNote as updateNoteAction } from "@/actions/note"
 import { getSession } from "@/actions/session"
 import { Spinner } from "@/components/spinner"
 import {

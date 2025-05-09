@@ -1,8 +1,8 @@
 import { useState } from "react"
 
 import {
-  createPolarCheckoutSession,
   createCustomerPortalSession as createCustomerPortalSessionAction,
+  createPolarCheckoutSession,
 } from "@/actions/subscriptions"
 import { CardRoot } from "@/components/card-root"
 import { Spinner } from "@/components/spinner"

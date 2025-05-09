@@ -7,7 +7,7 @@ import { Input, InputProps } from "@/components/ui/input"
 import { useFileUpload, type FileUploadEndpoint } from "@/hooks/use-file-upload"
 import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
-import { Paperclip, Upload } from "lucide-react"
+import { Paperclip } from "lucide-react"
 import { toast } from "sonner"
 
 type FileWithId = File & { id: string }

@@ -6,7 +6,7 @@ import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
 import Placeholder from "@tiptap/extension-placeholder"
 import Underline from "@tiptap/extension-underline"
-import { useEditor, EditorContent, EditorContentProps, UseEditorOptions, Editor } from "@tiptap/react"
+import { Editor, EditorContent, EditorContentProps, useEditor, UseEditorOptions } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 
 interface TiptapRootProps

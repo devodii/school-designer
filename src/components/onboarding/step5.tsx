@@ -164,12 +164,18 @@ export const Step5 = ({ onBack }: Step5Props) => {
         />
 
         <div className="flex w-full flex-col items-center gap-4 md:flex-row">
-          <Button className="flex-1" type="button" variant="outline" onClick={() => onBack()}>
+          <Button
+            disabled={isUpdatingAccount}
+            className="flex-1"
+            type="button"
+            variant="outline"
+            onClick={() => onBack()}
+          >
             Back
           </Button>
-          <Button className="flex-1" type="submit" disabled={isUpdatingAccount}>
+          <Button disabled={isUpdatingAccount} className="flex-1" type="submit">
             <span className="text-sm font-semibold">Complete Setup</span>
-            {isUpdatingAccount && <Spinner size={24} />}
+            {isUpdatingAccount && <Spinner size={16} />}
           </Button>
         </div>
       </form>

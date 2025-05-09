@@ -1,4 +1,4 @@
-import { findClassroomById, findClassroomByInviteCode } from "@/actions/classroom"
+import { findClassroomByInviteCode } from "@/actions/classroom"
 import { CardRoot } from "@/components/card-root"
 import { OnboardingForm } from "@/components/onboarding/onboarding-form"
 import { Users } from "lucide-react"

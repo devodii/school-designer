@@ -15,7 +15,6 @@ import {
 import { tryCatch } from "@/lib/try-catch"
 import { ClassroomEventMetadata } from "@/types"
 import { desc, eq, sql } from "drizzle-orm"
-import { nanoid } from "nanoid"
 import { revalidatePath } from "next/cache"
 
 // Classroom

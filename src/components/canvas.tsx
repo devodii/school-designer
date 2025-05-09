@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useEffect, ComponentProps, useState } from "react"
+import { ComponentProps, useEffect, useRef, useState } from "react"
 
 import { useCanvas } from "@/context/canvas"
 import { MixinProps, splitProps } from "@/lib/mixin"

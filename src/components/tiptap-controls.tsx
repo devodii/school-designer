@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Editor } from "@tiptap/react"
-import { Bold, Code, Heading, Italic, List, ListOrdered, Strikethrough } from "lucide-react"
+import { Bold, Code, Italic, List, ListOrdered, Strikethrough } from "lucide-react"
 
 interface TiptapControlProps {
   editor: Editor

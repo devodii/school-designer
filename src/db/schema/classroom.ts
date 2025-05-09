@@ -1,6 +1,6 @@
 import { AccountSchema, accountSchema } from "@/db/schema/account"
 import { ClassroomEventMetadata } from "@/types"
-import { pgTable, varchar, timestamp, unique, pgEnum, jsonb } from "drizzle-orm/pg-core"
+import { jsonb, pgEnum, pgTable, timestamp, unique, varchar } from "drizzle-orm/pg-core"
 import { nanoid } from "nanoid"
 
 export const classroomEventType = pgEnum("classroom_activity_type", ["NOTE", "PLAN", "ASSIGNMENT", "NEW_MEMBER"])

@@ -5,7 +5,7 @@
     "singleQuote": false,
     "trailingComma": "all",
     "arrowParens": "avoid",
-    "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+    "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"],
     "importOrder": ["^react$", "^react-dom$", "<THIRD_PARTY_MODULES>", "^@/react/(.*)$", "^[./]"],
     "importOrderSeparation": true
   }

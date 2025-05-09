@@ -13,7 +13,6 @@ import { getAccountSubscriptions } from "@/queries/subscriptions"
 import { useQuery } from "@tanstack/react-query"
 import { ArrowLeft, Timer } from "lucide-react"
 import Image from "next/image"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { QUIZ_CANVAS_NAME } from "~/constants/canvas"
 
 export type ChatMessagePersona = "user" | "ai"

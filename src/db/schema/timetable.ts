@@ -1,5 +1,5 @@
 import { accountSchema } from "@/db/schema/account"
-import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core"
+import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core"
 
 export const timetableSchema = pgTable("timetable", {
   id: varchar("id").primaryKey(),
