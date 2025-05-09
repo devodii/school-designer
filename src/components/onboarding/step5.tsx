@@ -7,6 +7,7 @@ import { Spinner } from "@/components/spinner"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { useFileUpload } from "@/hooks/use-file-upload"
+import { generateEmbedding } from "@/lib/openai"
 import { cn } from "@/lib/tw-merge"
 import { FileWithPreview } from "@/types"
 import { useMutation } from "@tanstack/react-query"
@@ -57,8 +58,13 @@ export const Step5 = ({ onBack }: Step5Props) => {
 
       const { schoolName, referralCode, educationLevel, fullName } = values
 
+      /**
+       * Creates an embedding for the account based on the school name and education level
+       */
+      const embedding = await generateEmbedding(JSON.stringify({ schoolName, educationLevel }))
+
       await Promise.all([
-        updateAccount(session.accountId, { educationLevel, referralCode, isOnboarded: true }),
+        updateAccount(session.accountId, { educationLevel, referralCode, isOnboarded: true, embedding }),
         createProfile(session.accountId, { fullName, pictureUrl: response[0], schoolName }),
       ])
 

@@ -3,7 +3,7 @@
 import db from "@/db"
 import { accountSchema, AccountSchema, profileSchema, ProfileSchema } from "@/db/schema/account"
 import { tryCatch } from "@/lib/try-catch"
-import { eq } from "drizzle-orm"
+import { cosineDistance, desc, eq, gt, sql } from "drizzle-orm"
 import { nanoid } from "nanoid"
 
 export const findAccountByEmail = async (email: string) => {
@@ -72,4 +72,28 @@ export const createAccount = async (dto: { email: string }) => {
   if (error) throw new Error("Failed to create account")
 
   return user[0]
+}
+
+export const findAccountRecommendation = async (accountId: string) => {
+  const account = await findAccountById(accountId)
+
+  if (!account) throw new Error("Account not found")
+
+  if (!account.embedding) throw new Error("Account embedding not found")
+
+  const similarity = sql<number>`1 - (${cosineDistance(accountSchema.embedding, account.embedding)})`
+
+  return db
+    .select({
+      accountId: accountSchema.id,
+      similarity,
+      fullName: profileSchema.fullName,
+      pictureUrl: profileSchema.pictureUrl,
+      schoolName: profileSchema.schoolName,
+    })
+    .from(accountSchema)
+    .leftJoin(profileSchema, eq(profileSchema.accountId, accountSchema.id))
+    .where(gt(similarity, 0.5))
+    .orderBy(desc(similarity))
+    .limit(1)
 }

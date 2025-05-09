@@ -152,6 +152,9 @@ importers:
       openai:
         specifier: ^4.96.0
         version: 4.96.0(zod@3.24.3)
+      pgvector:
+        specifier: ^0.2.0
+        version: 0.2.0
       postgres:
         specifier: ^3.4.5
         version: 3.4.5
@@ -3831,6 +3834,10 @@ packages:
 
   peberminta@0.9.0:
     resolution: {integrity: sha512-XIxfHpEuSJbITd1H3EeQwpcZbTLHc+VVr8ANI9t5sit565tsI4/xK3KWTUFE2e6QiangUkh3B0jihzmGnNrRsQ==}
+
+  pgvector@0.2.0:
+    resolution: {integrity: sha512-ef9SggYLzgshzpsFHAha77ghSOucf1ebXcuvokgTQK6V01uihqGJv6i0+U+yjEgiDsiVtTdojDrqOHRcSmcECw==}
+    engines: {node: '>= 18'}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -7993,6 +8000,8 @@ snapshots:
       path2d: 0.2.2
 
   peberminta@0.9.0: {}
+
+  pgvector@0.2.0: {}
 
   picocolors@1.1.1: {}
 
