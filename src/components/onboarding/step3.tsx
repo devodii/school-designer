@@ -9,8 +9,6 @@ interface Step3Props extends StepComponentProps<OnboardingSchema> {}
 export const Step3 = ({ onNext, onBack }: Step3Props) => {
   const form = useFormContext()
 
-  const educationLevel = form.getValues("educationLevel") as OnboardingSchema["educationLevel"]
-
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
@@ -38,7 +36,7 @@ export const Step3 = ({ onNext, onBack }: Step3Props) => {
               inputOnBlur={field.onBlur}
               inputName={field.name}
               errorText={error?.message}
-              inputPlaceholder={educationLevel === "HIGH_SCHOOL" ? "Baris High School" : "University of Michigan"}
+              inputPlaceholder="Enter your school name"
             />
           )}
         />

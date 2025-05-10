@@ -2,10 +2,17 @@ import { StepComponentProps } from "@/components/multi-step-form"
 import { OnboardingSchema } from "@/components/onboarding/schema"
 import { SelectableCard } from "@/components/selectable-card"
 import { Button } from "@/components/ui/button"
-import { GraduationCap, School } from "lucide-react"
+import { cn } from "@/lib/tw-merge"
+import { GraduationCap, School, TestTube } from "lucide-react"
 import { Controller, useFormContext } from "react-hook-form"
 
 const options = [
+  {
+    value: "ELEMENTARY_SCHOOL",
+    title: "Elementary School",
+    description: "I'm an elementary school student",
+    icon: School,
+  },
   {
     value: "HIGH_SCHOOL",
     title: "High School",
@@ -18,6 +25,13 @@ const options = [
     description: "I'm a college student",
     icon: GraduationCap,
   },
+
+  {
+    value: "RESEARCHER",
+    title: "Researcher",
+    description: "I'm a researcher",
+    icon: TestTube,
+  },
 ]
 
 interface Step2Props extends StepComponentProps<OnboardingSchema> {}
@@ -28,8 +42,10 @@ export const Step2 = ({ onNext, onBack }: Step2Props) => {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold">High School or College?</h1>
-        <p className="text-muted-foreground"> Select your current education level.</p>
+        <h1 className="text-3xl font-bold">Select your education level</h1>
+        <p className="text-muted-foreground">
+          This helps us personalize your experience and recommend the best content for you.
+        </p>
       </div>
 
       <form
@@ -61,6 +77,20 @@ export const Step2 = ({ onNext, onBack }: Step2Props) => {
                   ))}
                 </div>
                 {error?.message && <p className="text-red-500">{error.message}</p>}
+
+                <div
+                  className={cn(
+                    "rounded-md border bg-gray-50 p-3",
+                    "transition-all duration-300 ease-in-out",
+                    "overflow-hidden",
+                    field.value === "RESEARCHER" ? "max-h-[100px] opacity-100" : "h-0 border-0 p-0 opacity-0",
+                  )}
+                >
+                  <p className="text-muted-foreground text-center text-sm">
+                    As a researcher, you'll have access to features for creating and sharing research papers, including
+                    survey distribution tools.
+                  </p>
+                </div>
               </>
             )
           }}
