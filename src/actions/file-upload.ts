@@ -1,43 +1,36 @@
 "use server"
 
 import { findAccountById } from "@/actions/account"
-import { getSession } from "@/actions/session"
 import db from "@/db"
-import { FileMetadata, FileUploadSchema, fileUploadSchema, FileUploadType } from "@/db/schema/file-upload"
+import { FileMetadata, fileUploadSchema, FileUploadType } from "@/db/schema/file-upload"
 import { tryCatch } from "@/lib/try-catch"
 import { eq } from "drizzle-orm"
-import { nanoid } from "nanoid"
 
-interface PostUploadsDto {
-  data: Array<{ url: string; type: FileUploadType; metadata?: FileMetadata }>
-}
+export const postUploads = async (dto: {
+  accountId: string
+  url: string
+  type: FileUploadType
+  metadata?: FileMetadata
+}) => {
+  const { accountId, ...file } = dto
 
-export const postUploads = async (dto: PostUploadsDto) => {
-  const session = await getSession()
-
-  if (!session) throw new Error("Unauthorized")
-
-  const account = await findAccountById(session.accountId)
+  const account = await findAccountById(accountId)
 
   if (!account) throw new Error("Invalid account")
 
   const { data, error } = await tryCatch(
-    db.insert(fileUploadSchema).values(
-      dto.data.map(d => ({
-        accountId: session.accountId,
-        id: `fu_${nanoid(25)}`,
-        url: d.url,
-        type: d.type,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        metadata: d.metadata,
-      })),
-    ),
+    db
+      .insert(fileUploadSchema)
+      .values({ ...file, accountId: account.id })
+      .returning({
+        id: fileUploadSchema.id,
+        url: fileUploadSchema.url,
+      }),
   )
 
   if (error) throw new Error("Failed to save uploaded files")
 
-  return data.map((d: FileUploadSchema) => ({ id: d.id, url: d.url }))
+  return data[0]
 }
 
 export const getFileById = async (id: string) => {

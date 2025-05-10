@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Editor } from "@tiptap/react"
-import { Bold, Code, Italic, List, ListOrdered, Strikethrough } from "lucide-react"
+import { Bold, Code, Italic, List, ListOrdered, Quote, Strikethrough } from "lucide-react"
 
 interface TiptapControlProps {
   editor: Editor
@@ -59,6 +59,17 @@ export const StrikethroughButton = ({ editor }: TiptapControlProps) => {
       onClick={() => editor?.chain().focus().toggleStrike().run()}
     >
       <Strikethrough className="size-4" />
+    </Button>
+  )
+}
+
+export const QuoteButton = ({ editor }: TiptapControlProps) => {
+  return (
+    <Button
+      variant={editor?.isActive("blockquote") ? "default" : "outline"}
+      onClick={() => editor?.chain().focus().toggleBlockquote().run()}
+    >
+      <Quote className="size-4" />
     </Button>
   )
 }

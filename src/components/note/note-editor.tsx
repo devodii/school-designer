@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 import { createNote as createNoteAction, updateNote as updateNoteAction } from "@/actions/note"
 import { getSession } from "@/actions/session"
@@ -12,6 +12,7 @@ import {
   HeadingButton,
   ItalicButton,
   NumberedListButton,
+  QuoteButton,
   StrikethroughButton,
   SubHeadingButton,
 } from "@/components/tiptap-controls"
@@ -23,6 +24,7 @@ import { useUrlState } from "@/hooks/use-url-state"
 import { useMutation } from "@tanstack/react-query"
 import { Book } from "lucide-react"
 import { useSearchParams } from "next/navigation"
+import { useHotkeys } from "react-hotkeys-hook"
 import { toast } from "sonner"
 
 interface NoteEditorProps {
@@ -65,20 +67,14 @@ export const NoteEditor = ({ notes }: NoteEditorProps) => {
   const [editorTitle, setEditorTitle] = useState(selectedNote?.title)
   const [editorContent, setEditorContent] = useState(selectedNote?.content)
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
-        e.preventDefault()
-
-        if (!selectedNote) return
-
-        updateNote({ id: selectedNote.id, title: editorTitle ?? "Untitled Note", content: editorContent ?? "" })
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown)
-    return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [updateNote, selectedNote, editorTitle, editorContent])
+  useHotkeys(
+    "mod+s",
+    () => {
+      if (!selectedNote) return
+      updateNote({ id: selectedNote.id, title: editorTitle ?? "Untitled Note", content: editorContent ?? "" })
+    },
+    { enableOnContentEditable: true },
+  )
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
@@ -102,7 +98,7 @@ export const NoteEditor = ({ notes }: NoteEditorProps) => {
               groupedControls={[
                 [HeadingButton, SubHeadingButton],
                 [BoldButton, ItalicButton, StrikethroughButton, CodeButton],
-                [BulletListButton, NumberedListButton],
+                [BulletListButton, NumberedListButton, QuoteButton],
               ]}
               paramsContent={editorContent}
               contentClassName="h-[calc(100vh-15rem)] text-md"

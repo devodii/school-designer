@@ -1,6 +1,6 @@
 import { accountSchema } from "@/db/schema/account"
 import { foreignKey, index, jsonb, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core"
-
+import { nanoid } from "nanoid"
 export type FileMetadata = {
   scope: "ACCOUNT_PROFILE" | "COOKBOOK" | "TIMETABLE"
 }
@@ -10,7 +10,10 @@ export const fileUploadTypeEnum = pgEnum("fileUploadType", ["IMAGE", "PDF"])
 export const fileUploadSchema = pgTable(
   "file_upload",
   {
-    id: varchar("id").notNull().primaryKey(),
+    id: varchar("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => `fu_${nanoid(25)}`),
     url: varchar("url").notNull(),
     accountId: varchar("account_id").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
