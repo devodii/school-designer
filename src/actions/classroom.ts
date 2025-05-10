@@ -98,7 +98,7 @@ export const getAccountClassrooms = async (accountId: string) => {
       .where(eq(classroomMemberSchema.accountId, accountId)),
   )
 
-  if (error) throw new Error("Failed to get account classrooms")
+  if (error) return []
 
   return classrooms
 }

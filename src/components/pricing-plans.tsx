@@ -15,6 +15,7 @@ import { BadgePlus, Check } from "lucide-react"
 import moment from "moment"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { freeBenefits, plusBenefits } from "~/constants/subscriptions"
 
 type ActiveTab = "monthly" | "yearly"
 
@@ -88,12 +89,9 @@ export const PricingPlans = ({ intent }: PricingPlansProps) => {
         <div className="mx-auto mb-6 max-w-md rounded-lg bg-gray-50 p-6">
           <h3 className="mb-4 text-xl font-bold">Your Plus Benefits</h3>
           <div className="space-y-3 text-left">
-            <Benefit text="Unlimited AI study quiz generation" />
-            <Benefit text="Advanced notebook templates and customization" />
-            <Benefit text="Speech-to-text note taking" />
-            <Benefit text="Create unlimited classrooms" />
-            <Benefit text="Priority AI chat assistance" />
-            <Benefit text="Custom anime-style notebook covers" />
+            {plusBenefits.map(feature => (
+              <Benefit text={feature} />
+            ))}
           </div>
         </div>
 
@@ -156,12 +154,7 @@ export const PricingPlans = ({ intent }: PricingPlansProps) => {
               </Button>
 
               <ul className="flex flex-col gap-1">
-                {[
-                  "Limited AI study quiz generation",
-                  "Basic notebook template access",
-                  "Create one classroom",
-                  "Community support",
-                ].map(feature => (
+                {freeBenefits.map(feature => (
                   <li key={feature} className="flex items-center gap-1">
                     <Check className="size-4" />
                     <span className="text-sm">{feature}</span>
@@ -196,16 +189,7 @@ export const PricingPlans = ({ intent }: PricingPlansProps) => {
               </Button>
 
               <ul className="flex flex-col gap-2">
-                {[
-                  "Everything in Free*",
-                  "Unlimited AI study quiz generation",
-                  "Advanced notebook templates and customization",
-                  "Create unlimited classrooms",
-                  "Priority AI chat assistance",
-                  "Custom anime-style notebook covers",
-                  "Advanced student profile discovery",
-                  "Early access to new features",
-                ].map(feature => (
+                {plusBenefits.map(feature => (
                   <li key={feature} className="flex items-center gap-1">
                     <Check className="size-4" />
                     <span className="text-sm">{feature}</span>

@@ -6,15 +6,13 @@ import { SendFeedback } from "@/components/ai/send-feedback"
 import { ChatWindow } from "@/components/chat/chat-window"
 import { CreateNotebook } from "@/components/create-notebook"
 import { LinkButton } from "@/components/link-button"
+import { Logo } from "@/components/logo"
 import { useCanvas } from "@/context/canvas"
 import { useUrlState } from "@/hooks/use-url-state"
 import { Book, BookOpen, Calendar, Settings, Sparkle } from "lucide-react"
-import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { AI_CHAT_CANVAS_NAME, APP_FEEDBACK_CANVAS_NAME, CREATE_NOTEBOOK_CANVAS_NAME } from "~/constants/canvas"
-
-import { Logo } from "../logo"
 
 export const DashboardSidebar = () => {
   const { closeCanvas, openCanvas } = useCanvas()
@@ -75,9 +73,10 @@ export const DashboardSidebar = () => {
   return (
     <div className="flex h-screen w-64 flex-col border-r border-gray-100 px-3 py-6">
       <div className="mb-12">
-        <Link href="/dashboard">
-          <Logo />
-        </Link>
+        <div className="flex items-center gap-2">
+          <Logo wrapperClassName="size-8" />
+          <h2 className="text-lg font-bold">ClassyNotes</h2>
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-1">
