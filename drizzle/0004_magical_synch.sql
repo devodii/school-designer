@@ -1,1 +1,0 @@
-ALTER TABLE "account" ADD COLUMN "embedding" vector(1536);

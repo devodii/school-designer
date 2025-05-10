@@ -9,8 +9,10 @@ CREATE TABLE "account" (
 	"referral_code" varchar,
 	"education_level" "education_level",
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"customer_id" varchar,
 	"updated_at" timestamp (3),
 	"is_onboarded" boolean DEFAULT false,
+	"embedding" vector(1536),
 	CONSTRAINT "account_email_unique" UNIQUE("email"),
 	CONSTRAINT "account_referral_code_unique" UNIQUE("referral_code")
 );
@@ -90,6 +92,15 @@ CREATE TABLE "file_upload" (
 	"metadata" jsonb
 );
 --> statement-breakpoint
+CREATE TABLE "note" (
+	"id" varchar PRIMARY KEY NOT NULL,
+	"title" text NOT NULL,
+	"content" text NOT NULL,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp (3),
+	"account_id" varchar NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "checkout_session" (
 	"id" varchar PRIMARY KEY NOT NULL,
 	"account_id" varchar NOT NULL,
@@ -118,7 +129,7 @@ CREATE TABLE "timetable" (
 	"file_ids" text[] NOT NULL,
 	"description" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp (3),
 	"deleted_at" timestamp,
 	"account_id" varchar NOT NULL
 );
@@ -126,7 +137,7 @@ CREATE TABLE "timetable" (
 CREATE TABLE "waitlist" (
 	"id" varchar PRIMARY KEY NOT NULL,
 	"email" text NOT NULL,
-	"study_challenge" text,
+	"feature_request" text,
 	"would_pay" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "waitlist_email_unique" UNIQUE("email")
@@ -141,10 +152,12 @@ ALTER TABLE "classroom_member" ADD CONSTRAINT "classroom_member_account_id_accou
 ALTER TABLE "classroom" ADD CONSTRAINT "classroom_owner_id_account_id_fk" FOREIGN KEY ("owner_id") REFERENCES "public"."account"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "feedback" ADD CONSTRAINT "feedback_account_id_account_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."account"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "file_upload" ADD CONSTRAINT "fk__account_file_upload" FOREIGN KEY ("account_id") REFERENCES "public"."account"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "note" ADD CONSTRAINT "note_account_id_account_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."account"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "checkout_session" ADD CONSTRAINT "checkout_session_account_id_account_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."account"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscription" ADD CONSTRAINT "subscription_account_id_account_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."account"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscription" ADD CONSTRAINT "subscription_checkout_session_id_checkout_session_id_fk" FOREIGN KEY ("checkout_session_id") REFERENCES "public"."checkout_session"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "timetable" ADD CONSTRAINT "timetable_account_id_account_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."account"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "embeddingIndex" ON "account" USING hnsw ("embedding" vector_cosine_ops);--> statement-breakpoint
 CREATE INDEX "email_idx" ON "auth" USING btree ("email");--> statement-breakpoint
 CREATE INDEX "token_idx" ON "auth" USING btree ("token");--> statement-breakpoint
 CREATE INDEX "account_id_idx" ON "file_upload" USING btree ("account_id");
