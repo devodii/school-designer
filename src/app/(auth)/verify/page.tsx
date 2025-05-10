@@ -7,7 +7,6 @@ import {
   verifyMagicLinkToken as verifyMagicLinkTokenAction,
 } from "@/actions/auth"
 import { CardRoot } from "@/components/card-root"
-import { Logo } from "@/components/logo"
 import { Spinner } from "@/components/spinner"
 import { Button } from "@/components/ui/button"
 import { AuthProvider } from "@/db/schema/auth"
@@ -196,20 +195,4 @@ const VerifyToken = () => {
       </div>
     )
   }
-
-  return (
-    <div className="flex min-h-screen w-screen flex-col items-center justify-between gap-4 p-12">
-      <div className="flex flex-col items-center gap-2">
-        <Logo />
-        <h3 className="text-2xl font-semibold">ClassyNotes</h3>
-      </div>
-
-      <div className="flex w-full flex-col items-center gap-4">
-        <p className="font-semibold">Something went wrong, that's all we know </p>
-        <Button onClick={() => router.push("/")}>Go to Home</Button>
-      </div>
-
-      <div />
-    </div>
-  )
 }

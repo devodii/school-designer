@@ -1,3 +1,5 @@
+"use client"
+
 import { updateProfile } from "@/actions/account"
 import { AvatarRoot } from "@/components/avatar-root"
 import { CardRoot } from "@/components/card-root"
