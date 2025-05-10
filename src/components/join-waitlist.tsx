@@ -15,26 +15,25 @@ import { z } from "zod"
 const waitlistSchema = z.object({
   email: z.string().email(),
   would_pay: z.string().transform(v => v === "yes"),
-  study_challenge: z.string().optional(),
+  feature_request: z.string().optional(),
 })
 
 type WaitlistFormData = {
   email: string
   would_pay: string
-  study_challenge?: string
+  feature_request?: string
 }
 
 export const JoinWaitlist = () => {
   const form = useForm<WaitlistFormData>({
     resolver: zodResolver(waitlistSchema, undefined, { raw: true }),
-    defaultValues: { would_pay: "no", study_challenge: undefined },
+    defaultValues: { would_pay: "no", feature_request: undefined },
   })
 
   const { mutate: joinWaitlist, isPending } = useMutation({
     mutationFn: async (data: WaitlistFormData) => {
-      const { email, would_pay, study_challenge = null } = data
-      console.log(email, would_pay, study_challenge)
-      return await createWaitlist({ email, would_pay, study_challenge })
+      const { email, would_pay, feature_request = null } = data
+      return await createWaitlist({ email, would_pay, feature_request })
     },
     onSuccess: () => {
       toast.success("You've been added to the waitlist!")
@@ -64,11 +63,11 @@ export const JoinWaitlist = () => {
 
       <Controller
         control={form.control}
-        name="study_challenge"
+        name="feature_request"
         render={({ field }) => (
           <TextareaField
             id={field.name}
-            labelText="What is your study challenge?"
+            labelText="What specific features would you like to see?"
             textareaOnChange={field.onChange}
             textareaValue={field.value}
             textareaOnBlur={field.onBlur}
