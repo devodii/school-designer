@@ -44,7 +44,7 @@ export const ourFileRouter = {
         accountId,
         url: file.ufsUrl,
         type: "PDF",
-        metadata: { scope: "TIMETABLE" },
+        metadata: { scope: "*" },
       })
     }),
 } satisfies FileRouter

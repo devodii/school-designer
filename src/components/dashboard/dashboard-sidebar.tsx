@@ -9,7 +9,7 @@ import { LinkButton } from "@/components/link-button"
 import { Logo } from "@/components/logo"
 import { useCanvas } from "@/context/canvas"
 import { useUrlState } from "@/hooks/use-url-state"
-import { Book, BookOpen, Calendar, Settings, Sparkle } from "lucide-react"
+import { Book, BookOpen, Calendar, Settings, Sparkle, TestTube } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { AI_CHAT_CANVAS_NAME, APP_FEEDBACK_CANVAS_NAME, CREATE_NOTEBOOK_CANVAS_NAME } from "~/constants/canvas"
@@ -83,6 +83,7 @@ export const DashboardSidebar = () => {
         <LinkButton href="/dashboard/classrooms" icon={BookOpen} label="My Classrooms" buttonClassName="w-full" />
         <LinkButton href="/dashboard/timetables" icon={Calendar} label="My Timetable" buttonClassName="w-full" />
         <LinkButton href="/dashboard/notes" icon={Book} label="My Notes" buttonClassName="w-full" />
+        <LinkButton href="/dashboard/researches" icon={TestTube} label="My Research Papers" buttonClassName="w-full" />
         <LinkButton href="?pricing=auto" icon={Sparkle} label="Upgrade to Plus" buttonClassName="w-full" />
       </div>
 

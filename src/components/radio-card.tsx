@@ -3,7 +3,7 @@ import { ComponentProps, ElementType } from "react"
 import { MixinProps, splitProps } from "@/lib/mixin"
 import { cn } from "@/lib/tw-merge"
 
-interface SelectableCardProps
+interface RadioCardProps
   extends ComponentProps<"button">,
     MixinProps<"title", ComponentProps<"h3">>,
     MixinProps<"description", ComponentProps<"div">> {
@@ -14,15 +14,16 @@ interface SelectableCardProps
   onClick: () => void
 }
 
-export const SelectableCard = ({
+export const RadioCard = ({
   titleText,
   descriptionText,
   icon: Icon,
   onClick,
   isSelected,
   ...mixinProps
-}: SelectableCardProps) => {
+}: RadioCardProps) => {
   const { rest, title, description } = splitProps(mixinProps, "title", "description")
+
   return (
     <button
       {...rest}

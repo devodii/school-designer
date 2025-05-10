@@ -1,6 +1,6 @@
 import { StepComponentProps } from "@/components/multi-step-form"
 import { OnboardingSchema } from "@/components/onboarding/schema"
-import { SelectableCard } from "@/components/selectable-card"
+import { RadioCard } from "@/components/radio-card"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/tw-merge"
 import { GraduationCap, School, TestTube } from "lucide-react"
@@ -25,7 +25,6 @@ const options = [
     description: "I'm a college student",
     icon: GraduationCap,
   },
-
   {
     value: "RESEARCHER",
     title: "Researcher",
@@ -64,7 +63,7 @@ export const Step2 = ({ onNext, onBack }: Step2Props) => {
               <>
                 <div className="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
                   {options.map(option => (
-                    <SelectableCard
+                    <RadioCard
                       type="button"
                       key={option.value}
                       titleText={option.title}

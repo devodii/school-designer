@@ -43,3 +43,5 @@ export const profileSchema = pgTable("profile", {
 })
 
 export type ProfileSchema = typeof profileSchema.$inferSelect
+
+export type EducationLevel = (typeof educationLevelEnum.enumValues)[number]

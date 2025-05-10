@@ -74,7 +74,7 @@ export const ViewClassrooms = ({ classrooms }: ViewClassroomsProps) => {
               set([{ name: "sid", value: CREATE_CLASSROOM_CANVAS_NAME }])
             }}
           >
-            Create your first classroom
+            <span className="text-sm font-semibold">Create your first classroom</span>
           </Button>
         </div>
       </div>

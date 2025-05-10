@@ -7,7 +7,7 @@ interface LogoProps extends MixinProps<"wrapper", ComponentProps<"div">>, MixinP
 
 export const Logo = (mixinProps: LogoProps) => {
   const { wrapper, text } = splitProps(mixinProps, "wrapper", "text")
-  
+
   return (
     <div
       {...wrapper}

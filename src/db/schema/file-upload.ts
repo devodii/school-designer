@@ -1,8 +1,9 @@
 import { accountSchema } from "@/db/schema/account"
 import { foreignKey, index, jsonb, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core"
 import { nanoid } from "nanoid"
+
 export type FileMetadata = {
-  scope: "ACCOUNT_PROFILE" | "COOKBOOK" | "TIMETABLE"
+  scope: "ACCOUNT_PROFILE" | "COOKBOOK" | "TIMETABLE" | "*"
 }
 
 export const fileUploadTypeEnum = pgEnum("fileUploadType", ["IMAGE", "PDF"])
