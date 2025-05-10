@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "id": "5d78e287-a2f2-45a0-8980-adb6213e4926",
+=======
+  "id": "a9351019-9f73-4af4-99c5-ef50be28aa4f",
+>>>>>>> main
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -50,6 +54,15 @@
           "name": "is_onboarded",
           "type": "boolean",
           "primaryKey": false,
+<<<<<<< HEAD
+=======
+          "notNull": false
+        },
+        "is_onboarded": {
+          "name": "is_onboarded",
+          "type": "boolean",
+          "primaryKey": false,
+>>>>>>> main
           "notNull": false,
           "default": false
         }
@@ -218,12 +231,15 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
+<<<<<<< HEAD
         },
         "metadata": {
           "name": "metadata",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false
+=======
+>>>>>>> main
         }
       },
       "indexes": {
@@ -287,8 +303,13 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+<<<<<<< HEAD
     "public.classroom_timeline": {
       "name": "classroom_timeline",
+=======
+    "public.classroom_invite": {
+      "name": "classroom_invite",
+>>>>>>> main
       "schema": "",
       "columns": {
         "id": {
@@ -303,12 +324,22 @@
           "primaryKey": false,
           "notNull": false
         },
+<<<<<<< HEAD
+=======
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+>>>>>>> main
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+<<<<<<< HEAD
         },
         "text": {
           "name": "text",
@@ -333,13 +364,21 @@
           "type": "varchar[]",
           "primaryKey": false,
           "notNull": false
+=======
+>>>>>>> main
         }
       },
       "indexes": {},
       "foreignKeys": {
+<<<<<<< HEAD
         "classroom_timeline_classroom_id_classroom_id_fk": {
           "name": "classroom_timeline_classroom_id_classroom_id_fk",
           "tableFrom": "classroom_timeline",
+=======
+        "classroom_invite_classroom_id_classroom_id_fk": {
+          "name": "classroom_invite_classroom_id_classroom_id_fk",
+          "tableFrom": "classroom_invite",
+>>>>>>> main
           "tableTo": "classroom",
           "columnsFrom": [
             "classroom_id"
@@ -347,6 +386,7 @@
           "columnsTo": [
             "id"
           ],
+<<<<<<< HEAD
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -361,6 +401,9 @@
             "id"
           ],
           "onDelete": "cascade",
+=======
+          "onDelete": "no action",
+>>>>>>> main
           "onUpdate": "no action"
         }
       },
@@ -412,7 +455,11 @@
           "columnsTo": [
             "id"
           ],
+<<<<<<< HEAD
           "onDelete": "cascade",
+=======
+          "onDelete": "no action",
+>>>>>>> main
           "onUpdate": "no action"
         },
         "classroom_member_account_id_account_id_fk": {
@@ -425,11 +472,16 @@
           "columnsTo": [
             "id"
           ],
+<<<<<<< HEAD
           "onDelete": "cascade",
+=======
+          "onDelete": "no action",
+>>>>>>> main
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
+<<<<<<< HEAD
       "uniqueConstraints": {
         "unique_classroom_account": {
           "name": "unique_classroom_account",
@@ -440,6 +492,9 @@
           ]
         }
       },
+=======
+      "uniqueConstraints": {},
+>>>>>>> main
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -466,17 +521,24 @@
           "primaryKey": false,
           "notNull": true
         },
+<<<<<<< HEAD
         "instructor": {
           "name": "instructor",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         },
+=======
+>>>>>>> main
         "owner_id": {
           "name": "owner_id",
           "type": "varchar",
           "primaryKey": false,
+<<<<<<< HEAD
           "notNull": true
+=======
+          "notNull": false
+>>>>>>> main
         },
         "subject": {
           "name": "subject",
@@ -516,7 +578,11 @@
           "columnsTo": [
             "id"
           ],
+<<<<<<< HEAD
           "onDelete": "cascade",
+=======
+          "onDelete": "no action",
+>>>>>>> main
           "onUpdate": "no action"
         }
       },
@@ -544,9 +610,15 @@
           "primaryKey": true,
           "notNull": true
         },
+<<<<<<< HEAD
         "file_ids": {
           "name": "file_ids",
           "type": "varchar[]",
+=======
+        "file_upload_id": {
+          "name": "file_upload_id",
+          "type": "varchar",
+>>>>>>> main
           "primaryKey": false,
           "notNull": false
         },
@@ -572,6 +644,22 @@
       },
       "indexes": {},
       "foreignKeys": {
+<<<<<<< HEAD
+=======
+        "feedback_file_upload_id_file_upload_id_fk": {
+          "name": "feedback_file_upload_id_file_upload_id_fk",
+          "tableFrom": "feedback",
+          "tableTo": "file_upload",
+          "columnsFrom": [
+            "file_upload_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+>>>>>>> main
         "feedback_account_id_account_id_fk": {
           "name": "feedback_account_id_account_id_fk",
           "tableFrom": "feedback",
@@ -582,7 +670,11 @@
           "columnsTo": [
             "id"
           ],
+<<<<<<< HEAD
           "onDelete": "set null",
+=======
+          "onDelete": "no action",
+>>>>>>> main
           "onUpdate": "no action"
         }
       },
@@ -679,6 +771,7 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+<<<<<<< HEAD
     "public.checkout_session": {
       "name": "checkout_session",
       "schema": "",
@@ -922,6 +1015,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+=======
+>>>>>>> main
     "public.waitlist": {
       "name": "waitlist",
       "schema": "",
@@ -938,8 +1033,13 @@
           "primaryKey": false,
           "notNull": true
         },
+<<<<<<< HEAD
         "study_challenge": {
           "name": "study_challenge",
+=======
+        "feature_request": {
+          "name": "feature_request",
+>>>>>>> main
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -981,6 +1081,7 @@
       "schema": "public",
       "values": [
         "COLLEGE",
+<<<<<<< HEAD
         "HIGH_SCHOOL"
       ]
     },
@@ -1016,6 +1117,24 @@
       "values": [
         "MONTHLY",
         "YEARLY"
+=======
+        "HIGH SCHOOL"
+>>>>>>> main
+      ]
+    },
+    "public.auth_provider": {
+      "name": "auth_provider",
+      "schema": "public",
+      "values": [
+        "EMAIL",
+        "GOOGLE"
+      ]
+    },
+    "public.fileUploadType": {
+      "name": "fileUploadType",
+      "schema": "public",
+      "values": [
+        "IMAGE"
       ]
     }
   },
