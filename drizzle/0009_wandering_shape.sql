@@ -1,1 +1,0 @@
-ALTER TABLE "classroom" ADD CONSTRAINT "classroom_invite_code_unique" UNIQUE("invite_code");

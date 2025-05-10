@@ -1,1 +1,0 @@
-ALTER TABLE "waitlist" RENAME COLUMN "study_challenge" TO "feature_request";
