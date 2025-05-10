@@ -3,8 +3,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ClassroomEventSchema, ClassroomEventType } from "@/db/schema/classroom"
 import { BookOpen, Calendar, FileText } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
+import { AvatarRoot } from "../avatar-root"
 
 interface ActivityFeedSchema {
   activities: Array<{ event: ClassroomEventSchema; userName: string; userAvatar: string }>
@@ -46,12 +46,13 @@ export const ActivityFeed = ({ activities, classroomId, hasMore }: ActivityFeedS
             <ul className="w-full space-y-6">
               {activities.map(activity => (
                 <li key={activity.event.id} className="flex items-start gap-3">
-                  <Image
+                  <AvatarRoot
                     className="size-10 rounded-full"
-                    width={60}
-                    height={60}
-                    alt={`${activity.userName} \n ${activity.event.description}`}
-                    src={JSON.parse(activity.userAvatar)}
+                    imageWidth={60}
+                    imageHeight={60}
+                    fallbackChildren={activity.userName.charAt(0)}
+                    imageSrc={activity.userAvatar}
+                    imageAlt={`${activity.userName} \n ${activity.event.description}`}
                   />
 
                   <div className="flex-1">

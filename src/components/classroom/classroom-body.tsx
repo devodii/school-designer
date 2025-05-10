@@ -3,6 +3,7 @@
 import { useState } from "react"
 
 import { updateClassroomById } from "@/actions/classroom"
+import { AvatarRoot } from "@/components/avatar-root"
 import { CardRoot } from "@/components/card-root"
 import { ActivityFeed } from "@/components/classroom/activity-feed"
 import { AddActivityForm } from "@/components/classroom/add-activity-form"
@@ -21,7 +22,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { Calendar, FileText, Plus } from "lucide-react"
 import moment from "moment"
-import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -29,7 +29,7 @@ import { z } from "zod"
 
 interface ClassroomBodyProps {
   classroom: ClassroomSchema
-  owner: AccountSchema
+  owner: AccountSchema | null
   account: AccountSchema
   activities: Array<{ event: ClassroomEventSchema; userName: string; userAvatar: string }>
   members: ClassroomMemberAccount[]
@@ -56,7 +56,7 @@ export const ClassroomBody = ({ owner, account, classroom, activities, members }
     onError: () => toast.error("Something went wrong"),
   })
 
-  const isOwner = owner.id === account.id
+  const isOwner = owner?.id === account.id
 
   const router = useRouter()
 
@@ -211,11 +211,18 @@ export const ClassroomBody = ({ owner, account, classroom, activities, members }
                   titleChildren={<div className="text-2xl font-semibold">Classmates</div>}
                   contentChildren={
                     <ul className="space-y-4">
-                      {members.slice(0, 5).map(({ avatar, name, id, isOwner }) => (
-                        <li key={id} className="flex items-center gap-3 rounded-md hover:bg-gray-50">
-                          <Image src={avatar} alt={name} width={40} height={40} className="size-8 rounded-full" />
+                      {members.slice(0, 5).map(({ avatar, accountId, accountName, isOwner }) => (
+                        <li key={accountId} className="flex items-center gap-3 rounded-md hover:bg-gray-50">
+                          <AvatarRoot
+                            className="size-8 rounded-full"
+                            imageSrc={avatar}
+                            imageAlt={accountName}
+                            imageWidth={40}
+                            imageHeight={40}
+                          />
+
                           <div className="flex flex-1 flex-col gap-1">
-                            <p className="font-medium">{name}</p>
+                            <p className="font-medium">{accountName}</p>
                             <Badge variant={isOwner ? "default" : "outline"} className="mt-1 text-xs">
                               {isOwner ? "Admin" : "Member"}
                             </Badge>

@@ -34,12 +34,21 @@ export const findClassroomByInviteCode = async (inviteCode: string) => {
         name: classroomSchema.name,
         description: classroomSchema.description,
         inviteCode: classroomSchema.inviteCode,
-        ownerName: profileSchema.fullName,
+        instructor: classroomSchema.instructor,
+        memberCount: sql<number>`count(${classroomMemberSchema.id})::int`,
+        type: classroomSchema.type,
       })
       .from(classroomSchema)
       .leftJoin(accountSchema, eq(classroomSchema.ownerId, accountSchema.id))
-      .leftJoin(profileSchema, eq(accountSchema.id, profileSchema.accountId))
-      .where(eq(classroomSchema.inviteCode, inviteCode)),
+      .leftJoin(classroomMemberSchema, eq(classroomSchema.id, classroomMemberSchema.classroomId))
+      .where(eq(classroomSchema.inviteCode, inviteCode))
+      .groupBy(
+        classroomSchema.id,
+        classroomSchema.name,
+        classroomSchema.description,
+        classroomSchema.inviteCode,
+        classroomSchema.instructor,
+      ),
   )
 
   if (error) return null
@@ -129,9 +138,9 @@ export const getClassroomMembers = async (classroomId: string) => {
   const { data, error } = await tryCatch(
     db
       .select({
-        id: accountSchema.id,
-        name: profileSchema.fullName,
-        email: accountSchema.email,
+        accountId: accountSchema.id,
+        accountName: profileSchema.fullName,
+        accountEmail: accountSchema.email,
         isOwner: eq(classroomMemberSchema.accountId, classroomSchema.ownerId),
         joined: classroomMemberSchema.createdAt,
         avatar: profileSchema.pictureUrl,
@@ -176,8 +185,8 @@ export const getClassroomEvents = async (classroomId: string) => {
     db
       .select({
         event: classroomEventSchema,
-        userName: profileSchema.fullName,
-        userAvatar: profileSchema.pictureUrl,
+        userName: sql<string>`COALESCE(${profileSchema.fullName}, 'Unknown User')`,
+        userAvatar: sql<string>`COALESCE(${profileSchema.pictureUrl}, '')`,
       })
       .from(classroomEventSchema)
       .leftJoin(accountSchema, eq(classroomEventSchema.accountId, accountSchema.id))

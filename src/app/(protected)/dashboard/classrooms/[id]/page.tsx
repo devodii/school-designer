@@ -1,8 +1,14 @@
 import { findAccountById } from "@/actions/account"
-import { findClassroomById, getClassroomEvents, getClassroomMembers } from "@/actions/classroom"
+import {
+  findClassroomById,
+  findClassroomByInviteCode,
+  getClassroomEvents,
+  getClassroomMembers,
+} from "@/actions/classroom"
 import { getCurrentUser } from "@/actions/session"
 import { ClassroomBody } from "@/components/classroom/classroom-body"
 import { InviteButton } from "@/components/classroom/invite-button"
+import { JoinClassroom } from "@/components/classroom/join-classroom"
 import { UserPlus } from "lucide-react"
 import { notFound } from "next/navigation"
 
@@ -24,11 +30,25 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
     getClassroomMembers(id),
   ])
 
-  console.log({ members })
-
-  if (!owner || !account) return notFound()
+  if (!account) return notFound()
 
   const shareLink = `${process.env.APP_URL}/join?room_code=${classroom.inviteCode}`
+
+  const isMember = members.some(member => member.accountId === account.id)
+
+  if (!isMember) {
+    const room = await findClassroomByInviteCode(classroom.inviteCode)
+
+    if (!room) return notFound()
+
+    return (
+      <div className="flex h-screen flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto p-6">
+          <JoinClassroom data={room} />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex h-screen flex-col overflow-hidden">
@@ -37,7 +57,7 @@ export default async function ClassroomPage({ params }: ClassroomPageProps) {
           <header>
             <h1 className="mb-1 text-3xl font-bold">{classroom.name}</h1>
             <p className="text-sm text-gray-500">
-              {classroom.subject} • {owner.id}
+              {classroom.subject} • {classroom.id}
             </p>
           </header>
 

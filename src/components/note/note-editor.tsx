@@ -67,14 +67,12 @@ export const NoteEditor = ({ notes }: NoteEditorProps) => {
   const [editorTitle, setEditorTitle] = useState(selectedNote?.title)
   const [editorContent, setEditorContent] = useState(selectedNote?.content)
 
-  useHotkeys(
-    "mod+s",
-    () => {
-      if (!selectedNote) return
-      updateNote({ id: selectedNote.id, title: editorTitle ?? "Untitled Note", content: editorContent ?? "" })
-    },
-    { enableOnContentEditable: true },
-  )
+  const handleSaveNote = () => {
+    if (!selectedNote) return
+    updateNote({ id: selectedNote.id, title: editorTitle ?? "Untitled Note", content: editorContent ?? "" })
+  }
+
+  useHotkeys("mod+s", handleSaveNote, { enableOnContentEditable: true, preventDefault: true })
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
@@ -89,7 +87,10 @@ export const NoteEditor = ({ notes }: NoteEditorProps) => {
                 placeholder="Note title"
               />
 
-              {isUpdating ? <Spinner size={16} /> : <span className="text-muted-foreground text-xs">CTRL + S</span>}
+              <Button className="flex items-center gap-2" onClick={handleSaveNote}>
+                <span className="text-sm font-semibold">Save document</span>
+                {isUpdating && <Spinner size={16} />}
+              </Button>
             </div>
           </div>
           <div className="h-full flex-1 overflow-y-auto p-6">

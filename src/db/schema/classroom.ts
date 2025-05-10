@@ -1,9 +1,11 @@
-import { AccountSchema, accountSchema } from "@/db/schema/account"
+import { accountSchema } from "@/db/schema/account"
 import { ClassroomEventMetadata } from "@/types"
 import { jsonb, pgEnum, pgTable, timestamp, unique, varchar } from "drizzle-orm/pg-core"
 import { nanoid } from "nanoid"
 
 export const classroomEventType = pgEnum("classroom_activity_type", ["NOTE", "PLAN", "ASSIGNMENT", "NEW_MEMBER"])
+
+export const classroomType = pgEnum("classroom_type", ["PUBLIC", "PRIVATE"])
 
 export const classroomSchema = pgTable("classroom", {
   id: varchar("id")
@@ -14,7 +16,8 @@ export const classroomSchema = pgTable("classroom", {
   instructor: jsonb("instructor").$type<{ name?: string; avatar?: string }>(),
   ownerId: varchar("owner_id")
     .notNull()
-    .references(() => accountSchema.id, { onDelete: "cascade" }),
+    .references(() => accountSchema.id, { onDelete: "set null" }),
+  type: classroomType("type").notNull().default("PUBLIC"),
   subject: varchar("subject").notNull(),
   description: varchar("description").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -54,8 +57,10 @@ export type ClassroomEventType = (typeof classroomEventType.enumValues)[number]
 
 export type ClassroomEventSchema = typeof classroomEventSchema.$inferSelect
 
-export type ClassroomMemberAccount = Pick<AccountSchema, "id" | "email"> & {
-  name: string
+export type ClassroomMemberAccount = {
+  accountId: string
+  accountName: string
+  accountEmail: string
   joined: Date
   avatar: string
   isOwner: boolean
