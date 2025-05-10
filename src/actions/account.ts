@@ -38,6 +38,16 @@ export const updateAccount = async (id: string, data: Partial<AccountSchema>) =>
   return account[0]
 }
 
+export const updateProfile = async (id: string, data: Partial<ProfileSchema>) => {
+  const { data: profile, error } = await tryCatch(
+    db.update(profileSchema).set(data).where(eq(profileSchema.id, id)).returning(),
+  )
+
+  if (error) throw new Error("Failed to update profile")
+
+  return profile[0]
+}
+
 export const createProfile = async (
   accountId: string,
   dto: Pick<ProfileSchema, "fullName" | "pictureUrl" | "schoolName">,
